@@ -318,3 +318,5 @@ qdrant_storage/collections/sec_filings/0/segments/a99f00ef-7bf8-494c-9bb2-e832c2
 data/sql/sec_filings.duckdb.wal
 data/sql/sec_filings.duckdb
 *.pkl
+embeddings/chunks_embeddings.pkl
+*.pkl
