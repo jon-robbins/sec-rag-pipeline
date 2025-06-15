@@ -166,6 +166,22 @@ class VectorStore:
             top_k=top_k
         )
 
+    def retrieve_by_filter(
+        self,
+        *,
+        ticker: Optional[str] = None,
+        fiscal_year: Optional[int] = None,
+        sections: Optional[List[str]] = None,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """Retrieve documents based on metadata filters."""
+        return self.search_manager.retrieve_by_filter(
+            ticker=ticker,
+            fiscal_year=fiscal_year,
+            sections=sections,
+            limit=limit
+        )
+
     def answer(
         self,
         question: str,

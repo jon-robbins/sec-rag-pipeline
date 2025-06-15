@@ -100,8 +100,9 @@ def generate_qa_pairs(chunks: List, output_path: str):
     try:
         from langchain_openai import ChatOpenAI
         from langchain.schema import HumanMessage, SystemMessage
+        from tqdm.auto import tqdm
     except ImportError:
-        print("❌ LangChain not installed. Install with: pip install langchain langchain-openai")
+        print("❌ Required packages not installed. Install with: pip install langchain langchain-openai tqdm")
         return
 
     llm = ChatOpenAI(temperature=0, model="gpt-4o-mini")
@@ -113,26 +114,44 @@ def generate_qa_pairs(chunks: List, output_path: str):
     failed_generations = 0
     total_qa_pairs = 0
 
-    system_prompt = """You are a financial analyst assistant. Your job is to generate high-quality question-answer pairs based on SEC filing text.
-
+    system_prompt = """
+You are a financial analyst assistant. Your job is to generate high-quality question-answer pairs based on SEC filing text.
 INSTRUCTIONS:
-1. Generate 2-3 specific, answerable questions based ONLY on the provided text
-2. Each question should be clear and focused on factual information in the text
-3. Provide accurate, concise answers based solely on the text content
-4. Focus on: financial metrics, business operations, risk factors, competitive landscape, etc.
-5. Return your response as valid JSON in this exact format:
+1. Generate 2 specific, answerable questions based ONLY on the provided text.
+2. Each question must explicitly include the company name and fiscal year to clearly indicate the context.
+3. Ensure each question is clear and focused on factual information presented in the text.
+4. Provide accurate, concise answers based solely on the text content.
+5. Focus on topics such as financial metrics, business operations, risk factors, competitive landscape, and similar relevant information.
+6. Return your response as valid JSON in the exact format shown below:
 
 {
   "qa_pairs": [
-    {"question": "What was the revenue for Q1?", "answer": "Revenue was $X million"},
-    {"question": "What are the main risk factors?", "answer": "The main risks include..."}
+    {"question": "What was Chevron's revenue for Q1 2015?", "answer": "Revenue was $X million"},
+    {"question": "What are the main risk factors for Lululemon in 2019?", "answer": "The main risks include..."}
   ]
-}"""
+}
+"""
+
+    # Create progress bar with detailed description
+    progress_bar = tqdm(
+        chunks, 
+        desc="🤖 Generating QA pairs", 
+        unit="chunk",
+        leave=True,
+        dynamic_ncols=True,
+        bar_format='{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}'
+    )
 
     with open(output_path, "w", encoding="utf-8") as f:
-        for i, chunk in enumerate(chunks):
+        for i, chunk in enumerate(progress_bar):
             try:
-                print(f"Generating QA for chunk {i+1}/{len(chunks)}: {chunk.id}")
+                # Update progress bar with current chunk info
+                progress_bar.set_postfix({
+                    'Company': chunk.metadata["ticker"],
+                    'Year': chunk.metadata["fiscal_year"],
+                    'Success': f"{successful_generations}/{i+1}",
+                    'QA_pairs': total_qa_pairs
+                })
                 
                 # Create the human message with chunk text
                 user_prompt = f"Generate question-answer pairs for this SEC filing text:\n\n{chunk.text}"
@@ -151,11 +170,12 @@ INSTRUCTIONS:
                     qa_data = json.loads(response_text)
                     qa_pairs = qa_data.get("qa_pairs", [])
                 except json.JSONDecodeError:
-                    print(f"⚠️ Invalid JSON response for chunk {chunk.id}, skipping...")
+                    progress_bar.write(f"⚠️ Invalid JSON response for chunk {chunk.id}, skipping...")
                     failed_generations += 1
                     continue
                 
                 # Write QA pairs
+                chunk_qa_count = 0
                 for qa_pair in qa_pairs:
                     question = qa_pair.get("question", "").strip()
                     answer = qa_pair.get("answer", "").strip()
@@ -174,18 +194,26 @@ INSTRUCTIONS:
                         }
                         f.write(json.dumps(qa_entry, ensure_ascii=False) + "\n")
                         total_qa_pairs += 1
+                        chunk_qa_count += 1
                 
                 successful_generations += 1
                 
+                # Optional: write success message for significant milestones
+                if (i + 1) % 10 == 0:
+                    progress_bar.write(f"✅ Processed {i + 1} chunks, generated {total_qa_pairs} QA pairs")
+                
             except Exception as e:
-                print(f"⚠️ Failed to generate QA for chunk {chunk.id}: {e}")
+                progress_bar.write(f"⚠️ Failed to generate QA for chunk {chunk.id}: {e}")
                 failed_generations += 1
                 continue
 
-    print(f"✅ QA generation complete!")
+    # Final summary
+    progress_bar.close()
+    print(f"\n🎉 QA generation complete!")
     print(f"   Successful chunks: {successful_generations}")
     print(f"   Failed chunks: {failed_generations}")
     print(f"   Total QA pairs: {total_qa_pairs}")
+    print(f"   Average QA pairs per chunk: {total_qa_pairs/max(successful_generations, 1):.1f}")
     print(f"   Saved to: {output_path}")
 
 # Example usage

@@ -5,8 +5,8 @@ Query parsing utilities for the SEC Vector Store.
 import json
 from typing import Dict, Any, Tuple, Union
 
-from sec_vectorstore.openai_helpers import retry_openai_call
-from sec_vectorstore.config import DEFAULT_OPENAI_KEY
+from .openai_helpers import retry_openai_call
+from .config import DEFAULT_OPENAI_KEY
 import openai
 
 

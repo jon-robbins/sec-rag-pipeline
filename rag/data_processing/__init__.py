@@ -1,5 +1,5 @@
 """
-Data Processing Utilities for SEC Filings
+Data processing utilities for the SEC Vector Store.
 
 This module provides utilities for processing and chunking SEC filing documents.
 
@@ -9,8 +9,13 @@ Components:
 - TextCleaning: Text preprocessing and normalization utilities
 """
 
-from .chunkers import SmartChunker, Chunk
 from .filing_exploder import FilingExploder
-from .text_cleaning import clean_text
+from .chunkers import SmartChunker, Chunk
+from .text_cleaning import remove_boilerplate
 
-__all__ = ["SmartChunker", "Chunk", "FilingExploder", "clean_text"] 
+__all__ = [
+    "FilingExploder",
+    "SmartChunker",
+    "Chunk",
+    "remove_boilerplate"
+] 

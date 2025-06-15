@@ -6,7 +6,7 @@ from typing import List, Dict, Any, Optional, Union
 
 from qdrant_client import models
 
-from sec_vectorstore.config import VectorStoreConfig
+from .config import VectorStoreConfig
 
 
 class SearchManager:
@@ -80,6 +80,46 @@ class SearchManager:
                 "text": point.payload.get("text", ""),
             }
             for point in result
+        ]
+    
+    def retrieve_by_filter(
+        self,
+        *,
+        ticker: Optional[str] = None,
+        fiscal_year: Optional[int] = None,
+        sections: Optional[List[str]] = None,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve documents based on metadata filters only, without vector search.
+        
+        Args:
+            ticker: Optional ticker symbol filter
+            fiscal_year: Optional fiscal year filter
+            sections: Optional SEC sections filter
+            limit: Number of results to return
+            
+        Returns:
+            List of results with metadata
+        """
+        query_filter = self._build_filter(ticker, fiscal_year, sections)
+
+        # Execute scroll to retrieve by filter
+        points, _ = self.client.scroll(
+            collection_name=self.config.collection_name,
+            scroll_filter=query_filter,
+            limit=limit,
+            with_payload=True,
+            with_vectors=False,
+        )
+
+        # Format results
+        return [
+            {
+                **point.payload,
+                "text": point.payload.get("text", ""),
+            }
+            for point in points
         ]
     
     def _build_filter(

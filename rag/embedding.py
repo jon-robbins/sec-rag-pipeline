@@ -6,8 +6,8 @@ from typing import Iterable, List, Tuple, Any
 import tiktoken
 import openai
 
-from sec_vectorstore.config import MAX_TOKENS_PER_BATCH, DEFAULT_OPENAI_KEY
-from sec_vectorstore.openai_helpers import retry_openai_call
+from .config import MAX_TOKENS_PER_BATCH, DEFAULT_OPENAI_KEY
+from .openai_helpers import retry_openai_call
 
 
 class EmbeddingManager:

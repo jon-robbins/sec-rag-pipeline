@@ -8,8 +8,8 @@ from typing import List, Dict, Any, Optional
 
 from qdrant_client import QdrantClient, models
 
-from sec_vectorstore.config import VectorStoreConfig
-from sec_vectorstore.docker_utils import restart_docker_qdrant
+from .config import VectorStoreConfig
+from .docker_utils import restart_docker_qdrant
 
 
 class CollectionManager:

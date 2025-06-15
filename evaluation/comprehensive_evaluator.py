@@ -13,6 +13,7 @@ Metrics: Recall@K, Mean Reciprocal Rank (MRR), ROUGE-1/2/L
 import json
 import os
 import sys
+import pandas as pd
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 import statistics
@@ -22,8 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from rag import create_vector_store
 from rag.openai_helpers import UsageCostCalculator
-from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
+from openai import OpenAI
 
 try:
     from rouge_score import rouge_scorer
@@ -38,12 +38,24 @@ class ComprehensiveEvaluator:
     
     def __init__(self, evaluation_file: str = "data/qa_dataset.jsonl"):
         self.evaluation_file = evaluation_file
-        self.llm = ChatOpenAI(model="gpt-4", temperature=0)
+        self.openai_client = OpenAI()
         self.cost_calculator = UsageCostCalculator()
         
         # Initialize RAG pipeline
         print("🔧 Initializing RAG pipeline...")
-        self.rag_vs = create_vector_store(use_docker=False, verbose=False)
+        self.rag_vs = create_vector_store(use_docker=False)
+        
+        # Initialize collection and load data if needed
+        try:
+            status = self.rag_vs.get_status()
+            if status.get("points_count", 0) == 0:
+                print("⚠️ Vector store is empty. Loading data automatically...")
+                from rag.load_data import load_chunks_to_vectorstore
+                self.rag_vs = load_chunks_to_vectorstore()
+                print("✅ Data loaded successfully")
+        except Exception as e:
+            print(f"❌ Vector store initialization failed: {e}")
+            raise
         
         # ROUGE scorer for answer quality
         self.rouge_scorer = rouge_scorer.RougeScorer(['rouge1', 'rouge2', 'rougeL'], use_stemmer=True)
@@ -51,6 +63,9 @@ class ComprehensiveEvaluator:
         # Load evaluation dataset
         self.eval_data = self._load_evaluation_data()
         print(f"📊 Loaded {len(self.eval_data)} evaluation questions")
+        
+        # Load full SEC filings data for unfiltered context
+        self._load_full_filings()
         
     def _load_evaluation_data(self) -> List[Dict[str, Any]]:
         """Load the QA evaluation dataset."""
@@ -60,69 +75,98 @@ class ComprehensiveEvaluator:
                 data.append(json.loads(line.strip()))
         return data
     
-    def gpt4_unfiltered_context(self, question: str, source_text: str) -> str:
-        """Scenario 1: GPT-4 with entire SEC filing as context."""
-        system_prompt = """You are a financial analyst. Answer the question based ONLY on the provided SEC filing context. Be accurate and concise."""
-        
-        user_prompt = f"""Context: {source_text}
-
-Question: {question}
-
-Answer:"""
-        
-        messages = [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_prompt)
-        ]
-        
-        response = self.llm.invoke(messages)
-        return response.content.strip()
+    def _load_full_filings(self):
+        """Load the full SEC filings data for unfiltered context scenario."""
+        try:
+            self.df_filings = pd.read_csv("data/df_filings.csv")
+            print(f"📁 Loaded {len(self.df_filings)} full SEC filings")
+        except FileNotFoundError:
+            print("⚠️ Warning: df_filings.csv not found. Unfiltered context scenario may not work.")
+            self.df_filings = pd.DataFrame()
     
-    def gpt4_web_search(self, question: str) -> str:
-        """Scenario 2: GPT-4 with no additional context (web knowledge only)."""
-        system_prompt = """You are a financial analyst. Answer the question using your knowledge of publicly available financial information. Be accurate and concise."""
-        
-        user_prompt = f"""Question: {question}
-
-Answer:"""
-        
-        messages = [
-            SystemMessage(content=system_prompt),
-            HumanMessage(content=user_prompt)
-        ]
-        
-        response = self.llm.invoke(messages)
-        return response.content.strip()
-    
-    def rag_pipeline(self, question: str, ticker: str = None, year: int = None, section: str = None) -> str:
-        """Scenario 3: RAG pipeline with semantic search."""
-        # Search for relevant chunks
-        chunks = self.rag_vs.search(
-            query=question,
+    def _get_full_filing_text(self, ticker: str, fiscal_year: int) -> str:
+        """Get context from all chunks for a given ticker and year (simulating full filing)."""
+        # Since we don't have full filing texts, use all chunks from the company/year
+        # This simulates having the full filing as context
+        chunks = self.rag_vs.retrieve_by_filter(
             ticker=ticker,
-            fiscal_year=year,
-            sections=[section] if section else None,
-            top_k=10
+            fiscal_year=fiscal_year,
+            limit=100  # Get many chunks to simulate full filing
         )
         
-        # Generate answer using retrieved chunks
+        if not chunks:
+            return f"[No SEC filing data available for {ticker} {fiscal_year}]"
+        
+        # Concatenate all chunk texts to simulate full filing
+        full_text = "\n\n".join([chunk.get("text", "") for chunk in chunks])
+        return full_text[:50000]  # Limit to reasonable size for GPT context
+    
+    def _format_question_with_context(self, question: str, ticker: str, fiscal_year: int) -> str:
+        """Add company and year context to the question."""
+        return f"Company: {ticker}\nSEC Filing year: {fiscal_year}\n\n{question}"
+    
+    def gpt4_unfiltered_context(self, question: str, ticker: str, fiscal_year: int) -> str:
+        """Scenario 1: GPT-4 with entire SEC filing as context."""
+        # Get the full SEC filing for this company and year
+        full_filing_text = self._get_full_filing_text(ticker, fiscal_year)
+        
+        system_prompt = """You are a financial analyst. Answer the question based ONLY on the provided SEC filing context. Be accurate and concise."""
+        
+        formatted_question = self._format_question_with_context(question, ticker, fiscal_year)
+        user_prompt = f"""Context: {full_filing_text}
+
+Question: {formatted_question}
+
+Answer:"""
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        response = self.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=messages,
+            temperature=0
+        )
+        return response.choices[0].message.content.strip()
+    
+    def gpt4_web_search(self, question: str, ticker: str, fiscal_year: int) -> str:
+        """Scenario 2: GPT-4 with web search (no additional context)."""
+        formatted_question = self._format_question_with_context(question, ticker, fiscal_year)
+        
+        try:
+            # This format matches the user's validated test.py script.
+            response = self.openai_client.responses.create(
+                model="gpt-4o-mini",
+                tools=[{ "type": "web_search_preview" }],
+                input=formatted_question,
+            )
+            return response.output_text.strip()
+        except Exception as e:
+            # As requested: DO NOT FALL BACK, raise the exception
+            raise RuntimeError(f"Web search API failed: {e}") from e
+    
+    def rag_pipeline(self, question: str, ticker: str, fiscal_year: int) -> str:
+        """Scenario 3: RAG pipeline with query parsing and semantic search."""
+        formatted_question = self._format_question_with_context(question, ticker, fiscal_year)
+        
+        # Let the RAG pipeline use its built-in query parsing
+        # by not providing explicit filters - it will parse them from the question
         result = self.rag_vs.answer(
-            question=question,
-            ticker=ticker,
-            fiscal_year=year,
-            sections=[section] if section else None
+            question=formatted_question
         )
         
         return result["answer"]
     
-    def compute_retrieval_metrics(self, question: str, correct_chunk_id: str, ticker: str = None, year: int = None, section: str = None) -> Dict[str, float]:
+    def compute_retrieval_metrics(self, question: str, correct_chunk_id: str, ticker: str, fiscal_year: int) -> Dict[str, float]:
         """Compute Recall@K and MRR for retrieval quality."""
-        # Get retrieved chunks
+        formatted_question = self._format_question_with_context(question, ticker, fiscal_year)
+        
+        # Let the search manager use its built-in query parsing
+        # by not providing explicit filters - it will parse them from the question
         chunks = self.rag_vs.search(
-            query=question,
-            ticker=ticker,
-            fiscal_year=year,
-            sections=[section] if section else None,
+            query=formatted_question,
             top_k=10
         )
         
@@ -165,17 +209,16 @@ Answer:"""
         """Evaluate a single question across all three scenarios."""
         question = qa_item["question"]
         reference_answer = qa_item["answer"]
-        source_text = qa_item["source_text"]
         chunk_id = qa_item["chunk_id"]
-        ticker = qa_item.get("ticker")
-        year = qa_item.get("year")
+        ticker = qa_item["ticker"]
+        year = qa_item["year"]  # This corresponds to fiscal_year
         section = qa_item.get("section")
         
-        results = {"question": question, "reference": reference_answer}
+        results = {"question": question, "reference": reference_answer, "ticker": ticker, "year": year}
         
         try:
-            # Scenario 1: Unfiltered Context
-            unfiltered_answer = self.gpt4_unfiltered_context(question, source_text)
+            # Scenario 1: Unfiltered Context (uses entire SEC filing)
+            unfiltered_answer = self.gpt4_unfiltered_context(question, ticker, year)
             unfiltered_rouge = self.compute_rouge_scores(unfiltered_answer, reference_answer)
             results["unfiltered"] = {
                 "answer": unfiltered_answer,
@@ -183,17 +226,17 @@ Answer:"""
             }
             
             # Scenario 2: Web Search (No Context)
-            web_answer = self.gpt4_web_search(question)
+            web_answer = self.gpt4_web_search(question, ticker, year)
             web_rouge = self.compute_rouge_scores(web_answer, reference_answer)
             results["web_search"] = {
                 "answer": web_answer,
                 "rouge": web_rouge
             }
             
-            # Scenario 3: RAG Pipeline
-            rag_answer = self.rag_pipeline(question, ticker, year, section)
+            # Scenario 3: RAG Pipeline (uses query parser + semantic search)
+            rag_answer = self.rag_pipeline(question, ticker, year)
             rag_rouge = self.compute_rouge_scores(rag_answer, reference_answer)
-            rag_retrieval = self.compute_retrieval_metrics(question, chunk_id, ticker, year, section)
+            rag_retrieval = self.compute_retrieval_metrics(question, chunk_id, ticker, year)
             results["rag"] = {
                 "answer": rag_answer,
                 "rouge": rag_rouge,
@@ -238,9 +281,14 @@ Answer:"""
                     rag_retrieval[metric].append(result["rag"]["retrieval"][metric])
         
         # Compute aggregate scores
+        successful_evals = len([r for r in all_results if "error" not in r])
+        
+        if successful_evals == 0:
+            raise RuntimeError(f"All {len(eval_subset)} evaluations failed. Check your setup and data.")
+        
         summary = {
             "total_questions": len(eval_subset),
-            "successful_evaluations": len([r for r in all_results if "error" not in r]),
+            "successful_evaluations": successful_evals,
             "scenarios": {
                 "unfiltered_context": {
                     "rouge1": statistics.mean(unfiltered_rouge["rouge1"]),
@@ -311,7 +359,7 @@ Answer:"""
         print(f"ROUGE-L: {rougeL_winner.replace('_', ' ').title()} ({scenarios[rougeL_winner]['rougeL']:.3f})")
 
 
-def main():
+def run_evaluation():
     """Run comprehensive evaluation."""
     if not os.getenv("OPENAI_API_KEY"):
         print("❌ OPENAI_API_KEY not set")
@@ -335,4 +383,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main()) 
+    exit(run_evaluation()) 
