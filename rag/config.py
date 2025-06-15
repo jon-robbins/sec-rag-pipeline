@@ -32,3 +32,9 @@ class VectorStoreConfig:
 # Constants
 DEFAULT_OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 MAX_TOKENS_PER_BATCH = 280_000  # OpenAI embedding batch limit 
+
+#openai pricing
+PRICING = {
+    "gpt-4o-mini": {"input": 0.15/1_000_000, "output": 0.60/1_000_000},
+    "text-embedding-3-small": {"input": 0.02/1_000_000, "output": 0.0}
+}

@@ -3,10 +3,10 @@ Query parsing utilities for the SEC Vector Store.
 """
 
 import json
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, Union
 
-from .openai_helpers import retry_openai_call
-from .config import DEFAULT_OPENAI_KEY
+from sec_vectorstore.openai_helpers import retry_openai_call
+from sec_vectorstore.config import DEFAULT_OPENAI_KEY
 import openai
 
 
@@ -26,6 +26,38 @@ class QueryParser:
         Returns:
             Dictionary with parsed parameters: ticker, fiscal_year, sections
         """
+        response = self._make_parsing_request(query)
+        try:
+            content = response.choices[0].message.content
+            result = json.loads(content)
+            print(f"Parsed query: {result}")
+            return result
+        except Exception as e:
+            print(f"Failed to parse response: {e}")
+            return {}
+    
+    def parse_query_with_response(self, query: str) -> Tuple[Dict[str, Any], Any]:
+        """
+        Parse query and return both result and full response object.
+        
+        Args:
+            query: Natural language query string
+            
+        Returns:
+            Tuple of (parsed_parameters, response_object)
+        """
+        response = self._make_parsing_request(query)
+        try:
+            content = response.choices[0].message.content
+            result = json.loads(content)
+            print(f"Parsed query: {result}")
+            return result, response
+        except Exception as e:
+            print(f"Failed to parse response: {e}")
+            return {}, response
+    
+    def _make_parsing_request(self, query: str) -> Any:
+        """Make the actual API request for parsing."""
         system_message = """
         ## ROLE
         You are a financial-query parser.
@@ -62,7 +94,7 @@ class QueryParser:
         
         # Try GPT-4o-mini first for better accuracy
         try:
-            response = retry_openai_call(
+            return retry_openai_call(
                 self.openai_client.chat.completions.create,
                 model="gpt-4o-mini",
                 messages=[
@@ -70,35 +102,21 @@ class QueryParser:
                     {"role": "user", "content": query},
                 ],
                 response_format={"type": "json_object"},
-                temperature=0.1,  # Lower temperature for consistent parsing
-                max_tokens=100,   # Short response expected
+                temperature=0.1,
+                max_tokens=100,
             )
-            content = response.choices[0].message.content
-            result = json.loads(content)
-            print(f"GPT-4o-mini parsed: {result}")
-            return result
-            
         except Exception as e:
             print(f"GPT-4o-mini failed: {e}, falling back to GPT-3.5-turbo")
             
             # Fallback to GPT-3.5-turbo  
-            try:
-                response = retry_openai_call(
-                    self.openai_client.chat.completions.create,
-                    model="gpt-3.5-turbo-0125",
-                    messages=[
-                        {"role": "system", "content": system_message},
-                        {"role": "user", "content": query},
-                    ],
-                    response_format={"type": "json_object"},
-                    temperature=0.1,
-                    max_tokens=100,
-                )
-                content = response.choices[0].message.content
-                result = json.loads(content)
-                print(f"GPT-3.5-turbo parsed: {result}")
-                return result
-                
-            except Exception as fallback_e:
-                print(f"Both models failed: {fallback_e}")
-                return {} 
+            return retry_openai_call(
+                self.openai_client.chat.completions.create,
+                model="gpt-3.5-turbo-0125",
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": query},
+                ],
+                response_format={"type": "json_object"},
+                temperature=0.1,
+                max_tokens=100,
+            ) 

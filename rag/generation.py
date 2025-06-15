@@ -3,10 +3,10 @@ Answer generation using GPT based on retrieved document chunks.
 """
 
 import json
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
-from .openai_helpers import retry_openai_call
-from .config import DEFAULT_OPENAI_KEY
+from sec_vectorstore.openai_helpers import retry_openai_call
+from sec_vectorstore.config import DEFAULT_OPENAI_KEY
 import openai
 
 
@@ -49,7 +49,8 @@ class AnswerGenerator:
         
         # Generate the answer
         try:
-            answer = self._call_gpt(question, context["text"])
+            response = self._make_generation_request(question, context["text"])
+            answer = response.choices[0].message.content.strip()
             
             return {
                 "answer": answer,
@@ -64,6 +65,57 @@ class AnswerGenerator:
                 "chunks_used": 0,
                 "confidence": "error"
             }
+
+    def generate_answer_with_response(
+        self,
+        question: str,
+        chunks: List[Dict[str, Any]],
+        max_chunks: int = 10,
+        max_context_length: int = 8000,
+    ) -> Tuple[Dict[str, Any], Any]:
+        """
+        Generate an answer and return both result and full response object.
+        
+        Args:
+            question: The user's question
+            chunks: List of retrieved chunks with metadata
+            max_chunks: Maximum number of chunks to include
+            max_context_length: Maximum character length for context
+            
+        Returns:
+            Tuple of (answer_dict, response_object)
+        """
+        if not chunks:
+            return {
+                "answer": "I couldn't find any relevant information to answer your question.",
+                "sources": [],
+                "chunks_used": 0,
+                "confidence": "low"
+            }, None
+        
+        # Prepare context from chunks
+        context = self._prepare_context(chunks, max_chunks, max_context_length)
+        
+        # Generate the answer
+        try:
+            response = self._make_generation_request(question, context["text"])
+            answer = response.choices[0].message.content.strip()
+            
+            result = {
+                "answer": answer,
+                "sources": context["sources"],
+                "chunks_used": context["chunks_used"],
+                "confidence": self._assess_confidence(chunks, context["chunks_used"])
+            }
+            return result, response
+        except Exception as e:
+            result = {
+                "answer": f"I encountered an error while generating the answer: {str(e)}",
+                "sources": [],
+                "chunks_used": 0,
+                "confidence": "error"
+            }
+            return result, None
     
     def _prepare_context(
         self, 
@@ -119,16 +171,16 @@ class AnswerGenerator:
             "chunks_used": chunks_used
         }
     
-    def _call_gpt(self, question: str, context: str) -> str:
+    def _make_generation_request(self, question: str, context: str) -> Any:
         """
-        Call GPT to generate an answer based on the question and context.
+        Make the actual API request for answer generation.
         
         Args:
             question: User's question
             context: Prepared context from retrieved chunks
             
         Returns:
-            Generated answer string
+            Full OpenAI API response object
         """
         system_prompt = """You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context.
 
@@ -154,7 +206,7 @@ Context from SEC filings:
 
 Please provide a brief, accurate answer based on the above context."""
 
-        response = retry_openai_call(
+        return retry_openai_call(
             self.openai_client.chat.completions.create,
             model=self.model,
             messages=[
@@ -164,8 +216,6 @@ Please provide a brief, accurate answer based on the above context."""
             temperature=0.1,  # Low temperature for factual accuracy
             max_tokens=500,   # Limit response length
         )
-        
-        return response.choices[0].message.content.strip()
     
     def _assess_confidence(self, chunks: List[Dict[str, Any]], chunks_used: int) -> str:
         """

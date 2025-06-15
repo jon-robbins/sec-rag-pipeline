@@ -2,12 +2,12 @@
 Embedding utilities for the SEC Vector Store.
 """
 
-from typing import Iterable, List
+from typing import Iterable, List, Tuple, Any
 import tiktoken
 import openai
 
-from .config import MAX_TOKENS_PER_BATCH, DEFAULT_OPENAI_KEY
-from .openai_helpers import retry_openai_call
+from sec_vectorstore.config import MAX_TOKENS_PER_BATCH, DEFAULT_OPENAI_KEY
+from sec_vectorstore.openai_helpers import retry_openai_call
 
 
 class EmbeddingManager:
@@ -58,7 +58,21 @@ class EmbeddingManager:
         Returns:
             List of embedding vectors (lists of floats)
         """
+        embeddings, _ = self.embed_texts_with_response(texts)
+        return embeddings
+    
+    def embed_texts_with_response(self, texts: List[str]) -> Tuple[List[List[float]], List[Any]]:
+        """
+        Get OpenAI embeddings and return both embeddings and response objects.
+        
+        Args:
+            texts: List of text strings to embed
+            
+        Returns:
+            Tuple of (embedding_vectors, list_of_response_objects)
+        """
         embeddings: List[List[float]] = []
+        responses: List[Any] = []
         
         for batch in self.batch_texts_by_tokens(texts):
             response = retry_openai_call(
@@ -67,5 +81,6 @@ class EmbeddingManager:
                 model=self.model,
             )
             embeddings.extend(r.embedding for r in response.data)
+            responses.append(response)
             
-        return embeddings 
+        return embeddings, responses 

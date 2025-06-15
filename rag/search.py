@@ -6,7 +6,7 @@ from typing import List, Dict, Any, Optional, Union
 
 from qdrant_client import models
 
-from .config import VectorStoreConfig
+from sec_vectorstore.config import VectorStoreConfig
 
 
 class SearchManager:
