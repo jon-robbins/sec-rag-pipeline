@@ -317,3 +317,4 @@ qdrant_storage/collections/sec_filings/0/segments/9abb310e-2309-4df0-86eb-1b4fbd
 qdrant_storage/collections/sec_filings/0/segments/a99f00ef-7bf8-494c-9bb2-e832c282f63f/payload_index/OPTIONS-000007
 data/sql/sec_filings.duckdb.wal
 data/sql/sec_filings.duckdb
+*.pkl
