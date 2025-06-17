@@ -1,261 +1,237 @@
+#!/usr/bin/env python3
 """
-Evaluation class for the SEC Vector Store system.
-Handles end-to-end query processing with centralized token and cost tracking.
+Defines the ComprehensiveEvaluator for running and evaluating RAG scenarios.
 """
 
 import os
-import time
-from typing import Dict, Any, Optional, List
+import json
+import random
+from pathlib import Path
+from typing import List, Dict, Any
+from collections import defaultdict
 
-from rag import VectorStore, create_vector_store
-from rag.openai_helpers import UsageCostCalculator
+from openai import OpenAI
+from tqdm.auto import tqdm
+
+# Ensure the project root is in the Python path
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from rag.pipeline import RAGPipeline
+from evaluation.scenarios import (
+    run_rag_scenario,
+    run_unfiltered_context_scenario,
+    run_web_search_scenario,
+)
+from evaluation.metrics import calculate_retrieval_metrics, calculate_rouge_scores
+from evaluation.generate_qa_dataset import generate_qa_pairs, BalancedChunkSampler
 
 
-class SECQueryEvaluator:
+class ComprehensiveEvaluator:
     """
-    End-to-end evaluation system for SEC Vector Store queries.
-    
-    Features:
-    - Connects to Docker or in-memory vector database
-    - Parses natural language queries to extract metadata
-    - Retrieves relevant context based on parsed parameters
-    - Generates answers using only the provided context
-    - Centralized token usage and cost tracking from API responses
+    Orchestrates the comprehensive evaluation of different RAG scenarios.
     """
-    
-    def __init__(
-        self,
-        *,
-        use_docker: bool = False,
-        collection_name: str = "sec_filings",
-        docker_host: str = "localhost",
-        docker_port: int = 6333,
-        openai_key: Optional[str] = None,
-        verbose: bool = True
-    ):
+    def __init__(self, pipeline: RAGPipeline):
         """
-        Initialize the evaluator.
-        
+        Initializes the evaluator with a RAG pipeline instance.
+
         Args:
-            use_docker: Whether to use Docker Qdrant or in-memory
-            collection_name: Name of the Qdrant collection
-            docker_host: Docker host address
-            docker_port: Docker port number
-            openai_key: OpenAI API key (uses env var if not provided)
-            verbose: Whether to print detailed progress information
+            pipeline: An initialized RAGPipeline object.
         """
-        self.verbose = verbose
-        self.openai_key = openai_key or os.getenv("OPENAI_API_KEY")
-        
-        if not self.openai_key:
-            raise ValueError("OpenAI API key is required. Set OPENAI_API_KEY env var or pass openai_key parameter.")
-        
-        # Initialize cost calculator
-        self.cost_calculator = UsageCostCalculator()
-        
-        # Initialize vector store
-        if self.verbose:
-            print(f"🔧 Initializing vector store ({'Docker' if use_docker else 'Memory'})...")
-        
-        self.vector_store = create_vector_store(
-            use_docker=use_docker,
-            collection_name=collection_name,
-            docker_host=docker_host,
-            docker_port=docker_port,
-            openai_key=self.openai_key,
-            auto_fallback_to_memory=True
-        )
-        
-        # Check if collection exists and has data
-        status = self.vector_store.get_status()
-        if self.verbose:
-            print(f"📊 Vector store status: {status}")
-        
-        if status.get("points_count", 0) == 0:
-            print("⚠️  Warning: Vector store appears to be empty. Make sure data is loaded.")
-    
-    def evaluate_query(
-        self,
-        query: str,
-        *,
-        top_k: int = 10,
-        max_chunks: int = 10,
-        max_context_length: int = 8000
-    ) -> Dict[str, Any]:
+        self.pipeline = pipeline
+        self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.qa_dataset = None
+
+    def _get_chunks_from_pipeline(self):
         """
-        Evaluate a single query end-to-end with centralized usage tracking.
-        
-        Args:
-            query: Natural language query
-            top_k: Number of chunks to retrieve
-            max_chunks: Maximum chunks to use for answer generation
-            max_context_length: Maximum context length for GPT
-            
-        Returns:
-            Dictionary with answer, metadata, token usage, and costs
+        Get chunks directly from the RAG pipeline (always fresh).
         """
-        start_time = time.time()
+        if not hasattr(self.pipeline, 'chunks') or not self.pipeline.chunks:
+            raise RuntimeError("Pipeline chunks not available. Ensure the RAG pipeline is properly initialized.")
+        return self.pipeline.chunks
+
+    def _load_or_generate_qa_dataset(self, num_questions: int) -> List[Dict[str, Any]]:
+        """
+        Loads the QA dataset or generates a new one if it doesn't exist or is empty.
+        Only generates enough questions to satisfy the test size.
+        """
+        qa_dataset_path = Path("data/qa_dataset.jsonl")
         
-        if self.verbose:
-            print(f"\n🔍 Processing query: '{query}'")
+        if qa_dataset_path.exists():
+            with open(qa_dataset_path, "r") as f:
+                qa_data = [json.loads(line) for line in f]
+            if len(qa_data) >= num_questions:
+                print(f"✅ Loaded {len(qa_data)} QA pairs from {qa_dataset_path}.")
+                # Randomly sample to the number of questions needed
+                return random.sample(qa_data, num_questions)
+
+        print(f"QA dataset not found or insufficient. Generating {num_questions} new QA pairs...")
         
-        try:
-            # Step 1: Parse the query
-            if self.verbose:
-                print("1️⃣ Parsing query...")
-            
-            parsed_params, parsing_response = self.vector_store.query_parser.parse_query_with_response(query)
-            
-            if self.verbose:
-                print(f"   Parsed parameters: {parsed_params}")
-            
-            # Step 2: Search for relevant chunks
-            if self.verbose:
-                print("2️⃣ Searching for relevant chunks...")
-            
-            # Get embeddings with response objects
-            _, embedding_responses = self.vector_store.embedding_manager.embed_texts_with_response([query])
-            
-            # Perform search
-            chunks = self.vector_store.search(
-                query=query,
-                ticker=parsed_params.get("ticker"),
-                fiscal_year=parsed_params.get("fiscal_year"),
-                sections=parsed_params.get("sections"),
-                top_k=top_k
-            )
-            
-            if self.verbose:
-                print(f"   Found {len(chunks)} chunks")
-                if chunks:
-                    print(f"   Top score: {chunks[0].get('score', 0):.3f}")
-            
-            # Step 3: Generate answer
-            if self.verbose:
-                print("3️⃣ Generating answer...")
-            
-            answer_result, generation_response = self.vector_store.answer_generator.generate_answer_with_response(
-                question=query,
-                chunks=chunks,
-                max_chunks=max_chunks,
-                max_context_length=max_context_length
-            )
-            
-            if self.verbose:
-                print(f"   Generated answer ({len(answer_result['answer'])} chars)")
-            
-            # Centralized usage and cost calculation
-            usage_data = self._extract_all_usage(parsing_response, embedding_responses, generation_response)
-            
-            # Compile results
-            total_time = time.time() - start_time
-            
-            result = {
-                "query": query,
-                "answer": answer_result["answer"],
-                "sources": answer_result["sources"],
-                "confidence": answer_result["confidence"],
-                "chunks_used": answer_result["chunks_used"],
-                "chunks_found": len(chunks),
-                "parsed_params": parsed_params,
-                "token_usage": usage_data["token_usage"],
-                "cost_breakdown": usage_data["cost_breakdown"],
-                "processing_time_seconds": total_time
-            }
-            
-            if self.verbose:
-                print(f"\n✅ Query processed successfully!")
-                print(f"   Total tokens: {usage_data['token_usage']['total']}")
-                print(f"   Total cost: ${usage_data['cost_breakdown']['total']:.4f}")
-                print(f"   Processing time: {total_time:.2f}s")
-            
-            return result
-            
-        except Exception as e:
-            error_result = {
-                "query": query,
-                "answer": f"Error processing query: {str(e)}",
-                "sources": [],
-                "confidence": "error",
-                "chunks_used": 0,
-                "chunks_found": 0,
-                "parsed_params": {},
-                "token_usage": {"total": 0},
-                "cost_breakdown": {"total": 0.0},
-                "processing_time_seconds": time.time() - start_time,
-                "error": str(e)
-            }
-            
-            if self.verbose:
-                print(f"❌ Error processing query: {e}")
-            
-            return error_result
-    
-    def _extract_all_usage(self, parsing_response, embedding_responses, generation_response) -> Dict[str, Any]:
-        """Centrally extract all usage information and calculate costs."""
+        # Get chunks from the pipeline (always fresh)
+        chunks = self._get_chunks_from_pipeline()
+
+        # Create a balanced sample
+        sampler = BalancedChunkSampler()
+        grouped_chunks = sampler.group_chunks_by_keys(chunks)
+        balanced_chunks = sampler.stratified_sample(grouped_chunks)
+
+        # We need to sample enough chunks to generate the desired number of questions.
+        # The generator creates 2 questions per chunk.
+        num_chunks_to_sample = (num_questions + 1) // 2
+        if len(balanced_chunks) < num_chunks_to_sample:
+            print(f"⚠️ Warning: Not enough balanced chunks ({len(balanced_chunks)}) to generate {num_questions} questions. Using all available.")
+            chunks_for_qa = balanced_chunks
+        else:
+            chunks_for_qa = random.sample(balanced_chunks, num_chunks_to_sample)
         
-        # Extract usage from each response
-        parsing_usage = self.cost_calculator.extract_usage_from_response(parsing_response, "parsing") if parsing_response else {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        print(f"Selected {len(chunks_for_qa)} chunks to generate ~{num_questions} questions.")
         
-        # Sum up embedding usage from all batches
-        embedding_total_tokens = 0
-        if embedding_responses:
-            for resp in embedding_responses:
-                embedding_usage = self.cost_calculator.extract_usage_from_response(resp, "embedding")
-                embedding_total_tokens += embedding_usage["total_tokens"]
+        generate_qa_pairs(chunks_for_qa, str(qa_dataset_path))
         
-        generation_usage = self.cost_calculator.extract_usage_from_response(generation_response, "generation") if generation_response else {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        with open(qa_dataset_path, "r") as f:
+            qa_data = [json.loads(line) for line in f]
         
-        # Calculate costs
-        parsing_cost = self.cost_calculator.calculate_cost(parsing_usage, "gpt-4o-mini")
-        embedding_cost = self.cost_calculator.calculate_cost({"prompt_tokens": embedding_total_tokens, "completion_tokens": 0}, "text-embedding-3-small")
-        generation_cost = self.cost_calculator.calculate_cost(generation_usage, "gpt-4o-mini")
-        
-        return {
-            "token_usage": {
-                "parsing": {"input": parsing_usage["prompt_tokens"], "output": parsing_usage["completion_tokens"]},
-                "embedding": embedding_total_tokens,
-                "generation": {"input": generation_usage["prompt_tokens"], "output": generation_usage["completion_tokens"]},
-                "total": parsing_usage["total_tokens"] + embedding_total_tokens + generation_usage["total_tokens"]
-            },
-            "cost_breakdown": {
-                "parsing": parsing_cost,
-                "embedding": embedding_cost,
-                "generation": generation_cost,
-                "total": parsing_cost + embedding_cost + generation_cost
-            }
+        # Final check and sample
+        if len(qa_data) > num_questions:
+            return random.sample(qa_data, num_questions)
+        return qa_data
+
+
+    def evaluate_single_question(self, qa_item: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Evaluates a single question across all three scenarios.
+        """
+        results = {}
+        ground_truth_answer = qa_item["answer"]
+        ground_truth_chunk_id = qa_item["chunk_id"]
+
+        # 1. RAG Scenario
+        rag_answer, retrieved_ids = run_rag_scenario(self.pipeline, qa_item)
+        results["rag"] = {
+            "answer": rag_answer,
+            "retrieval": calculate_retrieval_metrics(
+                retrieved_chunk_ids=retrieved_ids,
+                true_chunk_id=ground_truth_chunk_id,
+                k_values=[1, 3, 5, 10]
+            ),
+            "rouge": calculate_rouge_scores(rag_answer, ground_truth_answer)
         }
-    
-    def get_database_status(self) -> Dict[str, Any]:
-        """Get current status of the vector database."""
-        return self.vector_store.get_status()
 
+        # 2. Unfiltered Context Scenario
+        unfiltered_answer = run_unfiltered_context_scenario(self.pipeline, self.openai_client, qa_item)
+        results["unfiltered"] = {
+            "answer": unfiltered_answer,
+            "rouge": calculate_rouge_scores(unfiltered_answer, ground_truth_answer)
+        }
 
-if __name__ == "__main__":
-    from rag.openai_helpers import UsageCostCalculator
-    evaluator = SECQueryEvaluator(use_docker=True, verbose=True)
-    print(evaluator.get_database_status())
+        # 3. Web Search Scenario
+        web_search_answer = run_web_search_scenario(self.openai_client, qa_item)
+        results["web_search"] = {
+            "answer": web_search_answer,
+            "rouge": calculate_rouge_scores(web_search_answer, ground_truth_answer)
+        }
+        
+        return results
 
-    test_queries = [
-        "What were Tesla's main risks in 2020?",
-        "How did Apple's revenue change in 2021?",
-        "What competitors does Microsoft mention in their 2019 filing?",
-    ]
+    def evaluate_all_scenarios(self, num_questions: int = 20) -> Dict[str, Any]:
+        """
+        Runs the full evaluation across all scenarios and aggregates the results.
+        """
+        self.qa_dataset = self._load_or_generate_qa_dataset(num_questions)
+        
+        all_results = []
+        progress_bar = tqdm(self.qa_dataset, desc="🔬 Evaluating scenarios", unit="question")
 
-    print("🚀 Running evaluation on test queries...\n")
-    results = [evaluator.evaluate_query(q) for q in test_queries]
+        for qa_item in progress_bar:
+            single_result = self.evaluate_single_question(qa_item)
+            single_result["question"] = qa_item["question"]
+            single_result["ground_truth_answer"] = qa_item["answer"]
+            all_results.append(single_result)
+        
+        return self._aggregate_results(all_results)
 
+    def _aggregate_results(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Aggregates metrics from all evaluation runs.
+        """
+        summary = {
+            "rag": {"retrieval": defaultdict(list), "rouge": defaultdict(list)},
+            "unfiltered": {"rouge": defaultdict(list)},
+            "web_search": {"rouge": defaultdict(list)}
+        }
+        
+        for res in results:
+            # RAG
+            for metric, value in res["rag"]["retrieval"].items():
+                summary["rag"]["retrieval"][metric].append(value)
+            for metric, scores in res["rag"]["rouge"].items():
+                summary["rag"]["rouge"][metric].append(scores)
+            
+            # Unfiltered
+            for metric, scores in res["unfiltered"]["rouge"].items():
+                summary["unfiltered"]["rouge"][metric].append(scores)
+            
+            # Web Search
+            for metric, scores in res["web_search"]["rouge"].items():
+                summary["web_search"]["rouge"][metric].append(scores)
 
-    # Calculate summary using the cost calculator
-    calc = UsageCostCalculator()
-    summary = calc.summarize(results)
+        # Calculate averages, filtering out None values
+        final_summary = {"total_questions": len(results)}
+        for scenario, metrics in summary.items():
+            final_summary[scenario] = {}
+            if "retrieval" in metrics:
+                final_summary[scenario]["retrieval"] = {}
+                for m, values in metrics["retrieval"].items():
+                    # Filter out None values before calculating average
+                    valid_values = [v for v in values if v is not None]
+                    if valid_values:
+                        final_summary[scenario]["retrieval"][m] = sum(valid_values) / len(valid_values)
+                    else:
+                        final_summary[scenario]["retrieval"][m] = 0.0
+            if "rouge" in metrics:
+                final_summary[scenario]["rouge"] = {
+                    m: {
+                        "precision": sum(s['precision'] for s in scores) / len(scores),
+                        "recall": sum(s['recall'] for s in scores) / len(scores),
+                        "fmeasure": sum(s['fmeasure'] for s in scores) / len(scores),
+                    }
+                    for m, scores in metrics["rouge"].items()
+                }
+        
+        return {"summary": final_summary, "detailed": results}
 
-    print("📊 EVALUATION SUMMARY")
-    print(f"   Model: {summary['model']}")
-    print(f"   Queries processed: {len(results)}")
-    print(f"   Total tokens used: {summary['total_tokens']:,}")
-    print(f"   Total cost: ${summary['total_cost']:.4f}")
-    print(f"   Avg cost / query: ${summary['avg_cost_per_query']:.4f}")
-    print("   Breakdown:")
-    for part, cost in summary["breakdown"].items():
-        print(f"     {part.capitalize():<10}: ${cost:.4f}")
+    def print_results(self, results: Dict[str, Any]):
+        """
+        Prints a formatted summary of the evaluation results.
+        """
+        summary = results.get("summary", {})
+        if not summary:
+            print("No summary found in results.")
+            return
+
+        print("\n" + "="*80)
+        print(f"📊 Evaluation Summary (Total Questions: {summary.get('total_questions', 0)})")
+        print("="*80)
+        
+        for scenario, metrics in summary.items():
+            if scenario == "total_questions": continue
+            
+            print(f"\n--- Scenario: {scenario.upper()} ---")
+            
+            if "retrieval" in metrics:
+                print("  [Retrieval Metrics]")
+                ret = metrics["retrieval"]
+                print(f"    - Recall@1:  {ret.get('recall_at_1', 0):.3f}")
+                print(f"    - Recall@3:  {ret.get('recall_at_3', 0):.3f}")
+                print(f"    - Recall@5:  {ret.get('recall_at_5', 0):.3f}")
+                print(f"    - Recall@10: {ret.get('recall_at_10', 0):.3f}")
+                print(f"    - MRR:       {ret.get('mrr', 0):.3f}")
+            
+            if "rouge" in metrics:
+                print("\n  [Generation Metrics (F1-Score)]")
+                rouge = metrics["rouge"]
+                print(f"    - ROUGE-1: {rouge.get('rouge1', {}).get('fmeasure', 0):.3f}")
+                print(f"    - ROUGE-2: {rouge.get('rouge2', {}).get('fmeasure', 0):.3f}")
+                print(f"    - ROUGE-L: {rouge.get('rougeL', {}).get('fmeasure', 0):.3f}")
+        
+        print("\n" + "="*80) 

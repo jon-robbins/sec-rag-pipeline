@@ -54,7 +54,7 @@ class FilingExploder:
 
     def __post_init__(self):
         if self.id_cols is None:
-            self.id_cols = ["cik", "ticker", "fiscal_year"]
+            self.id_cols = ["ticker", "fiscal_year", "docID"]
 
     # public ------------------------------------------------------------
     def explode(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -83,7 +83,7 @@ class FilingExploder:
                 continue
 
             for section_key, sent_list in payload.items():
-                if not sent_list:
+                if sent_list is None or len(sent_list) == 0:
                     continue
 
                 # ── 1) clean sentences ─────────────────────────────
@@ -95,12 +95,12 @@ class FilingExploder:
                 prefix = SECTION_HEADING.get(section_key, "")
                 text   = f"{prefix}: " * bool(prefix) + " ".join(cleaned)
 
-                # ── 3) derive “item” label ────────────────────────
+                # ── 3) derive "item" label ────────────────────────
                 #     section_1A  →  1A
                 item = section_key.replace("section_", "")
 
-                # prefer item in doc_id; change if you’d rather keep section_
-                doc_id = f"{base['cik']}_{base['fiscal_year']}_{item}"
+                # prefer item in doc_id; change if you'd rather keep section_
+                doc_id = f"{base['ticker']}_{base['fiscal_year']}_{item}"
 
                 records.append(
                     {

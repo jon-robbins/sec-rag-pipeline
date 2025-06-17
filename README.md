@@ -305,3 +305,45 @@ python evaluation/comprehensive_evaluator.py
 ## 📄 **License**
 
 This project demonstrates production-quality RAG pipeline development with comprehensive evaluation frameworks for financial document analysis.
+
+## Data Sources & Pipeline
+
+### Data Sources
+The system works with SEC 10-K filings from the **JanosAudran/financial-reports-sec** dataset on Hugging Face:
+- **Raw Format**: Sentence-level data with metadata (ticker, fiscal year, section, etc.)
+- **Coverage**: Multiple companies across multiple years
+- **Size**: ~7GB full dataset
+
+### Data Pipeline
+```
+Raw Data (Hugging Face) 
+    ↓
+Processing Options:
+    ├── Chunked Format → data/chunks.pkl (12MB)
+    └── Full Documents → data/df_filings_full.parquet (7GB)
+    ↓
+Embeddings Generation → embeddings/chunks_embeddings.pkl (100MB)
+    ↓
+Vector Store Loading → Qdrant (in-memory or Docker)
+```
+
+### Check Data Status
+```bash
+# See what data is available and pipeline status
+python -m rag.prepare_data status
+
+# Or from Python
+from rag import create_vector_store
+vs = create_vector_store()
+vs.init_collection()
+print(vs.get_data_info())
+```
+
+### Load Data
+```bash
+# Load pre-processed chunks into vector store
+python -m rag.load_data
+
+# Or download/process from scratch
+python -m rag.data_processing.download_corpus
+```

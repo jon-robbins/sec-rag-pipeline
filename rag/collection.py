@@ -9,7 +9,6 @@ from typing import List, Dict, Any, Optional
 from qdrant_client import QdrantClient, models
 
 from .config import VectorStoreConfig
-from .docker_utils import restart_docker_qdrant
 
 
 class CollectionManager:
@@ -50,9 +49,9 @@ class CollectionManager:
                     else:
                         raise  # Re-raise for in-memory mode
 
-            # Create the collection
-            print(f"🏗️  Creating collection '{self.config.collection_name}'...")
-            self.client.create_collection(
+            # Create the collection for in-memory storage, which accepts any ID type
+            print(f"🏗️  Creating in-memory collection '{self.config.collection_name}'...")
+            self.client.recreate_collection(
                 collection_name=self.config.collection_name,
                 vectors_config=models.VectorParams(
                     size=self.config.dim,
@@ -88,8 +87,7 @@ class CollectionManager:
                     raise
                     
             elif self.config.use_docker:
-                print("💡 Docker collection failed. Try setting auto_fallback_to_memory=True or restart Docker:")
-                print("   docker stop <container_id> && docker run -p 6333:6333 qdrant/qdrant")
+                print("💡 Docker operation failed. Consider restarting Docker or using in-memory mode.")
             raise
     
     def upsert(
@@ -208,4 +206,19 @@ class CollectionManager:
                 )
             elif self.config.use_docker:
                 print("💡 Docker upsert failed. Try restarting Docker Qdrant or set auto_fallback_to_memory=True")
-            raise 
+            raise
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get status information about the collection."""
+        status = {
+            "collection_name": self.config.collection_name,
+        }
+        try:
+            if self.client.collection_exists(self.config.collection_name):
+                info = self.client.get_collection(self.config.collection_name)
+                status["points_count"] = info.points_count
+            else:
+                status["points_count"] = 0
+        except Exception as e:
+            status["error"] = str(e)
+        return status 

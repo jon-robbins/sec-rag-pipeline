@@ -75,6 +75,7 @@ class SearchManager:
         # Format results
         return [
             {
+                "id": point.id,
                 "score": point.score,
                 **point.payload,
                 "text": point.payload.get("text", ""),

@@ -3,6 +3,7 @@ from __future__ import annotations
 import html, re
 from dataclasses import dataclass
 from typing import List, Dict, Any
+import uuid
 
 import pandas as pd
 import tiktoken
@@ -19,10 +20,10 @@ SEC_10K_ITEMS = {
     "2":  "Properties",
     "3":  "Legal Proceedings",
     "4":  "Mine Safety Disclosures",
-    "5":  "Market for Registrant’s Common Equity, Related Stockholder Matters "
+    "5":  "Market for Registrant's Common Equity, Related Stockholder Matters "
           "and Issuer Purchases of Equity Securities",
     "6":  "Selected Financial Data",
-    "7":  "Management’s Discussion and Analysis of Financial Condition and "
+    "7":  "Management's Discussion and Analysis of Financial Condition and "
           "Results of Operations (MD&A)",
     "7A": "Quantitative and Qualitative Disclosures About Market Risk",
     "8":  "Financial Statements and Supplementary Data",
@@ -52,6 +53,14 @@ class Chunk:
     id: str
     text: str
     metadata: Dict[str, Any]   # ticker, fiscal_year, item, item_desc, section
+
+    def to_dict(self):
+        """Convert the chunk to a dictionary."""
+        return {
+            "id": self.id,
+            "text": self.text,
+            "metadata": self.metadata
+        }
 
 # ───────────────────────────────── chunker ───────────────────────────────────
 class SmartChunker:
@@ -97,6 +106,7 @@ class SmartChunker:
 
             # handle single über-long sentence
             if n_tok >= self.ceiling:
+                print(f"⚠️ Encountered oversized sentence ({n_tok} tokens). Forcibly slicing.")
                 for slice_txt in self._force_slice(sentences[i], n_tok):
                     chunks.extend(
                         self._emit_chunk(slice_txt, ticker, fiscal_year,
@@ -117,17 +127,25 @@ class SmartChunker:
         return chunks
 
     def run(self, df: pd.DataFrame) -> List[Chunk]:
-        df["text_clean"] = df["text"].map(self._preprocess)
+        """
+        Processes a DataFrame containing filings and returns a list of chunks.
 
+        The input DataFrame must have columns: 'text', 'ticker', 'fiscal_year',
+        'section', and 'item'.
+        """
         all_chunks: list[Chunk] = []
         for _, row in df.iterrows():
-            all_chunks += self.chunk_text(
-                row["text_clean"],
+            # Check for necessary columns
+            if not all(k in row for k in ['text', 'ticker', 'fiscal_year', 'section', 'item']):
+                raise ValueError("Input DataFrame is missing required columns for chunking.")
+
+            all_chunks.extend(self.chunk_text(
+                row["text"],
                 ticker=row["ticker"],
                 fiscal_year=row["fiscal_year"],
                 section=row["section"],
                 item=row["item"],
-            )
+            ))
         return all_chunks
 
     # ----------------------------- internals ------------------------------
@@ -156,8 +174,9 @@ class SmartChunker:
         return leftover, tok_cnt
 
     def _force_slice(self, sentence: str, n_tok: int) -> List[str]:
+        """Aggressively slice a very long sentence into target-sized pieces."""
         toks = _tok(sentence)
-        return [_detok(toks[i:i + self.ceiling]) for i in range(0, n_tok, self.ceiling)]
+        return [_detok(toks[i:i + self.target]) for i in range(0, n_tok, self.target)]
 
     # main emitter
     def _emit_chunk(self,
@@ -169,26 +188,33 @@ class SmartChunker:
                     seq: int) -> List[Chunk]:
 
         item_desc = SEC_10K_ITEMS.get(item, "")
-        toks      = _tok(chunk_text)
-
-        # split again if still above hard ceiling (rare)
-        chunks: list[Chunk] = []
-        for i in range(0, len(toks), self.ceiling):
-            slice_txt = _detok(toks[i:i + self.ceiling]).strip()
-            chunk_id  = f"{ticker}_{fiscal_year}_{item}_{seq}" + (f"_{i//self.ceiling}" if i else "")
-            chunks.append(
+        
+        # Final safety check: split any chunk that is still too large
+        # This can happen if a single "sentence" from the source is massive.
+        final_chunks: list[Chunk] = []
+        toks = _tok(chunk_text)
+        
+        for i in range(0, len(toks), self.target):
+            slice_txt = _detok(toks[i:i + self.target]).strip()
+            if not slice_txt:
+                continue
+                
+            human_readable_id = f"{ticker}_{fiscal_year}_{item}_{seq}" + (f"_{i//self.target}" if i > 0 else "")
+            
+            final_chunks.append(
                 Chunk(
-                    id=chunk_id,
+                    id=str(uuid.uuid4()),
                     text=slice_txt,
                     metadata={
                         "ticker": ticker,
                         "fiscal_year": fiscal_year,
                         "item": item,
                         "item_desc": item_desc,
+                        "human_readable_id": human_readable_id
                     },
                 )
             )
-        return chunks
+        return final_chunks
 
 
 if __name__ == "__main__":
@@ -198,8 +224,8 @@ if __name__ == "__main__":
 
     df_filings = pd.read_csv("/Users/jon/GitHub/dowjones-takehome/data/df_filings.csv")
     df_filings = df_filings[df_filings['fiscal_year'].between(2012, 2019)]
-    df_filings_exploded = exploder.explode(df=df_filings)
-    chunks = chunker.run(df_filings_exploded)
+    df_exploded = exploder.explode(df=df_filings)
+    chunks = chunker.run(df_exploded)
     for i in chunks[:5]:
         print(i)
         print("-"*50)

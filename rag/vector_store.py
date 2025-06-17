@@ -1,10 +1,37 @@
 """
 Main VectorStore class for the SEC Vector Store.
+
+Data Sources:
+=============
+This vector store is designed to work with SEC 10-K filings data. The data pipeline involves:
+
+1. **Raw Data**: JanosAudran/financial-reports-sec dataset from Hugging Face
+   - Contains sentence-level SEC filing data for multiple companies
+   - Each row represents a sentence with metadata (ticker, fiscal year, section, etc.)
+
+2. **Processing Options**:
+   - **Chunked Data**: Sentences grouped into semantic chunks (data/chunks.pkl)
+   - **Full Documents**: All sentences concatenated per filing (via DownloadCorpus)
+   - **Embeddings**: Pre-computed OpenAI embeddings (embeddings/ directory)
+
+3. **Loading**: Use load_data.py to populate the vector store from processed data
+
+Example Usage:
+    # Load pre-processed chunks
+    from rag.load_data import load_chunks_to_vectorstore
+    vs = load_chunks_to_vectorstore()
+    
+    # Or create empty store and load via document store
+    from rag.document_store import DocumentStore
+    doc_store = DocumentStore()
+    filings = doc_store.get_filings(['AAPL', 'META'], [2022, 2023])
 """
 
-from typing import List, Dict, Any, Optional
+from __future__ import annotations
+from typing import List, Dict, Any, Optional, TYPE_CHECKING
 
 from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct
 
 from .config import VectorStoreConfig
 from .embedding import EmbeddingManager
@@ -12,65 +39,36 @@ from .parser import QueryParser
 from .collection import CollectionManager
 from .search import SearchManager
 from .generation import AnswerGenerator
-from .docker_utils import get_docker_status
+
+if TYPE_CHECKING:
+    from .pipeline import RAGPipeline
 
 
 class VectorStore:
-    """
-    Main facade class for the SEC Vector Store.
-    Orchestrates embedding, collection management, and search operations.
-    """
+    """A wrapper for the Qdrant client that simplifies interactions."""
 
     def __init__(
         self,
         *,
-        collection_name: str = "sec_filings",
-        dim: int = 1536,
-        model: str = "text-embedding-3-small",
-        client: Optional[QdrantClient] = None,
-        openai_key: Optional[str] = None,
         use_docker: bool = False,
-        docker_host: str = "localhost",
-        docker_port: int = 6333,
-        auto_fallback_to_memory: bool = True,
+        collection_name: str = "sec_filings",
+        **kwargs,
     ) -> None:
         """
-        Initialize the VectorStore.
+        Initializes the VectorStore.
         
         Args:
-            collection_name: Name of the Qdrant collection
-            dim: Vector dimension (should match embedding model)
-            model: OpenAI embedding model name
-            client: Optional pre-configured Qdrant client
-            openai_key: OpenAI API key (uses env var if not provided)
-            use_docker: Whether to use Docker Qdrant or in-memory
-            docker_host: Docker host address
-            docker_port: Docker port number
-            auto_fallback_to_memory: Auto-fallback to memory on Docker errors
+            use_docker: Whether to connect to a Docker-based Qdrant instance.
+            collection_name: The name of the collection to use.
+            **kwargs: Additional arguments for the QdrantClient.
         """
-        # Configuration
-        self.config = VectorStoreConfig(
-            collection_name=collection_name,
-            dim=dim,
-            model=model,
-            openai_key=openai_key,
-            use_docker=use_docker,
-            docker_host=docker_host,
-            docker_port=docker_port,
-            auto_fallback_to_memory=auto_fallback_to_memory,
-        )
-
-        # Set up Qdrant client
-        self.client = self._setup_client(client)
-
-        # Initialize managers
-        self.embedding_manager = EmbeddingManager(
-            model=self.config.model,
-            openai_key=self.config.openai_key
-        )
+        self.client = self._setup_client(use_docker=use_docker, **kwargs)
+        self.config = VectorStoreConfig(collection_name=collection_name)
         
-        self.query_parser = QueryParser(openai_key=self.config.openai_key)
-        
+        self.query_parser = QueryParser()
+        self.embedding_manager = EmbeddingManager()
+        self.answer_generator = AnswerGenerator()
+
         self.collection_manager = CollectionManager(
             client=self.client,
             config=self.config,
@@ -83,242 +81,79 @@ class VectorStore:
             embedding_manager=self.embedding_manager,
             query_parser=self.query_parser
         )
-        
-        self.answer_generator = AnswerGenerator(
-            openai_key=self.config.openai_key,
-            model="gpt-4o-mini"
-        )
 
-    def _setup_client(self, client: Optional[QdrantClient]) -> QdrantClient:
+        # Ensure the collection exists
+        self.collection_manager.init_collection()
+
+    def _setup_client(self, use_docker: bool, **kwargs) -> QdrantClient:
         """Set up the Qdrant client based on configuration."""
-        if client:
-            return client
-        elif self.config.use_docker:
-            print(f"🐳 Using Docker Qdrant at {self.config.docker_host}:{self.config.docker_port}")
-            
-            # Create Docker client with timeout
-            docker_client = QdrantClient(
-                host=self.config.docker_host,
-                port=self.config.docker_port,
-                timeout=self.config.docker_timeout,
-            )
-            
-            # Test the connection
+        if use_docker:
+            # Docker connection logic...
             try:
-                collections = docker_client.get_collections()
-                print(f"✅ Docker connection successful, found {len(collections.collections)} collections")
-                return docker_client
+                client = QdrantClient(**kwargs)
+                client.get_collections()
+                print("✅ Docker Qdrant connection successful.")
+                return client
             except Exception as e:
                 print(f"❌ Docker connection failed: {e}")
-                print("💡 Make sure Docker Qdrant is running: docker run -p 6333:6333 qdrant/qdrant")
                 raise
         else:
             print("🧠 Using in-memory Qdrant")
             return QdrantClient(":memory:")
 
-    def init_collection(self) -> None:
-        """Initialize the collection."""
-        self.collection_manager.init_collection()
-        
-        # Update client reference in case of fallback to memory mode
-        if self.collection_manager.client != self.client:
-            self.client = self.collection_manager.client
-            self.search_manager.client = self.client
-
-    def upsert(
-        self,
-        *,
-        metas: List[Dict[str, Any]],
-        texts: Optional[List[str]] = None,
-        vectors: Optional[List[List[float]]] = None,
-        ids: Optional[List[Any]] = None,
-        batch_size: Optional[int] = None,
-    ) -> None:
-        """Upsert vectors and metadata."""
-        self.collection_manager.upsert(
-            metas=metas,
-            texts=texts,
-            vectors=vectors,
-            ids=ids,
-            batch_size=batch_size
-        )
-        
-        # Update client reference in case of fallback to memory mode
-        if self.collection_manager.client != self.client:
-            self.client = self.collection_manager.client
-            self.search_manager.client = self.client
-
-    def search(
-        self,
-        query: str,
-        *,
-        ticker: Optional[str] = None,
-        fiscal_year: Optional[int] = None,
-        sections: Optional[List[str]] = None,
-        top_k: int = 10,
-    ) -> List[Dict[str, Any]]:
-        """Search for similar documents."""
-        return self.search_manager.search(
-            query=query,
-            ticker=ticker,
-            fiscal_year=fiscal_year,
-            sections=sections,
-            top_k=top_k
-        )
-
-    def retrieve_by_filter(
-        self,
-        *,
-        ticker: Optional[str] = None,
-        fiscal_year: Optional[int] = None,
-        sections: Optional[List[str]] = None,
-        limit: int = 100,
-    ) -> List[Dict[str, Any]]:
-        """Retrieve documents based on metadata filters."""
-        return self.search_manager.retrieve_by_filter(
-            ticker=ticker,
-            fiscal_year=fiscal_year,
-            sections=sections,
-            limit=limit
-        )
-
-    def answer(
-        self,
-        question: str,
-        *,
-        ticker: Optional[str] = None,
-        fiscal_year: Optional[int] = None,
-        sections: Optional[List[str]] = None,
-        top_k: int = 10,
-        max_chunks: int = 10,
-        max_context_length: int = 8000,
-    ) -> Dict[str, Any]:
+    def answer(self, question: str, **kwargs) -> Dict[str, Any]:
         """
-        Answer a question using retrieved documents and GPT.
-        
-        Args:
-            question: The question to answer
-            ticker: Optional ticker symbol filter
-            fiscal_year: Optional fiscal year filter
-            sections: Optional SEC sections filter
-            top_k: Number of chunks to retrieve
-            max_chunks: Maximum chunks to use for answer generation
-            max_context_length: Maximum context length for GPT
-            
-        Returns:
-            Dictionary with answer, sources, and confidence information
+        Answer a question by searching for context and generating a response.
         """
         # First, search for relevant chunks
-        chunks = self.search(
-            query=question,
-            ticker=ticker,
-            fiscal_year=fiscal_year,
-            sections=sections,
-            top_k=top_k
-        )
+        chunks = self.search(query=question, **kwargs)
         
-        # Generate answer using retrieved chunks
+        # Then, generate an answer using the retrieved chunks
         result = self.answer_generator.generate_answer(
             question=question,
             chunks=chunks,
-            max_chunks=max_chunks,
-            max_context_length=max_context_length
         )
         
-        # Add search metadata
-        result["search_results"] = len(chunks)
+        result["search_results_count"] = len(chunks)
         result["top_score"] = chunks[0]["score"] if chunks else 0.0
         
         return result
 
-    def summarize(
-        self,
-        topic: str,
-        *,
-        ticker: Optional[str] = None,
-        fiscal_year: Optional[int] = None,
-        sections: Optional[List[str]] = None,
-        top_k: int = 15,
-    ) -> Dict[str, Any]:
-        """
-        Generate a summary about a topic using retrieved documents.
-        
-        Args:
-            topic: The topic to summarize
-            ticker: Optional ticker symbol filter
-            fiscal_year: Optional fiscal year filter
-            sections: Optional SEC sections filter
-            top_k: Number of chunks to retrieve
-            
-        Returns:
-            Dictionary with summary and source information
-        """
-        # Search for relevant chunks
-        chunks = self.search(
-            query=topic,
-            ticker=ticker,
-            fiscal_year=fiscal_year,
-            sections=sections,
-            top_k=top_k
+    def search(self, query: str, **kwargs) -> List[Dict[str, Any]]:
+        """Search for similar documents with optional filtering."""
+        return self.search_manager.search(query=query, **kwargs)
+
+    def upsert_chunks(self, chunks: List[Dict[str, Any]]):
+        """Upsert a list of chunk dictionaries into the collection."""
+        self.collection_manager.upsert_chunks(chunks)
+
+    def retrieve_by_filter(self, **kwargs) -> List[Dict[str, Any]]:
+        """Retrieve documents based on metadata filters."""
+        return self.search_manager.retrieve_by_filter(**kwargs)
+
+    def upsert_chunks_with_embeddings(self, chunks: List[Dict[str, Any]], embeddings: List[List[float]]):
+        """Upsert chunks and their pre-computed embeddings."""
+        if len(chunks) != len(embeddings):
+            raise ValueError("The number of chunks and embeddings must be the same.")
+
+        # Ensure the collection is initialized before upserting
+        self.collection_manager.init_collection()
+
+        # The CollectionManager expects these specific arguments
+        self.collection_manager.upsert(
+            metas=[chunk['metadata'] for chunk in chunks],
+            ids=[chunk['id'] for chunk in chunks],
+            vectors=embeddings,
+            texts=[chunk['text'] for chunk in chunks]
         )
-        
-        if not chunks:
-            return {
-                "summary": f"No relevant information found about {topic}.",
-                "sources": [],
-                "chunks_used": 0
-            }
-        
-        # Generate summary
-        summary = self.answer_generator.generate_summary(chunks, topic)
-        
-        # Extract source information
-        sources = []
-        for chunk in chunks:
-            ticker_info = chunk.get("ticker", "UNKNOWN")
-            year_info = chunk.get("fiscal_year", "UNKNOWN")
-            section_info = chunk.get("item", "UNKNOWN")
-            section_desc = chunk.get("item_desc", "")
-            score = chunk.get("score", 0.0)
-            
-            source = f"{ticker_info} {year_info} Section {section_info}"
-            if section_desc:
-                source += f" ({section_desc})"
-            source += f" [Score: {score:.3f}]"
-            sources.append(source)
-        
-        return {
-            "summary": summary,
-            "sources": sources[:10],  # Limit to top 10 sources
-            "chunks_used": len(chunks)
-        }
+
+    def generate_summary(self, topic: str, chunks: List[Dict[str, Any]]) -> str:
+        """Helper method to generate a summary from chunks."""
+        return self.answer_generator.generate_summary(chunks, topic)
 
     def get_status(self) -> Dict[str, Any]:
-        """Get status information about the vector store."""
-        status = {
-            "mode": "docker" if self.config.use_docker else "memory",
-            "collection_name": self.config.collection_name,
-            "model": self.config.model,
-            "dimensions": self.config.dim,
-        }
-        
-        if self.config.use_docker:
-            docker_status = get_docker_status(
-                self.config.docker_host, 
-                self.config.docker_port
-            )
-            status["docker"] = docker_status
-        
-        try:
-            if self.client.collection_exists(self.config.collection_name):
-                info = self.client.get_collection(self.config.collection_name)
-                status["points_count"] = info.points_count
-            else:
-                status["points_count"] = 0
-        except Exception as e:
-            status["error"] = str(e)
-        
-        return status
+        """Get the status of the vector store and its collection."""
+        return self.collection_manager.get_status()
 
 
 def create_vector_store(
