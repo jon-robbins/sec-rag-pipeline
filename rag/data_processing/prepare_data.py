@@ -49,7 +49,7 @@ def prepare_and_save_data(
     parsed AS (
         SELECT 
             ticker, sentence, sentenceID, docID,
-            EXTRACT(year FROM CAST(reportDate AS DATE)) AS fiscal_year,
+            CAST(RIGHT(docID, 4) AS INTEGER) AS fiscal_year,
             regexp_extract(sentenceID, 'section_([^_]+)', 1) AS section
         FROM filtered
     )

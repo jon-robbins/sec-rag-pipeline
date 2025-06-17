@@ -3,66 +3,66 @@
     "total_questions": 18,
     "rag": {
       "retrieval": {
-        "recall_at_1": 0.0,
-        "recall_at_3": 0.1111111111111111,
-        "recall_at_5": 0.16666666666666666,
-        "recall_at_10": 0.3333333333333333,
-        "mrr": 0.07738095238095238,
-        "retrieved_position": 4.833333333333333
+        "recall_at_1": 0.2777777777777778,
+        "recall_at_3": 0.4444444444444444,
+        "recall_at_5": 0.4444444444444444,
+        "recall_at_10": 0.4444444444444444,
+        "mrr": 0.3611111111111111,
+        "retrieved_position": 1.375
       },
       "rouge": {
         "rouge1": {
-          "precision": 0.24980657759510352,
-          "recall": 0.560761569585099,
-          "fmeasure": 0.3379958267303088
+          "precision": 0.24736383246035823,
+          "recall": 0.7330515068296838,
+          "fmeasure": 0.34655067918989946
         },
         "rouge2": {
-          "precision": 0.13861073293451215,
-          "recall": 0.32619791485502503,
-          "fmeasure": 0.19096628582063774
+          "precision": 0.16562354358352482,
+          "recall": 0.5363621037640646,
+          "fmeasure": 0.23462297857507053
         },
         "rougeL": {
-          "precision": 0.1977422876262232,
-          "recall": 0.44430202604222213,
-          "fmeasure": 0.26691099104596827
+          "precision": 0.21441269901683302,
+          "recall": 0.664546426413138,
+          "fmeasure": 0.30259098447075444
         }
       }
     },
     "unfiltered": {
       "rouge": {
         "rouge1": {
-          "precision": 0.5049043638257482,
-          "recall": 0.839492660571092,
-          "fmeasure": 0.6083024730400645
+          "precision": 0.37914829665554906,
+          "recall": 0.8470306746470427,
+          "fmeasure": 0.49098385487764673
         },
         "rouge2": {
-          "precision": 0.4160812015371492,
-          "recall": 0.6947099308024104,
-          "fmeasure": 0.501066784663039
+          "precision": 0.30208620234515277,
+          "recall": 0.7200355327316112,
+          "fmeasure": 0.3884170460260692
         },
         "rougeL": {
-          "precision": 0.4636395401239497,
-          "recall": 0.7782691618475933,
-          "fmeasure": 0.5605491742115735
+          "precision": 0.3539723032378428,
+          "recall": 0.7921848989693986,
+          "fmeasure": 0.4570931863871181
         }
       }
     },
     "web_search": {
       "rouge": {
         "rouge1": {
-          "precision": 0.127601969488451,
-          "recall": 0.6339234567175743,
-          "fmeasure": 0.20634401989706744
+          "precision": 0.10353469875738977,
+          "recall": 0.6545158102035362,
+          "fmeasure": 0.17077565190338506
         },
         "rouge2": {
-          "precision": 0.057902165800932576,
-          "recall": 0.29695846440613594,
-          "fmeasure": 0.09413227652388192
+          "precision": 0.0443010399647898,
+          "recall": 0.3179705316470021,
+          "fmeasure": 0.07378094001538124
         },
         "rougeL": {
-          "precision": 0.1062748777661573,
-          "recall": 0.5311009569588001,
-          "fmeasure": 0.17207074621106683
+          "precision": 0.08228744464620483,
+          "recall": 0.5380899457255128,
+          "fmeasure": 0.1357411941493124
         }
       }
     }
@@ -70,79 +70,79 @@
   "detailed": [
     {
       "rag": {
-        "answer": "The provided context does not contain specific information about the features of the Xserve\u00ae for the fiscal year 2008. Therefore, I cannot provide details regarding its features.",
+        "answer": "For the fiscal year ended December 31, 2013, Tesla experienced a favorable foreign currency exchange impact, recording gains of $11.9 million on foreign exchange transactions, primarily related to liabilities in Japanese yen. While a majority of Tesla's revenues were in U.S. dollars, they faced potential risks from costs denominated in foreign currencies, which could adversely impact operating results if the U.S. dollar depreciated significantly.",
         "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 1.0,
+          "retrieved_position": 1
         },
         "rouge": {
           "rouge1": {
-            "precision": 0.1111111111111111,
-            "recall": 0.07142857142857142,
-            "fmeasure": 0.08695652173913043
+            "precision": 0.36764705882352944,
+            "recall": 0.6097560975609756,
+            "fmeasure": 0.45871559633027525
           },
           "rouge2": {
-            "precision": 0.038461538461538464,
-            "recall": 0.024390243902439025,
-            "fmeasure": 0.029850746268656723
+            "precision": 0.16417910447761194,
+            "recall": 0.275,
+            "fmeasure": 0.205607476635514
           },
           "rougeL": {
-            "precision": 0.1111111111111111,
-            "recall": 0.07142857142857142,
-            "fmeasure": 0.08695652173913043
+            "precision": 0.17647058823529413,
+            "recall": 0.2926829268292683,
+            "fmeasure": 0.22018348623853212
           }
         }
       },
       "unfiltered": {
-        "answer": "In fiscal year 2008, the Xserve\u00ae offered the following features:\n\n- A 1U rack-mount server powered by up to two Quad-Core 128-bit Intel Xeon processors running at up to 3.0GHz.\n- Mac OS X Server 10.5 Leopard.\n- Support for up to 32GB of random access memory (RAM).\n- Remote management capabilities.\n- Storage drives of up to 3TB.\n- An optional internal Xserve RAID card.",
+        "answer": "For the fiscal year ended December 31, 2013, Tesla's operating results were positively impacted by foreign currency exchange gains, specifically recording gains of $11.9 million on foreign exchange transactions. This was primarily due to favorable foreign currency exchange impacts from foreign currency-denominated liabilities, particularly related to the Japanese yen. However, Tesla also faced risks associated with foreign currency movements, as revenues and costs denominated in foreign currencies were not completely matched, which could have adversely affected operating results if the U.S. dollar depreciated against those currencies.",
         "rouge": {
           "rouge1": {
-            "precision": 0.6307692307692307,
-            "recall": 0.9761904761904762,
-            "fmeasure": 0.7663551401869158
+            "precision": 0.23333333333333334,
+            "recall": 0.5121951219512195,
+            "fmeasure": 0.32061068702290074
           },
           "rouge2": {
-            "precision": 0.53125,
-            "recall": 0.8292682926829268,
-            "fmeasure": 0.6476190476190476
+            "precision": 0.06741573033707865,
+            "recall": 0.15,
+            "fmeasure": 0.09302325581395349
           },
           "rougeL": {
-            "precision": 0.6307692307692307,
-            "recall": 0.9761904761904762,
-            "fmeasure": 0.7663551401869158
+            "precision": 0.1111111111111111,
+            "recall": 0.24390243902439024,
+            "fmeasure": 0.15267175572519084
           }
         }
       },
       "web_search": {
-        "answer": "In 2008, Apple's Xserve\u00ae was a rack-mounted server designed for businesses and enterprise environments. The key features of the Xserve\u00ae during that fiscal year included:\n\n1. **Processor Options**: The Xserve\u00ae was equipped with Intel Xeon processors, offering dual-processor configurations for enhanced performance.\n\n2. **Memory**: It supported a significant amount of RAM, with options for up to 32GB of DDR2 ECC memory, which was crucial for handling demanding applications and workloads.\n\n3. **Storage**: The Xserve\u00ae offered multiple hard drive configurations, including options for SATA and SAS drives, allowing for flexible storage solutions and RAID configurations for data redundancy and performance.\n\n4. **Networking**: It included dual Gigabit Ethernet ports for high-speed network connectivity, and optional 10 Gigabit Ethernet for increased bandwidth.\n\n5. **Operating System**: The server ran on Mac OS X Server, which provided a robust platform for various server applications, including file sharing, web hosting, and email services.\n\n6. **Management Features**: The Xserve\u00ae came with built-in management tools, such as the ability to monitor system health and remote management capabilities through a web interface.\n\n7. **Expansion Slots**: It featured PCI Express expansion slots for additional hardware, allowing businesses to customize their server according to specific needs.\n\n8. **Power Efficiency**: The Xserve\u00ae was designed with energy efficiency in mind, featuring a power supply that met Energy Star requirements.\n\nThese features made the Xserve\u00ae a competitive option for businesses looking for reliable and scalable server solutions in 2008.",
+        "answer": "In its 2013 SEC filings, Tesla Motors (TSLA) highlighted the impact of foreign currency risk on its operating results. As a company that operates in multiple international markets, Tesla is exposed to fluctuations in foreign currency exchange rates, which can affect its revenues and costs.\n\nFor the fiscal year ended December 31, 2013, Tesla reported that a significant portion of its sales was generated from international markets, particularly in Europe and Asia. As a result, any adverse movements in foreign currency exchange rates could lead to reduced revenues when converted back to U.S. dollars. Specifically, if the U.S. dollar strengthened against foreign currencies, Tesla's international sales would yield lower dollar amounts, negatively impacting overall revenue.\n\nAdditionally, Tesla's costs could also be affected by foreign currency fluctuations, especially if it sourced materials or components from suppliers in other countries. If the dollar weakened against the currencies of its suppliers, the cost of goods sold could increase, further impacting operating margins.\n\nIn summary, the foreign currency risk in 2013 had the potential to negatively impact Tesla's operating results by affecting both revenue from international sales and costs associated with foreign suppliers. The company would have needed to manage this risk through various strategies, such as hedging or pricing adjustments, to mitigate the impact on its financial performance.",
         "rouge": {
           "rouge1": {
-            "precision": 0.10416666666666667,
-            "recall": 0.5952380952380952,
-            "fmeasure": 0.1773049645390071
+            "precision": 0.12272727272727273,
+            "recall": 0.6585365853658537,
+            "fmeasure": 0.20689655172413796
           },
           "rouge2": {
-            "precision": 0.03347280334728033,
-            "recall": 0.1951219512195122,
-            "fmeasure": 0.057142857142857134
+            "precision": 0.0365296803652968,
+            "recall": 0.2,
+            "fmeasure": 0.06177606177606177
           },
           "rougeL": {
-            "precision": 0.06666666666666667,
-            "recall": 0.38095238095238093,
-            "fmeasure": 0.11347517730496454
+            "precision": 0.07727272727272727,
+            "recall": 0.4146341463414634,
+            "fmeasure": 0.13026819923371646
           }
         }
       },
-      "question": "What features does the Xserve\u00ae offer in the fiscal year 2008?",
-      "ground_truth_answer": "The Xserve\u00ae offers up to two Quad-Core 128-bit Intel Xeon processors running at up to 3.0GHz, supports up to 32GB of random access memory, remote management, storage drives of up to 3TB, and an optional internal Xserve RAID card."
+      "question": "What was the foreign currency risk impact on Tesla's operating results for the fiscal year ended December 31, 2013?",
+      "ground_truth_answer": "If the value of the U.S. dollar depreciates significantly against currencies where Tesla has a net short exposure, their costs as measured in U.S. dollars as a percent of revenues will increase, which may adversely impact their operating results."
     },
     {
       "rag": {
-        "answer": "The context does not provide specific information about any new service launched by Apple related to its iPod products in July 2008. Therefore, I cannot answer your question based on the provided information.",
+        "answer": "The context does not provide specific information regarding the gains on foreign exchange transactions for Tesla for the fiscal year ended December 31, 2013. Therefore, I cannot provide that figure.",
         "retrieval": {
           "recall_at_1": 0.0,
           "recall_at_3": 0.0,
@@ -153,500 +153,284 @@
         },
         "rouge": {
           "rouge1": {
-            "precision": 0.21212121212121213,
-            "recall": 0.3181818181818182,
-            "fmeasure": 0.2545454545454546
+            "precision": 0.16666666666666666,
+            "recall": 0.5555555555555556,
+            "fmeasure": 0.2564102564102564
           },
           "rouge2": {
-            "precision": 0.0625,
-            "recall": 0.09523809523809523,
-            "fmeasure": 0.07547169811320754
-          },
-          "rougeL": {
-            "precision": 0.12121212121212122,
-            "recall": 0.18181818181818182,
-            "fmeasure": 0.14545454545454545
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "In July 2008, the Company launched the iTunes App Store, which allows users to browse, search for, or purchase third-party applications that can be downloaded directly onto an iPhone or iPod touch.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.6666666666666666,
-            "recall": 1.0,
-            "fmeasure": 0.8
-          },
-          "rouge2": {
-            "precision": 0.59375,
-            "recall": 0.9047619047619048,
-            "fmeasure": 0.7169811320754718
-          },
-          "rougeL": {
-            "precision": 0.6363636363636364,
-            "recall": 0.9545454545454546,
-            "fmeasure": 0.7636363636363637
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In July 2008, Apple launched the \"iTunes Plus\" service, which allowed users to purchase and download music without digital rights management (DRM) restrictions. This service was significant as it provided users with more flexibility in how they could use the music they purchased, particularly in relation to their iPod products. Additionally, Apple also introduced the iPhone 3G around the same time, which further integrated iTunes services with mobile devices.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.15942028985507245,
+            "precision": 0.13793103448275862,
             "recall": 0.5,
-            "fmeasure": 0.24175824175824173
-          },
-          "rouge2": {
-            "precision": 0.08823529411764706,
-            "recall": 0.2857142857142857,
-            "fmeasure": 0.1348314606741573
+            "fmeasure": 0.2162162162162162
           },
           "rougeL": {
-            "precision": 0.14492753623188406,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.21978021978021978
-          }
-        }
-      },
-      "question": "What new service did the Company launch in July 2008 related to its iPod products?",
-      "ground_truth_answer": "In July 2008, the Company launched the iTunes App Store that allows users to browse, search for, or purchase third-party applications."
-    },
-    {
-      "rag": {
-        "answer": "The occupancy size of Gigafactory 1 for Tesla in the fiscal year 2018 was approximately 3.5 million square feet.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 1.0,
-          "recall_at_5": 1.0,
-          "recall_at_10": 1.0,
-          "mrr": 0.3333333333333333,
-          "retrieved_position": 3
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.45,
-            "recall": 0.75,
-            "fmeasure": 0.5625000000000001
-          },
-          "rouge2": {
-            "precision": 0.2631578947368421,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.3333333333333333
-          },
-          "rougeL": {
-            "precision": 0.35,
-            "recall": 0.5833333333333334,
-            "fmeasure": 0.4375
+            "precision": 0.16666666666666666,
+            "recall": 0.5555555555555556,
+            "fmeasure": 0.2564102564102564
           }
         }
       },
       "unfiltered": {
-        "answer": "As of December 31, 2017, Gigafactory 1 had an occupancy size of 3.5 million square feet.",
+        "answer": "Tesla recorded gains of $11.9 million on foreign exchange transactions for the fiscal year ended December 31, 2013.",
         "rouge": {
           "rouge1": {
-            "precision": 0.5294117647058824,
-            "recall": 0.75,
-            "fmeasure": 0.6206896551724139
+            "precision": 0.42105263157894735,
+            "recall": 0.8888888888888888,
+            "fmeasure": 0.5714285714285714
           },
           "rouge2": {
-            "precision": 0.375,
-            "recall": 0.5454545454545454,
-            "fmeasure": 0.4444444444444444
+            "precision": 0.2777777777777778,
+            "recall": 0.625,
+            "fmeasure": 0.3846153846153846
           },
           "rougeL": {
-            "precision": 0.5294117647058824,
-            "recall": 0.75,
-            "fmeasure": 0.6206896551724139
+            "precision": 0.3684210526315789,
+            "recall": 0.7777777777777778,
+            "fmeasure": 0.5
           }
         }
       },
       "web_search": {
-        "answer": "In the fiscal year 2018, Tesla's Gigafactory 1, located in Nevada, had an occupancy size of approximately 5.3 million square feet. This facility was designed to produce batteries and electric vehicles, and it was a key part of Tesla's strategy to scale production and reduce costs. If you need more specific details or further information about Tesla's operations or financials, feel free to ask!",
+        "answer": "In the fiscal year ended December 31, 2013, Tesla recorded gains of $0.5 million on foreign exchange transactions.",
         "rouge": {
           "rouge1": {
-            "precision": 0.14705882352941177,
-            "recall": 0.8333333333333334,
-            "fmeasure": 0.25
+            "precision": 0.3684210526315789,
+            "recall": 0.7777777777777778,
+            "fmeasure": 0.5
           },
           "rouge2": {
-            "precision": 0.04477611940298507,
-            "recall": 0.2727272727272727,
-            "fmeasure": 0.07692307692307691
+            "precision": 0.16666666666666666,
+            "recall": 0.375,
+            "fmeasure": 0.23076923076923078
           },
           "rougeL": {
-            "precision": 0.11764705882352941,
+            "precision": 0.3157894736842105,
             "recall": 0.6666666666666666,
-            "fmeasure": 0.2
+            "fmeasure": 0.42857142857142855
           }
         }
       },
-      "question": "What is the occupancy size of Gigafactory 1 for Tesla in the fiscal year 2018?",
-      "ground_truth_answer": "Gigafactory 1 has a current occupancy of 3.5 million square feet."
+      "question": "How much did Tesla record in gains on foreign exchange transactions for the fiscal year ended December 31, 2013?",
+      "ground_truth_answer": "$11.9 million in gains on foreign exchange transactions."
     },
     {
       "rag": {
-        "answer": "Tesla will begin leasing a 1.1 million square feet solar manufacturing facility (Gigafactory 2) in Buffalo, New York, in the fiscal year 2018 for an initial term of 10 years.",
+        "answer": "The 2013 Proxy Statement for TSLA will not include the information regarding security ownership of certain beneficial owners and management; instead, this information will be included in the 2014 Proxy Statement.",
         "retrieval": {
           "recall_at_1": 0.0,
-          "recall_at_3": 1.0,
-          "recall_at_5": 1.0,
-          "recall_at_10": 1.0,
-          "mrr": 0.3333333333333333,
-          "retrieved_position": 3
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
         },
         "rouge": {
           "rouge1": {
             "precision": 0.3548387096774194,
-            "recall": 0.9166666666666666,
-            "fmeasure": 0.5116279069767442
+            "recall": 0.5789473684210527,
+            "fmeasure": 0.44000000000000006
           },
           "rouge2": {
+            "precision": 0.3,
+            "recall": 0.5,
+            "fmeasure": 0.37499999999999994
+          },
+          "rougeL": {
+            "precision": 0.3548387096774194,
+            "recall": 0.5789473684210527,
+            "fmeasure": 0.44000000000000006
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The 2013 Proxy Statement will include information regarding the security ownership of certain beneficial owners and management, detailing the number of shares owned by executive officers, directors, and significant shareholders. It will also provide insights into the percentage of ownership held by these individuals relative to the total outstanding shares of the company.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.24528301886792453,
+            "recall": 0.6842105263157895,
+            "fmeasure": 0.36111111111111105
+          },
+          "rouge2": {
+            "precision": 0.1346153846153846,
+            "recall": 0.3888888888888889,
+            "fmeasure": 0.19999999999999998
+          },
+          "rougeL": {
+            "precision": 0.20754716981132076,
+            "recall": 0.5789473684210527,
+            "fmeasure": 0.3055555555555556
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In the 2013 Proxy Statement for Tesla, Inc. (TSLA), you can expect to find several key pieces of information regarding security ownership, which typically includes:\n\n1. **Principal Shareholders**: A list of individuals or entities that own a significant percentage of the company's shares, often defined as 5% or more of the total outstanding shares. This section will detail the number of shares owned and the percentage of total shares represented.\n\n2. **Executive and Director Ownership**: Information on the ownership of the company's common stock by its executive officers and directors. This section usually includes the number of shares owned directly and indirectly, as well as any options or other equity awards that are exercisable within a certain period.\n\n3. **Total Shares Outstanding**: The total number of shares of common stock outstanding as of a specific date, which helps contextualize the ownership percentages.\n\n4. **Changes in Ownership**: Any significant changes in ownership from the previous year, including new shareholders or changes in the holdings of existing shareholders.\n\n5. **Equity Awards**: Details about stock options, restricted stock units, or other equity awards granted to executives and directors, including the number of shares underlying these awards.\n\n6. **Voting Power**: Information on the voting power associated with the shares owned by major shareholders, executives, and directors, which can impact corporate governance.\n\nThis information is crucial for shareholders and potential investors as it provides insight into who controls the company and how ownership is distributed among key stakeholders.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.04081632653061224,
+            "recall": 0.5263157894736842,
+            "fmeasure": 0.07575757575757575
+          },
+          "rouge2": {
+            "precision": 0.012295081967213115,
+            "recall": 0.16666666666666666,
+            "fmeasure": 0.022900763358778626
+          },
+          "rougeL": {
+            "precision": 0.0326530612244898,
+            "recall": 0.42105263157894735,
+            "fmeasure": 0.06060606060606061
+          }
+        }
+      },
+      "question": "What information regarding security ownership will be included in the 2013 Proxy Statement for the company?",
+      "ground_truth_answer": "The information required by Item 12 of Form 10-K regarding security ownership of certain beneficial owners and management."
+    },
+    {
+      "rag": {
+        "answer": "The company references the Proxy Statement for security ownership information for the fiscal year 2013.",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 1.0,
+          "retrieved_position": 1
+        },
+        "rouge": {
+          "rouge1": {
             "precision": 0.26666666666666666,
-            "recall": 0.7272727272727273,
-            "fmeasure": 0.3902439024390244
-          },
-          "rougeL": {
-            "precision": 0.16129032258064516,
-            "recall": 0.4166666666666667,
-            "fmeasure": 0.2325581395348837
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The solar manufacturing facility that Tesla will begin leasing in Buffalo, New York in the fiscal year 2018 is approximately 1.1 million square feet.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.4,
-            "recall": 0.8333333333333334,
-            "fmeasure": 0.5405405405405406
-          },
-          "rouge2": {
-            "precision": 0.2916666666666667,
-            "recall": 0.6363636363636364,
-            "fmeasure": 0.4
-          },
-          "rougeL": {
-            "precision": 0.4,
-            "recall": 0.8333333333333334,
-            "fmeasure": 0.5405405405405406
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In the SEC filings from 2017, Tesla announced that it would begin leasing a solar manufacturing facility in Buffalo, New York, which is approximately 1.2 million square feet in size. This facility is part of Tesla's efforts to expand its solar energy production capabilities, particularly in relation to its solar products and the Solar Roof initiative.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.1724137931034483,
-            "recall": 0.8333333333333334,
-            "fmeasure": 0.28571428571428575
-          },
-          "rouge2": {
-            "precision": 0.08771929824561403,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.14705882352941174
-          },
-          "rougeL": {
-            "precision": 0.15517241379310345,
-            "recall": 0.75,
-            "fmeasure": 0.2571428571428572
-          }
-        }
-      },
-      "question": "What is the size of the solar manufacturing facility that Tesla will begin leasing in Buffalo, New York in the fiscal year 2018?",
-      "ground_truth_answer": "The solar manufacturing facility (Gigafactory 2) is 1.1 million square feet."
-    },
-    {
-      "rag": {
-        "answer": "In fiscal year 2017, Apple Inc. included a 53rd week in its fiscal calendar, which allowed for a 14th week in the first quarter. This adjustment was made to realign the Company's fiscal quarters with the calendar quarters, a practice that occurs every five or six years. In contrast, the fiscal years 2018 and 2019 each spanned 52 weeks.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.35,
-            "recall": 0.9545454545454546,
-            "fmeasure": 0.5121951219512195
-          },
-          "rouge2": {
-            "precision": 0.2033898305084746,
-            "recall": 0.5714285714285714,
-            "fmeasure": 0.30000000000000004
-          },
-          "rougeL": {
-            "precision": 0.2833333333333333,
-            "recall": 0.7727272727272727,
-            "fmeasure": 0.4146341463414634
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "In the fiscal year 2017, the Company included a 53rd week in its fiscal calendar, resulting in a 14th week in the first quarter of 2017. This adjustment was made to realign the Company\u2019s fiscal quarters with calendar quarters, a practice that occurs every five or six years.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.4489795918367347,
             "recall": 1.0,
-            "fmeasure": 0.6197183098591549
-          },
-          "rouge2": {
-            "precision": 0.3125,
-            "recall": 0.7142857142857143,
-            "fmeasure": 0.43478260869565216
-          },
-          "rougeL": {
-            "precision": 0.3877551020408163,
-            "recall": 0.8636363636363636,
-            "fmeasure": 0.5352112676056339
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In the fiscal year 2017, Apple Inc. (AAPL) made a significant change in how it reported its financial results by transitioning to a new fiscal calendar. Specifically, Apple shifted its fiscal year-end from September 24, 2016, to September 30, 2017. This change meant that the company aligned its fiscal year-end with the end of the calendar month, which is a common practice among many companies. \n\nAs a result of this change, the fiscal year 2017 included a 53rd week, which is not typical in most fiscal years. This additional week can impact revenue and earnings figures, as it provides an extra week of sales, particularly important for a company like Apple that often sees significant sales during the holiday season. \n\nThis adjustment was reflected in the SEC filings for the fiscal year 2017, where Apple reported its financial results for the additional week and the implications of this change on its quarterly results.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.0967741935483871,
-            "recall": 0.6818181818181818,
-            "fmeasure": 0.1694915254237288
-          },
-          "rouge2": {
-            "precision": 0.012987012987012988,
-            "recall": 0.09523809523809523,
-            "fmeasure": 0.02285714285714286
-          },
-          "rougeL": {
-            "precision": 0.06451612903225806,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.11299435028248588
-          }
-        }
-      },
-      "question": "What significant change occurred in the fiscal year 2017 for the Company regarding its quarters?",
-      "ground_truth_answer": "A 14th week was included in the first fiscal quarter of 2017 to realign the Company\u2019s fiscal quarters with calendar quarters."
-    },
-    {
-      "rag": {
-        "answer": "Apple Inc. recognizes revenue from hardware sales when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable, and collection is probable. Typically, revenue is recognized at the time the product is shipped, as this is when title, risk of loss, and rewards of ownership transfer to the customer. For certain online sales and specific customer segments, revenue may be deferred until the customer receives the product due to retained risk during transit.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.34177215189873417,
-            "recall": 0.9642857142857143,
-            "fmeasure": 0.5046728971962617
-          },
-          "rouge2": {
-            "precision": 0.32051282051282054,
-            "recall": 0.9259259259259259,
-            "fmeasure": 0.4761904761904762
-          },
-          "rougeL": {
-            "precision": 0.3291139240506329,
-            "recall": 0.9285714285714286,
-            "fmeasure": 0.48598130841121495
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "In fiscal year 2017, the Company recognized revenue from hardware sales when persuasive evidence of an arrangement existed, delivery had occurred, the sales price was fixed or determinable, and collection was probable. Product is considered delivered to the customer once it has been shipped, and title, risk of loss, and rewards of ownership have been transferred. For most product sales, these criteria were met at the time the product was shipped. For online sales to individuals, some sales to education customers in the U.S., and certain other sales, the Company deferred revenue until the customer received the product due to retaining a portion of the risk of loss during transit.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.24324324324324326,
-            "recall": 0.9642857142857143,
-            "fmeasure": 0.3884892086330935
-          },
-          "rouge2": {
-            "precision": 0.19090909090909092,
-            "recall": 0.7777777777777778,
-            "fmeasure": 0.30656934306569344
-          },
-          "rougeL": {
-            "precision": 0.22522522522522523,
-            "recall": 0.8928571428571429,
-            "fmeasure": 0.3597122302158274
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In the fiscal year 2017, Apple Inc. (AAPL) recognized revenue from hardware sales in accordance with the revenue recognition standards outlined in ASC 606, which was adopted by the company starting in fiscal year 2018. However, for the fiscal year 2017, Apple was still following the previous revenue recognition standard, ASC 605.\n\nUnder ASC 605, Apple recognized revenue from hardware sales when the following criteria were met:\n\n1. **Persuasive Evidence of an Arrangement**: There must be a clear agreement between Apple and the customer, typically in the form of a sales order or contract.\n\n2. **Delivery Has Occurred**: Revenue was recognized when the product was shipped to the customer, which indicated that the risks and rewards of ownership had transferred.\n\n3. **Price is Fixed or Determinable**: The sales price must be established and not subject to significant future adjustments.\n\n4. **Collectability is Reasonably Assured**: Apple needed to have a reasonable expectation that it would collect the payment from the customer.\n\nFor hardware sales, this typically included products like iPhones, iPads, Macs, and accessories. Revenue was recognized at the point of sale, which meant that once the product was delivered and the customer had accepted it, Apple would record the revenue in its financial statements.\n\nIt's important to note that Apple also had to consider any potential returns or allowances, which could affect the final revenue recognized. The company would estimate these returns based on historical data and trends.\n\nIn summary, for fiscal year 2017, Apple recognized revenue from hardware sales upon delivery of the products, provided that the arrangement was clear, the price was fixed, and collectability was assured, in accordance with ASC 605.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.09454545454545454,
-            "recall": 0.9285714285714286,
-            "fmeasure": 0.17161716171617164
-          },
-          "rouge2": {
-            "precision": 0.072992700729927,
-            "recall": 0.7407407407407407,
-            "fmeasure": 0.13289036544850497
-          },
-          "rougeL": {
-            "precision": 0.09090909090909091,
-            "recall": 0.8928571428571429,
-            "fmeasure": 0.16501650165016504
-          }
-        }
-      },
-      "question": "How does the Company recognize revenue from hardware sales in the fiscal year 2017?",
-      "ground_truth_answer": "The Company recognizes revenue from hardware sales when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable, and collection is probable."
-    },
-    {
-      "rag": {
-        "answer": "In fiscal year 2005, NVIDIA (NVDA) had approximately 452 stockholders of record as of March 4, 2005, not including shares held in street or nominee name. The company announced a stock repurchase program on August 9, 2004, authorizing the repurchase of up to $300 million of its common stock over a three-year period through August 2007.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.08771929824561403,
-            "recall": 0.19230769230769232,
-            "fmeasure": 0.12048192771084336
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.07017543859649122,
-            "recall": 0.15384615384615385,
-            "fmeasure": 0.09638554216867469
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "In fiscal year 2005, information regarding security ownership for NVIDIA Corporation is referenced under the headings \"Security Ownership of Certain Beneficial Owners and Management\" and \"Equity Compensation Plan Information\" in the company's 2005 Proxy Statement, which is incorporated by reference into the Annual Report on Form 10-K.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.5102040816326531,
-            "recall": 0.9615384615384616,
-            "fmeasure": 0.6666666666666667
-          },
-          "rouge2": {
-            "precision": 0.375,
-            "recall": 0.72,
-            "fmeasure": 0.4931506849315069
-          },
-          "rougeL": {
-            "precision": 0.3673469387755102,
-            "recall": 0.6923076923076923,
-            "fmeasure": 0.48000000000000004
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In the SEC filings for NVIDIA Corporation (NVDA) for the fiscal year 2005, you would typically find information regarding the ownership of the company's securities, which includes details about the number of shares held by executive officers, directors, and significant shareholders. This information is usually presented in the form of a table or summary that outlines:\n\n1. **Total Shares Outstanding**: The total number of shares of common stock that are outstanding as of a specific date.\n2. **Ownership by Executive Officers and Directors**: A breakdown of the number of shares owned by each executive officer and director, often including their percentage of total shares outstanding.\n3. **Significant Shareholders**: Information about any shareholders who own a significant percentage of the company's stock, typically defined as 5% or more.\n4. **Stock Options and Restricted Stock**: Details about any stock options or restricted stock units held by executives and directors, including the number of options that are vested and unvested.\n\nThis information is important for investors as it provides insight into the alignment of interests between management and shareholders, as well as potential influences on corporate governance. For the specific details, one would need to refer to the actual SEC filing (such as the Form 10-K) for that year.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.06698564593301436,
-            "recall": 0.5384615384615384,
-            "fmeasure": 0.11914893617021276
-          },
-          "rouge2": {
-            "precision": 0.014423076923076924,
-            "recall": 0.12,
-            "fmeasure": 0.02575107296137339
-          },
-          "rougeL": {
-            "precision": 0.05263157894736842,
-            "recall": 0.4230769230769231,
-            "fmeasure": 0.09361702127659574
-          }
-        }
-      },
-      "question": "What information is referenced regarding security ownership for the company in the fiscal year 2005?",
-      "ground_truth_answer": "The information referenced is found in the 2005 Proxy Statement under the headings 'Security Ownership of Certain Beneficial Owners and Management' and 'Equity Compensation Plan Information.'"
-    },
-    {
-      "rag": {
-        "answer": "The Proxy Statement regarding security ownership for NVDA refers to the fiscal year 2005. This is indicated in the context where it mentions that information about equity compensation plans will be included in the definitive Proxy Statement for the Annual Meeting of Stockholders.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.3023255813953488,
-            "recall": 0.8666666666666667,
-            "fmeasure": 0.44827586206896547
+            "fmeasure": 0.4210526315789474
           },
           "rouge2": {
             "precision": 0.21428571428571427,
-            "recall": 0.6428571428571429,
-            "fmeasure": 0.32142857142857145
+            "recall": 1.0,
+            "fmeasure": 0.35294117647058826
           },
           "rougeL": {
-            "precision": 0.20930232558139536,
-            "recall": 0.6,
-            "fmeasure": 0.3103448275862069
+            "precision": 0.26666666666666666,
+            "recall": 1.0,
+            "fmeasure": 0.4210526315789474
           }
         }
       },
       "unfiltered": {
-        "answer": "The company refers to its Proxy Statement regarding security ownership for the fiscal year 2005.",
+        "answer": "The company references the Proxy Statement for security ownership information for the fiscal year 2013.",
         "rouge": {
           "rouge1": {
-            "precision": 1.0,
+            "precision": 0.26666666666666666,
             "recall": 1.0,
-            "fmeasure": 1.0
+            "fmeasure": 0.4210526315789474
           },
           "rouge2": {
-            "precision": 0.7857142857142857,
-            "recall": 0.7857142857142857,
-            "fmeasure": 0.7857142857142857
+            "precision": 0.21428571428571427,
+            "recall": 1.0,
+            "fmeasure": 0.35294117647058826
           },
           "rougeL": {
-            "precision": 0.6666666666666666,
-            "recall": 0.6666666666666666,
-            "fmeasure": 0.6666666666666666
+            "precision": 0.26666666666666666,
+            "recall": 1.0,
+            "fmeasure": 0.4210526315789474
           }
         }
       },
       "web_search": {
-        "answer": "In the context of SEC filings, a Proxy Statement typically refers to the fiscal year that ends before the filing date. Since the SEC filing year is 2005, the Proxy Statement would generally refer to the fiscal year that ended in 2004. Therefore, for NVDA's Proxy Statement regarding security ownership, it would refer to the fiscal year 2004.",
+        "answer": "In the SEC filings, companies typically reference the Proxy Statement for security ownership information in the year prior to the filing year. Since the SEC filing year for TSLA is 2012, the Proxy Statement referenced for security ownership information would pertain to the fiscal year 2011.",
         "rouge": {
           "rouge1": {
-            "precision": 0.22033898305084745,
-            "recall": 0.8666666666666667,
-            "fmeasure": 0.3513513513513513
+            "precision": 0.06521739130434782,
+            "recall": 0.75,
+            "fmeasure": 0.12
           },
           "rouge2": {
-            "precision": 0.13793103448275862,
-            "recall": 0.5714285714285714,
-            "fmeasure": 0.2222222222222222
+            "precision": 0.044444444444444446,
+            "recall": 0.6666666666666666,
+            "fmeasure": 0.08333333333333334
           },
           "rougeL": {
-            "precision": 0.22033898305084745,
-            "recall": 0.8666666666666667,
-            "fmeasure": 0.3513513513513513
+            "precision": 0.06521739130434782,
+            "recall": 0.75,
+            "fmeasure": 0.12
           }
         }
       },
-      "question": "Which fiscal year does the company refer to for its Proxy Statement regarding security ownership?",
-      "ground_truth_answer": "The company refers to the fiscal year 2005 for its Proxy Statement regarding security ownership."
+      "question": "In which fiscal year does the company reference the Proxy Statement for security ownership information?",
+      "ground_truth_answer": "The fiscal year 2013."
     },
     {
       "rag": {
-        "answer": "The context provided does not specify the location of Apple's headquarters as of fiscal year 2007. Therefore, I cannot provide that information.",
+        "answer": "The Proxy Statement for Amazon.com, Inc. related to the fiscal year 2003 includes information on executive compensation, security ownership of certain beneficial owners and management, and certain relationships and related transactions. Specific details from these sections are incorporated by reference in the SEC filings for 2002.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 0.5,
+          "retrieved_position": 2
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2553191489361702,
+            "recall": 0.5454545454545454,
+            "fmeasure": 0.34782608695652173
+          },
+          "rouge2": {
+            "precision": 0.10869565217391304,
+            "recall": 0.23809523809523808,
+            "fmeasure": 0.1492537313432836
+          },
+          "rougeL": {
+            "precision": 0.1702127659574468,
+            "recall": 0.36363636363636365,
+            "fmeasure": 0.23188405797101447
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The Proxy Statement for the company related to the fiscal year 2003 includes information regarding the Executive Officers and Directors of Amazon.com, as well as details about compliance with Section 16(a) of the Securities Exchange Act of 1934.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.275,
+            "recall": 0.5,
+            "fmeasure": 0.3548387096774194
+          },
+          "rouge2": {
+            "precision": 0.10256410256410256,
+            "recall": 0.19047619047619047,
+            "fmeasure": 0.13333333333333333
+          },
+          "rougeL": {
+            "precision": 0.2,
+            "recall": 0.36363636363636365,
+            "fmeasure": 0.25806451612903225
+          }
+        }
+      },
+      "web_search": {
+        "answer": "The Proxy Statement for Amazon.com, Inc. (AMZN) related to the fiscal year 2003 would typically include several key pieces of information, as required by the SEC. Here are the main components you would expect to find:\n\n1. **Executive Compensation**: Details about the compensation packages for the company's top executives, including salary, bonuses, stock options, and other forms of compensation. This section often includes a summary compensation table and may also discuss the rationale behind the compensation decisions.\n\n2. **Board of Directors**: Information about the members of the board, including their backgrounds, qualifications, and any committees they serve on. This section may also include details about the board's governance practices.\n\n3. **Shareholder Proposals**: Any proposals submitted by shareholders for consideration at the annual meeting, along with the company's position on these proposals.\n\n4. **Voting Procedures**: Instructions on how shareholders can vote, including information on proxy voting, deadlines, and how to attend the annual meeting.\n\n5. **Related Party Transactions**: Disclosure of any transactions between the company and its executives, directors, or significant shareholders that could present a conflict of interest.\n\n6. **Equity Awards**: Information on stock options and other equity awards granted to executives and directors, including the number of shares and the terms of the awards.\n\n7. **Corporate Governance**: An overview of the company's governance policies, including any changes made since the previous year, and how the company complies with relevant regulations.\n\n8. **Financial Performance**: A summary of the company's financial performance, which may include highlights from the previous fiscal year and projections for the upcoming year.\n\n9. **Risk Factors**: A discussion of any risks that could impact the company's performance, which may be relevant to shareholders when making voting decisions.\n\nThese components are designed to provide shareholders with the necessary information to make informed decisions regarding their votes on various matters, including the election of directors and approval of executive compensation.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.04716981132075472,
+            "recall": 0.6818181818181818,
+            "fmeasure": 0.08823529411764706
+          },
+          "rouge2": {
+            "precision": 0.01892744479495268,
+            "recall": 0.2857142857142857,
+            "fmeasure": 0.03550295857988166
+          },
+          "rougeL": {
+            "precision": 0.03773584905660377,
+            "recall": 0.5454545454545454,
+            "fmeasure": 0.07058823529411765
+          }
+        }
+      },
+      "question": "What information is included in the Proxy Statement for the company related to the fiscal year 2003?",
+      "ground_truth_answer": "Information required by Item 13 of Part III is included in the Proxy Statement relating to the 2003 annual meeting of stockholders."
+    },
+    {
+      "rag": {
+        "answer": "The context does not provide specific information regarding the item of the SEC filing that refers to relationships and related transactions for Amazon.com, Inc. in fiscal year 2003. Therefore, I cannot identify that item based on the provided information.",
         "retrieval": {
           "recall_at_1": 0.0,
           "recall_at_3": 0.0,
@@ -657,712 +441,928 @@
         },
         "rouge": {
           "rouge1": {
-            "precision": 0.17391304347826086,
-            "recall": 0.4444444444444444,
-            "fmeasure": 0.25
+            "precision": 0.325,
+            "recall": 0.8666666666666667,
+            "fmeasure": 0.4727272727272728
+          },
+          "rouge2": {
+            "precision": 0.23076923076923078,
+            "recall": 0.6428571428571429,
+            "fmeasure": 0.339622641509434
+          },
+          "rougeL": {
+            "precision": 0.3,
+            "recall": 0.8,
+            "fmeasure": 0.4363636363636363
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The item of the SEC filing that refers to relationships and related transactions for the company in fiscal year 2003 is found in Item 13, \"Certain Relationships and Related Transactions.\"",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "fmeasure": 0.6666666666666666
+          },
+          "rouge2": {
+            "precision": 0.4482758620689655,
+            "recall": 0.9285714285714286,
+            "fmeasure": 0.6046511627906977
+          },
+          "rougeL": {
+            "precision": 0.4666666666666667,
+            "recall": 0.9333333333333333,
+            "fmeasure": 0.6222222222222223
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In SEC filings, relationships and related transactions are typically discussed in Item 13 of the Form 10-K, which is the annual report filed by publicly traded companies. This section often includes disclosures about transactions with related parties, including any relationships that could potentially create conflicts of interest or affect the financial statements.\n\nFor Amazon (AMZN) in the fiscal year 2003, you would look for Item 13 in their 2002 SEC filing (Form 10-K) to find information regarding relationships and related transactions. This section would detail any significant transactions with related parties that occurred during that fiscal year.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.1414141414141414,
+            "recall": 0.9333333333333333,
+            "fmeasure": 0.24561403508771928
+          },
+          "rouge2": {
+            "precision": 0.061224489795918366,
+            "recall": 0.42857142857142855,
+            "fmeasure": 0.10714285714285714
+          },
+          "rougeL": {
+            "precision": 0.10101010101010101,
+            "recall": 0.6666666666666666,
+            "fmeasure": 0.1754385964912281
+          }
+        }
+      },
+      "question": "Which item of the SEC filing refers to relationships and related transactions for the company in fiscal year 2003?",
+      "ground_truth_answer": "Item 13 refers to relationships and related transactions for the company in fiscal year 2003."
+    },
+    {
+      "rag": {
+        "answer": "ITEM 9B for TSLA in the fiscal year 2018 states that there is \"None\" reported under Other Information.",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 1.0,
+          "retrieved_position": 1
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.05555555555555555,
+            "recall": 1.0,
+            "fmeasure": 0.10526315789473684
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.05555555555555555,
+            "recall": 1.0,
+            "fmeasure": 0.10526315789473684
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "ITEM 9B of the SEC filing for Tesla, Inc. in the fiscal year 2018 states that there are no other information disclosures required.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In the SEC filings, ITEM 9B typically pertains to \"Other Information\" that the company wishes to disclose that is not covered in other sections of the filing. For Tesla (TSLA) in the fiscal year 2018, ITEM 9B would likely include any significant events or developments that occurred after the end of the fiscal year that could impact the company's financial position or operations. \n\nThis could encompass information such as:\n\n- Updates on production and delivery numbers for Tesla vehicles.\n- Developments related to new product launches or technological advancements.\n- Changes in management or key personnel.\n- Legal proceedings or regulatory issues that may have arisen.\n- Financial guidance or outlook for the upcoming fiscal year.\n\nTo get the specific details from ITEM 9B for Tesla in 2018, you would need to refer directly to the SEC filing for that year, as it would contain the exact disclosures made by the company.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        }
+      },
+      "question": "What information is provided in ITEM 9B for the company in the fiscal year?",
+      "ground_truth_answer": "None"
+    },
+    {
+      "rag": {
+        "answer": "The title of ITEM 10 in TSLA's SEC filing for the fiscal year 2018 is not provided in the context. Therefore, I cannot provide that information.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.07407407407407407,
+            "recall": 1.0,
+            "fmeasure": 0.13793103448275862
+          },
+          "rouge2": {
+            "precision": 0.038461538461538464,
+            "recall": 1.0,
+            "fmeasure": 0.07407407407407407
+          },
+          "rougeL": {
+            "precision": 0.07407407407407407,
+            "recall": 1.0,
+            "fmeasure": 0.13793103448275862
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The title of ITEM 10 in the company's SEC filing for the fiscal year 2018 is \"DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE.\"",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.08695652173913043,
+            "recall": 1.0,
+            "fmeasure": 0.16
           },
           "rouge2": {
             "precision": 0.045454545454545456,
-            "recall": 0.125,
-            "fmeasure": 0.06666666666666667
+            "recall": 1.0,
+            "fmeasure": 0.08695652173913045
           },
           "rougeL": {
-            "precision": 0.13043478260869565,
-            "recall": 0.3333333333333333,
-            "fmeasure": 0.18750000000000003
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The Company's headquarters are located in Cupertino, California.",
-        "rouge": {
-          "rouge1": {
-            "precision": 1.0,
+            "precision": 0.08695652173913043,
             "recall": 1.0,
-            "fmeasure": 1.0
-          },
-          "rouge2": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "fmeasure": 1.0
-          },
-          "rougeL": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "fmeasure": 1.0
+            "fmeasure": 0.16
           }
         }
       },
       "web_search": {
-        "answer": "As of fiscal year 2007, Apple's headquarters was located in Cupertino, California. The specific address is 1 Infinite Loop, Cupertino, CA 95014.",
+        "answer": "In the SEC filing for Tesla, Inc. (TSLA) for the fiscal year 2018, the title of ITEM 10 is \"Directors, Executive Officers and Corporate Governance.\" This section typically includes information about the company's leadership, their backgrounds, and governance practices.",
         "rouge": {
           "rouge1": {
-            "precision": 0.30434782608695654,
-            "recall": 0.7777777777777778,
-            "fmeasure": 0.43750000000000006
-          },
-          "rouge2": {
-            "precision": 0.18181818181818182,
-            "recall": 0.5,
-            "fmeasure": 0.26666666666666666
-          },
-          "rougeL": {
-            "precision": 0.2608695652173913,
-            "recall": 0.6666666666666666,
-            "fmeasure": 0.37500000000000006
-          }
-        }
-      },
-      "question": "What is the location of the Company's headquarters as of fiscal year 2007?",
-      "ground_truth_answer": "The Company's headquarters are located in Cupertino, California."
-    },
-    {
-      "rag": {
-        "answer": "The context does not provide information about the amount of leased space that Apple Inc. (AAPL) had as of September 29, 2007. Therefore, I cannot answer the question based on the provided information.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 1.0,
-          "mrr": 0.16666666666666666,
-          "retrieved_position": 6
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.12121212121212122,
-            "recall": 0.36363636363636365,
-            "fmeasure": 0.18181818181818182
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.09090909090909091,
-            "recall": 0.2727272727272727,
-            "fmeasure": 0.13636363636363635
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "As of September 29, 2007, the Company leased approximately 3.7 million square feet of space.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.6875,
+            "precision": 0.05,
             "recall": 1.0,
-            "fmeasure": 0.8148148148148148
+            "fmeasure": 0.09523809523809523
           },
           "rouge2": {
-            "precision": 0.6666666666666666,
+            "precision": 0.02564102564102564,
             "recall": 1.0,
-            "fmeasure": 0.8
+            "fmeasure": 0.05
           },
           "rougeL": {
-            "precision": 0.6875,
+            "precision": 0.05,
             "recall": 1.0,
-            "fmeasure": 0.8148148148148148
+            "fmeasure": 0.09523809523809523
           }
         }
       },
-      "web_search": {
-        "answer": "To find the amount of leased space that Apple Inc. (AAPL) had as of September 29, 2007, you would typically need to refer to the company's SEC filings, specifically the 10-K report for that fiscal year. In the 10-K, companies disclose information about their leased properties, including the total square footage of leased space.\n\nUnfortunately, I do not have direct access to specific SEC filings or their contents. However, you can find this information by searching for Apple's 2007 10-K filing on the SEC's EDGAR database or on Apple's investor relations website. Look for sections that discuss \"Properties\" or \"Leases\" to find the relevant details about the leased space.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.05172413793103448,
-            "recall": 0.5454545454545454,
-            "fmeasure": 0.09448818897637795
-          },
-          "rouge2": {
-            "precision": 0.008695652173913044,
-            "recall": 0.1,
-            "fmeasure": 0.016
-          },
-          "rougeL": {
-            "precision": 0.05172413793103448,
-            "recall": 0.5454545454545454,
-            "fmeasure": 0.09448818897637795
-          }
-        }
-      },
-      "question": "How much leased space does the Company have as of September 29, 2007?",
-      "ground_truth_answer": "The Company leased approximately 3.7 million square feet of space."
+      "question": "What is the title of ITEM 10 in the company's SEC filing for the fiscal year?",
+      "ground_truth_answer": "ITEM 10."
     },
     {
       "rag": {
-        "answer": "The context provided does not contain any information regarding Item 9B for Amazon.com, Inc. in the fiscal year 2005. Therefore, I cannot provide details about that specific item.",
+        "answer": "Apple Inc. paid a total of $12.0 billion in dividends during 2016.",
         "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "Item 9B of the SEC filing for Amazon.com, Inc. in the fiscal year 2005 states that there is no other information to report.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In SEC filings, Item 9B typically refers to \"Other Information\" and is often used to disclose any significant events or changes that occurred after the end of the fiscal year but before the filing date. For Amazon (AMZN) in 2005, this section may have included information about any material events, changes in management, legal proceedings, or other significant developments that could impact the company's financial position or operations.\n\nTo find the specific details provided in Item 9B for Amazon in 2005, you would need to access the actual SEC filing (such as the 10-K report) for that year. This document would provide the exact disclosures made by the company in that section. If you have access to the SEC's EDGAR database, you can search for Amazon's filings and review the 2005 10-K report to find the relevant information in Item 9B.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          }
-        }
-      },
-      "question": "What information is provided in Item 9B for the company in the fiscal year?",
-      "ground_truth_answer": "None."
-    },
-    {
-      "rag": {
-        "answer": "The context does not provide specific information about the sections that follow Item 9B in AMZN's SEC filing for the fiscal year 2005. Therefore, I cannot determine what section follows Item 9B.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.030303030303030304,
-            "recall": 0.25,
-            "fmeasure": 0.054054054054054064
-          },
-          "rouge2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "fmeasure": 0.0
-          },
-          "rougeL": {
-            "precision": 0.030303030303030304,
-            "recall": 0.25,
-            "fmeasure": 0.054054054054054064
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The section that follows Item 9B in the company's SEC filing for the fiscal year is Item 10, which covers \"Directors and Executive Officers of the Registrant.\"",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.07142857142857142,
-            "recall": 0.5,
-            "fmeasure": 0.125
-          },
-          "rouge2": {
-            "precision": 0.037037037037037035,
-            "recall": 0.3333333333333333,
-            "fmeasure": 0.06666666666666667
-          },
-          "rougeL": {
-            "precision": 0.07142857142857142,
-            "recall": 0.5,
-            "fmeasure": 0.125
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In SEC filings, particularly in Form 10-K, Item 9B is typically titled \"Other Information.\" The section that follows Item 9B is usually Item 10, which is titled \"Directors, Executive Officers, and Corporate Governance.\" This section provides information about the company's leadership and governance practices.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.043478260869565216,
-            "recall": 0.5,
-            "fmeasure": 0.08
-          },
-          "rouge2": {
-            "precision": 0.022222222222222223,
-            "recall": 0.3333333333333333,
-            "fmeasure": 0.04166666666666667
-          },
-          "rougeL": {
-            "precision": 0.043478260869565216,
-            "recall": 0.5,
-            "fmeasure": 0.08
-          }
-        }
-      },
-      "question": "What section follows Item 9B in the company's SEC filing for the fiscal year?",
-      "ground_truth_answer": "PART III Item 10."
-    },
-    {
-      "rag": {
-        "answer": "The duration of the Extended Service plan for Tesla in fiscal year 2023 is four years or 50,000 miles, which is applicable after the end of the New Vehicle Limited Warranty. This plan must be purchased within a specified period of time.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.4418604651162791,
-            "recall": 0.5757575757575758,
-            "fmeasure": 0.5
-          },
-          "rouge2": {
-            "precision": 0.2857142857142857,
-            "recall": 0.375,
-            "fmeasure": 0.3243243243243243
-          },
-          "rougeL": {
-            "precision": 0.3953488372093023,
-            "recall": 0.5151515151515151,
-            "fmeasure": 0.4473684210526315
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The Extended Service plan for Tesla covers additional services for up to an additional four years or up to an additional 50,000 miles after the New Vehicle Limited Warranty for their new vehicles.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.7941176470588235,
-            "recall": 0.8181818181818182,
-            "fmeasure": 0.8059701492537314
-          },
-          "rouge2": {
-            "precision": 0.696969696969697,
-            "recall": 0.71875,
-            "fmeasure": 0.7076923076923077
-          },
-          "rougeL": {
-            "precision": 0.7647058823529411,
-            "recall": 0.7878787878787878,
-            "fmeasure": 0.7761194029850745
-          }
-        }
-      },
-      "web_search": {
-        "answer": "As of my last knowledge update in October 2023, Tesla's Extended Service Plan typically offers coverage for a duration of up to 8 years or 100,000 miles, whichever comes first, for most of their vehicles. However, specific details can vary based on the model and any updates Tesla may have made to their service plans since then. For the most accurate and current information, it is advisable to check Tesla's official website or their latest SEC filings.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.2,
-            "recall": 0.48484848484848486,
-            "fmeasure": 0.28318584070796465
-          },
-          "rouge2": {
-            "precision": 0.06329113924050633,
-            "recall": 0.15625,
-            "fmeasure": 0.0900900900900901
-          },
-          "rougeL": {
-            "precision": 0.1375,
-            "recall": 0.3333333333333333,
-            "fmeasure": 0.1946902654867257
-          }
-        }
-      },
-      "question": "What is the duration of the Extended Service plan for Tesla in fiscal year 2023?",
-      "ground_truth_answer": "The Extended Service plan covers the repair or replacement of vehicle parts for up to an additional four years or up to an additional 50,000 miles after the New Vehicle Limited Warranty."
-    },
-    {
-      "rag": {
-        "answer": "In fiscal year 2023, Tesla provides a ten-year \"no defect\" and \"energy retention\" warranty for the Powerwall 2 system, guaranteeing that the energy capacity will be at least 70% or 80% of its nameplate capacity after 10 years, depending on the installation region. Additionally, customers can purchase a 20-year extended protection plan for the Powerwall 2. All warranties are subject to specified use restrictions or kWh throughput caps.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 1.0,
-          "mrr": 0.14285714285714285,
-          "retrieved_position": 7
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.42857142857142855,
-            "recall": 0.8823529411764706,
-            "fmeasure": 0.5769230769230769
-          },
-          "rouge2": {
-            "precision": 0.34782608695652173,
-            "recall": 0.7272727272727273,
-            "fmeasure": 0.4705882352941176
-          },
-          "rougeL": {
-            "precision": 0.42857142857142855,
-            "recall": 0.8823529411764706,
-            "fmeasure": 0.5769230769230769
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The provided SEC filing context does not include specific information about warranties for the Powerwall 2 system in fiscal year 2023. The most recent details available indicate that Tesla generally provides a 10-year \"no defect\" and \"energy retention\" warranty for the Powerwall 2 system, guaranteeing that the energy capacity will be at least 70% or 80% (depending on the region of installation) of its nameplate capacity after 10 years of use. However, for the exact terms and conditions applicable in fiscal year 2023, one would need to refer to more current documents or filings.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.3368421052631579,
-            "recall": 0.9411764705882353,
-            "fmeasure": 0.49612403100775193
-          },
-          "rouge2": {
-            "precision": 0.2765957446808511,
-            "recall": 0.7878787878787878,
-            "fmeasure": 0.4094488188976378
-          },
-          "rougeL": {
-            "precision": 0.3368421052631579,
-            "recall": 0.9411764705882353,
-            "fmeasure": 0.49612403100775193
-          }
-        }
-      },
-      "web_search": {
-        "answer": "As of my last knowledge update in October 2023, I do not have access to specific SEC filings or the exact warranty details for the Powerwall 2 system provided by Tesla in fiscal year 2023. However, Tesla typically offers warranties for its energy products, including the Powerwall, which may include coverage for defects in materials and workmanship, as well as performance guarantees over a certain period.\n\nFor the most accurate and up-to-date information regarding the warranties for the Powerwall 2 system in fiscal year 2023, I recommend checking Tesla's official website or their most recent SEC filings, such as the 10-K or 10-Q reports, where they would disclose warranty information and any changes to their policies.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.1487603305785124,
-            "recall": 0.5294117647058824,
-            "fmeasure": 0.23225806451612901
-          },
-          "rouge2": {
-            "precision": 0.008333333333333333,
-            "recall": 0.030303030303030304,
-            "fmeasure": 0.013071895424836602
-          },
-          "rougeL": {
-            "precision": 0.08264462809917356,
-            "recall": 0.29411764705882354,
-            "fmeasure": 0.12903225806451613
-          }
-        }
-      },
-      "question": "What warranties are provided for the Powerwall 2 system by Tesla in fiscal year 2023?",
-      "ground_truth_answer": "Tesla provides a 10 year 'no defect' and 'energy retention' warranty with every Powerwall 2, guaranteeing that the energy capacity will be 70% or 80% of its nameplate capacity after 10 years of use."
-    },
-    {
-      "rag": {
-        "answer": "In the fiscal year 1997, Apple primarily manufactured its products in facilities located in California, Colorado, and Singapore. These locations served the Apple Americas, Apple Japan, and Apple Asia Pacific divisions.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
           "recall_at_5": 1.0,
           "recall_at_10": 1.0,
-          "mrr": 0.25,
-          "retrieved_position": 4
+          "mrr": 1.0,
+          "retrieved_position": 1
         },
         "rouge": {
           "rouge1": {
-            "precision": 0.3870967741935484,
-            "recall": 0.75,
-            "fmeasure": 0.5106382978723403
-          },
-          "rouge2": {
-            "precision": 0.03333333333333333,
-            "recall": 0.06666666666666667,
-            "fmeasure": 0.04444444444444444
-          },
-          "rougeL": {
-            "precision": 0.22580645161290322,
-            "recall": 0.4375,
-            "fmeasure": 0.2978723404255319
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The primary manufacturing locations for Apple in the fiscal year 1997 were in California (specifically Sacramento and Cupertino), Cork and Dublin in Ireland, and Singapore.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.48,
-            "recall": 0.75,
-            "fmeasure": 0.5853658536585366
-          },
-          "rouge2": {
-            "precision": 0.25,
-            "recall": 0.4,
-            "fmeasure": 0.3076923076923077
-          },
-          "rougeL": {
-            "precision": 0.4,
-            "recall": 0.625,
-            "fmeasure": 0.48780487804878053
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In 1997, Apple primarily manufactured its products in the United States, with significant operations in California. However, during that time, Apple also began to shift some of its manufacturing to overseas locations, particularly in Asia, to take advantage of lower labor costs and increased production capacity. Key manufacturing partners included companies in countries like Japan, China, and Taiwan.\n\nFor the most accurate and detailed information regarding specific manufacturing locations mentioned in the SEC filing, it would be necessary to review the actual document from that year. However, the general trend during that period was a mix of domestic and increasing international manufacturing.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.09803921568627451,
-            "recall": 0.625,
-            "fmeasure": 0.1694915254237288
-          },
-          "rouge2": {
-            "precision": 0.019801980198019802,
-            "recall": 0.13333333333333333,
-            "fmeasure": 0.03448275862068966
-          },
-          "rougeL": {
-            "precision": 0.06862745098039216,
-            "recall": 0.4375,
-            "fmeasure": 0.11864406779661019
-          }
-        }
-      },
-      "question": "What are the primary manufacturing locations for Apple in the fiscal year mentioned in the SEC filing?",
-      "ground_truth_answer": "The primary manufacturing locations for Apple are in California, Singapore, and the SCI facility in Colorado."
-    },
-    {
-      "rag": {
-        "answer": "In the fiscal year 1997, Apple implemented restructuring actions aimed at reducing its cost structure, improving competitiveness, and restoring sustainable profitability. These actions included the termination of employees, closure of facilities, and cancellation of contracts. Specific details about changes to the channel program are not provided in the context.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 1.0,
-          "mrr": 0.16666666666666666,
-          "retrieved_position": 6
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.1836734693877551,
-            "recall": 0.45,
-            "fmeasure": 0.2608695652173913
-          },
-          "rouge2": {
-            "precision": 0.020833333333333332,
-            "recall": 0.05263157894736842,
-            "fmeasure": 0.02985074626865672
-          },
-          "rougeL": {
-            "precision": 0.12244897959183673,
-            "recall": 0.3,
-            "fmeasure": 0.17391304347826086
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "In the fiscal year referenced in the SEC filing, Apple revised its channel program by decreasing the number of resellers and reducing returns, price protection, and certain rebate programs. This was done in an effort to reduce channel inventory, increase inventory turns, and enhance product support within the channel.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.40816326530612246,
+            "precision": 0.23076923076923078,
             "recall": 1.0,
-            "fmeasure": 0.5797101449275363
-          },
-          "rouge2": {
-            "precision": 0.3958333333333333,
-            "recall": 1.0,
-            "fmeasure": 0.5671641791044776
-          },
-          "rougeL": {
-            "precision": 0.40816326530612246,
-            "recall": 1.0,
-            "fmeasure": 0.5797101449275363
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In 1997, Apple made a significant change to its channel program by shifting its focus towards a more streamlined distribution strategy. This included reducing the number of resellers and emphasizing direct sales through its own retail channels and online presence. The company aimed to improve its relationships with key partners and enhance the customer experience by ensuring better product availability and support. This strategic move was part of Apple's broader efforts to regain market share and improve its financial performance during a challenging period in its history.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.13636363636363635,
-            "recall": 0.6,
-            "fmeasure": 0.22222222222222218
-          },
-          "rouge2": {
-            "precision": 0.08045977011494253,
-            "recall": 0.3684210526315789,
-            "fmeasure": 0.1320754716981132
-          },
-          "rougeL": {
-            "precision": 0.125,
-            "recall": 0.55,
-            "fmeasure": 0.20370370370370372
-          }
-        }
-      },
-      "question": "What significant change did Apple implement in its channel program in the fiscal year referenced in the SEC filing?",
-      "ground_truth_answer": "Apple revised its channel program by decreasing the number of resellers and reducing returns, price protection, and certain rebate programs."
-    },
-    {
-      "rag": {
-        "answer": "The context provided does not include specific information regarding security ownership for AMZN in the Proxy Statement related to the fiscal year 2016. It only references other companies (META and AAPL) and their respective filings. Therefore, I cannot provide details about AMZN's security ownership from the 2016 Proxy Statement.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.2,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.2777777777777778
-          },
-          "rouge2": {
-            "precision": 0.14285714285714285,
-            "recall": 0.3333333333333333,
-            "fmeasure": 0.2
-          },
-          "rougeL": {
-            "precision": 0.18,
-            "recall": 0.4090909090909091,
-            "fmeasure": 0.25
-          }
-        }
-      },
-      "unfiltered": {
-        "answer": "The Proxy Statement for the company related to the fiscal year 2016 includes information regarding the security ownership of certain beneficial owners and management. This information is incorporated by reference from the Proxy Statement relating to the 2016 Annual Meeting of Shareholders.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.38095238095238093,
-            "recall": 0.7272727272727273,
-            "fmeasure": 0.5
-          },
-          "rouge2": {
-            "precision": 0.24390243902439024,
-            "recall": 0.47619047619047616,
-            "fmeasure": 0.3225806451612903
-          },
-          "rougeL": {
-            "precision": 0.3333333333333333,
-            "recall": 0.6363636363636364,
-            "fmeasure": 0.43749999999999994
-          }
-        }
-      },
-      "web_search": {
-        "answer": "In the Proxy Statement for Amazon.com, Inc. (AMZN) related to the fiscal year 2016, you would typically find information regarding security ownership that includes:\n\n1. **Beneficial Ownership of Common Stock**: This section usually details the number of shares owned by the company's directors, executive officers, and significant shareholders. It often includes the percentage of total shares outstanding that these individuals or entities own.\n\n2. **Ownership by Directors and Executive Officers**: Specific information about the shares owned by each director and named executive officers, including any options or restricted stock units (RSUs) that may be vested or unvested.\n\n3. **Ownership by Significant Shareholders**: Information about any shareholders who own a significant percentage of the company's stock, often defined as 5% or more of the total shares outstanding.\n\n4. **Changes in Ownership**: Any notable changes in ownership from the previous year, including new significant shareholders or changes in the holdings of existing shareholders.\n\n5. **Equity Awards**: Details about stock options, restricted stock, and other equity awards granted to executives and directors, which may also impact their ownership percentages.\n\n6. **Voting Power**: Information on the voting power associated with the shares owned by directors, executives, and significant shareholders.\n\nThis information is crucial for shareholders and potential investors as it provides insight into who controls the company and how aligned the interests of management and shareholders are.",
-        "rouge": {
-          "rouge1": {
-            "precision": 0.06637168141592921,
-            "recall": 0.6818181818181818,
-            "fmeasure": 0.12096774193548389
-          },
-          "rouge2": {
-            "precision": 0.022222222222222223,
-            "recall": 0.23809523809523808,
-            "fmeasure": 0.04065040650406505
-          },
-          "rougeL": {
-            "precision": 0.04424778761061947,
-            "recall": 0.45454545454545453,
-            "fmeasure": 0.08064516129032258
-          }
-        }
-      },
-      "question": "What information regarding security ownership is included in the Proxy Statement for the company related to the fiscal year 2016?",
-      "ground_truth_answer": "Information required by Item 12 of Part III is included in the Proxy Statement relating to the 2016 Annual Meeting of Shareholders."
-    },
-    {
-      "rag": {
-        "answer": "The Proxy Statement for AMZN refers to the fiscal year ended December 31, 2015, as it would be filed within 120 days after that date.",
-        "retrieval": {
-          "recall_at_1": 0.0,
-          "recall_at_3": 0.0,
-          "recall_at_5": 0.0,
-          "recall_at_10": 0.0,
-          "mrr": 0.0,
-          "retrieved_position": null
-        },
-        "rouge": {
-          "rouge1": {
-            "precision": 0.32,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.47058823529411764
-          },
-          "rouge2": {
-            "precision": 0.25,
-            "recall": 0.75,
             "fmeasure": 0.375
           },
+          "rouge2": {
+            "precision": 0.16666666666666666,
+            "recall": 1.0,
+            "fmeasure": 0.2857142857142857
+          },
           "rougeL": {
-            "precision": 0.32,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.47058823529411764
+            "precision": 0.23076923076923078,
+            "recall": 1.0,
+            "fmeasure": 0.375
           }
         }
       },
       "unfiltered": {
-        "answer": "The Proxy Statement refers to the fiscal year 2015 for the company's security ownership information.",
+        "answer": "Apple Inc. paid a total of $12.0 billion in dividends during 2016.",
         "rouge": {
           "rouge1": {
-            "precision": 0.5,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.64
+            "precision": 0.23076923076923078,
+            "recall": 1.0,
+            "fmeasure": 0.375
           },
           "rouge2": {
-            "precision": 0.4666666666666667,
-            "recall": 0.875,
-            "fmeasure": 0.608695652173913
+            "precision": 0.16666666666666666,
+            "recall": 1.0,
+            "fmeasure": 0.2857142857142857
           },
           "rougeL": {
-            "precision": 0.5,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.64
+            "precision": 0.23076923076923078,
+            "recall": 1.0,
+            "fmeasure": 0.375
           }
         }
       },
       "web_search": {
-        "answer": "In SEC filings, the Proxy Statement typically refers to the most recent fiscal year prior to the filing date. Since the filing year is 2015, the Proxy Statement would generally refer to the fiscal year 2014 for the company's security ownership information.",
+        "answer": "In 2016, Apple Inc. (AAPL) paid a total of approximately $11.9 billion in dividends. This amount reflects the company's commitment to returning value to its shareholders through regular dividend payments. If you need more detailed information or specific figures from the SEC filing, I recommend checking the company's 10-K report for that year, which provides comprehensive financial data.",
         "rouge": {
           "rouge1": {
-            "precision": 0.18604651162790697,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.3076923076923077
+            "precision": 0.016129032258064516,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.03076923076923077
           },
           "rouge2": {
-            "precision": 0.14285714285714285,
-            "recall": 0.75,
-            "fmeasure": 0.24
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
           },
           "rougeL": {
-            "precision": 0.18604651162790697,
-            "recall": 0.8888888888888888,
-            "fmeasure": 0.3076923076923077
+            "precision": 0.016129032258064516,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.03076923076923077
           }
         }
       },
-      "question": "Which fiscal year does the Proxy Statement refer to for the company's security ownership information?",
-      "ground_truth_answer": "The Proxy Statement refers to the fiscal year 2016."
+      "question": "What was the total amount of dividends paid by Apple Inc. in 2016?",
+      "ground_truth_answer": "$12.0 billion"
+    },
+    {
+      "rag": {
+        "answer": "As of September 24, 2016, Apple Inc. had utilized $133 billion of its $175 billion share repurchase program authorization. This means there was $42 billion remaining available for repurchases under the program at that time.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 0.5,
+          "retrieved_position": 2
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.05714285714285714,
+            "recall": 1.0,
+            "fmeasure": 0.1081081081081081
+          },
+          "rouge2": {
+            "precision": 0.029411764705882353,
+            "recall": 1.0,
+            "fmeasure": 0.05714285714285715
+          },
+          "rougeL": {
+            "precision": 0.05714285714285714,
+            "recall": 1.0,
+            "fmeasure": 0.1081081081081081
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "As of September 24, 2016, Apple Inc. had utilized $133 billion of the $175 billion share repurchase program authorization.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.10526315789473684,
+            "recall": 1.0,
+            "fmeasure": 0.1904761904761905
+          },
+          "rouge2": {
+            "precision": 0.05555555555555555,
+            "recall": 1.0,
+            "fmeasure": 0.10526315789473684
+          },
+          "rougeL": {
+            "precision": 0.10526315789473684,
+            "recall": 1.0,
+            "fmeasure": 0.1904761904761905
+          }
+        }
+      },
+      "web_search": {
+        "answer": "As of September 24, 2016, Apple Inc. had utilized approximately $143 billion of its share repurchase program authorization. The company had announced a significant share repurchase program in 2013, and by 2016, it had continued to buy back shares as part of its capital return program to shareholders. For the most accurate and detailed information, you would typically refer to the specific SEC filings or the company's quarterly earnings reports from that period.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.013513513513513514,
+            "recall": 0.5,
+            "fmeasure": 0.026315789473684213
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.013513513513513514,
+            "recall": 0.5,
+            "fmeasure": 0.026315789473684213
+          }
+        }
+      },
+      "question": "How much of the share repurchase program authorization had Apple Inc. utilized as of September 24, 2016?",
+      "ground_truth_answer": "$133 billion"
+    },
+    {
+      "rag": {
+        "answer": "The purpose of internal control over financial reporting for Amazon.com, Inc. in the fiscal year ending January 31, 2019, is to provide reasonable assurance regarding the reliability of financial reporting and the preparation of financial statements in accordance with generally accepted accounting principles (GAAP). Management is responsible for establishing and maintaining these controls, which are designed to help detect errors or fraud, although they cannot guarantee absolute assurance against such issues.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.4583333333333333,
+            "recall": 0.9428571428571428,
+            "fmeasure": 0.616822429906542
+          },
+          "rouge2": {
+            "precision": 0.4084507042253521,
+            "recall": 0.8529411764705882,
+            "fmeasure": 0.5523809523809524
+          },
+          "rougeL": {
+            "precision": 0.4444444444444444,
+            "recall": 0.9142857142857143,
+            "fmeasure": 0.5981308411214952
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The purpose of internal control over financial reporting for Amazon.com, Inc. in the fiscal year ending January 31, 2019, is to provide reasonable assurance regarding the reliability of financial reporting and the preparation of financial statements for external purposes in accordance with generally accepted accounting principles (GAAP). This includes maintaining accurate records of transactions, ensuring that transactions are recorded properly to allow for the preparation of financial statements, and preventing or detecting unauthorized acquisition, use, or disposition of the company's assets that could materially affect the financial statements.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.3888888888888889,
+            "recall": 1.0,
+            "fmeasure": 0.56
+          },
+          "rouge2": {
+            "precision": 0.3707865168539326,
+            "recall": 0.9705882352941176,
+            "fmeasure": 0.5365853658536586
+          },
+          "rougeL": {
+            "precision": 0.3888888888888889,
+            "recall": 1.0,
+            "fmeasure": 0.56
+          }
+        }
+      },
+      "web_search": {
+        "answer": "The purpose of internal control over financial reporting (ICFR) for Amazon (AMZN) in the fiscal year ending January 31, 2019, is to ensure the accuracy and reliability of the company's financial statements. This involves implementing processes and procedures that help prevent errors and fraud, ensuring compliance with applicable laws and regulations, and providing reasonable assurance that the financial reporting is free from material misstatements.\n\nKey objectives of ICFR include:\n\n1. **Accuracy of Financial Reporting**: Ensuring that all financial transactions are recorded accurately and that the financial statements reflect the true financial position of the company.\n\n2. **Compliance with Regulations**: Adhering to the requirements set forth by the Securities and Exchange Commission (SEC) and other regulatory bodies, which is crucial for maintaining investor confidence and avoiding legal penalties.\n\n3. **Risk Management**: Identifying and mitigating risks that could lead to financial misstatements, including operational risks, compliance risks, and fraud risks.\n\n4. **Operational Efficiency**: Streamlining processes to improve the efficiency of financial reporting and reduce the likelihood of errors.\n\n5. **Accountability**: Establishing clear roles and responsibilities within the organization to ensure that individuals are accountable for their contributions to the financial reporting process.\n\nIn summary, the internal control over financial reporting is essential for maintaining the integrity of Amazon's financial information, supporting effective decision-making, and fostering trust among investors and stakeholders.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.12217194570135746,
+            "recall": 0.7714285714285715,
+            "fmeasure": 0.21093749999999997
+          },
+          "rouge2": {
+            "precision": 0.07727272727272727,
+            "recall": 0.5,
+            "fmeasure": 0.13385826771653542
+          },
+          "rougeL": {
+            "precision": 0.10407239819004525,
+            "recall": 0.6571428571428571,
+            "fmeasure": 0.17968750000000003
+          }
+        }
+      },
+      "question": "What is the purpose of internal control over financial reporting for the company in the fiscal year ending January 31, 2019?",
+      "ground_truth_answer": "The purpose of internal control over financial reporting is to provide reasonable assurance regarding the reliability of financial reporting and the preparation of financial statements for external purposes in accordance with generally accepted accounting principles."
+    },
+    {
+      "rag": {
+        "answer": "The context does not provide information about who conducted the audit for AMZN in the fiscal year ending January 31, 2019.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.14285714285714285,
+            "recall": 0.375,
+            "fmeasure": 0.20689655172413796
+          },
+          "rouge2": {
+            "precision": 0.05,
+            "recall": 0.14285714285714285,
+            "fmeasure": 0.07407407407407408
+          },
+          "rougeL": {
+            "precision": 0.09523809523809523,
+            "recall": 0.25,
+            "fmeasure": 0.13793103448275862
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The audit for the company in the fiscal year ending January 31, 2019, was conducted by Ernst & Young LLP.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.42105263157894735,
+            "recall": 1.0,
+            "fmeasure": 0.5925925925925926
+          },
+          "rouge2": {
+            "precision": 0.3333333333333333,
+            "recall": 0.8571428571428571,
+            "fmeasure": 0.48
+          },
+          "rougeL": {
+            "precision": 0.42105263157894735,
+            "recall": 1.0,
+            "fmeasure": 0.5925925925925926
+          }
+        }
+      },
+      "web_search": {
+        "answer": "For the fiscal year ending January 31, 2019, Amazon.com, Inc. (AMZN) was audited by Ernst & Young LLP. This information can typically be found in the company's annual report (Form 10-K) filed with the SEC for that fiscal year.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.17073170731707318,
+            "recall": 0.875,
+            "fmeasure": 0.28571428571428575
+          },
+          "rouge2": {
+            "precision": 0.075,
+            "recall": 0.42857142857142855,
+            "fmeasure": 0.1276595744680851
+          },
+          "rougeL": {
+            "precision": 0.14634146341463414,
+            "recall": 0.75,
+            "fmeasure": 0.24489795918367344
+          }
+        }
+      },
+      "question": "Who conducted the audit for the company in the fiscal year ending January 31, 2019?",
+      "ground_truth_answer": "The audit was conducted by Ernst & Young LLP."
+    },
+    {
+      "rag": {
+        "answer": "The context provided does not contain specific information regarding the plan reported by Apple Inc. (AAPL) in its 8-K filing on July 16, 1999, for the fiscal year 1999. Therefore, I cannot provide details about that plan.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.10526315789473684,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.16
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.10526315789473684,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.16
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "In its 8-K filing on July 16, 1999, the Company reported a plan to repurchase up to $500 million of its common stock. This repurchase plan did not obligate the Company to acquire any specific number of shares or to acquire shares over any specified period of time.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.24489795918367346,
+            "recall": 1.0,
+            "fmeasure": 0.39344262295081966
+          },
+          "rouge2": {
+            "precision": 0.14583333333333334,
+            "recall": 0.6363636363636364,
+            "fmeasure": 0.23728813559322035
+          },
+          "rougeL": {
+            "precision": 0.20408163265306123,
+            "recall": 0.8333333333333334,
+            "fmeasure": 0.3278688524590165
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In its 8-K filing on July 16, 1999, Apple Inc. (AAPL) reported a plan to restructure its operations. This restructuring was aimed at improving the company's financial performance and operational efficiency. The plan included a focus on streamlining product lines, reducing costs, and enhancing the overall management structure. The company was also looking to address challenges it faced in the competitive technology market at that time. This restructuring was part of Apple's broader strategy to regain market share and improve profitability during a period of significant transition for the company.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0967741935483871,
+            "recall": 0.75,
+            "fmeasure": 0.1714285714285714
+          },
+          "rouge2": {
+            "precision": 0.021739130434782608,
+            "recall": 0.18181818181818182,
+            "fmeasure": 0.038834951456310676
+          },
+          "rougeL": {
+            "precision": 0.06451612903225806,
+            "recall": 0.5,
+            "fmeasure": 0.1142857142857143
+          }
+        }
+      },
+      "question": "What was the plan reported by the Company in its 8-K filing on July 16, 1999, for the fiscal year 1999?",
+      "ground_truth_answer": "The Company reported its plan to repurchase shares of its common stock."
+    },
+    {
+      "rag": {
+        "answer": "The change reported in the 8-K filing on December 23, 1998, indicated that Apple Computer, Inc. amended its by-laws to have its fiscal year end on the last Saturday in September instead of the last Friday. Consequently, the first fiscal quarter of 1999 ended on Saturday, December 26, 1998, adding one day to that quarter.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.24561403508771928,
+            "recall": 0.7777777777777778,
+            "fmeasure": 0.3733333333333333
+          },
+          "rouge2": {
+            "precision": 0.14285714285714285,
+            "recall": 0.47058823529411764,
+            "fmeasure": 0.2191780821917808
+          },
+          "rougeL": {
+            "precision": 0.19298245614035087,
+            "recall": 0.6111111111111112,
+            "fmeasure": 0.29333333333333333
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The Company's fiscal year end was amended to move from the last Friday in September to the last Saturday in September.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.8181818181818182,
+            "recall": 1.0,
+            "fmeasure": 0.9
+          },
+          "rouge2": {
+            "precision": 0.7142857142857143,
+            "recall": 0.8823529411764706,
+            "fmeasure": 0.7894736842105262
+          },
+          "rougeL": {
+            "precision": 0.8181818181818182,
+            "recall": 1.0,
+            "fmeasure": 0.9
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In the 8-K filing on December 23, 1998, Apple Inc. (AAPL) reported a change to its fiscal year end from September 30 to a new fiscal year end of September 28. This change was part of a broader strategy to align the company's financial reporting with its business operations and to better reflect the seasonal nature of its sales. The adjustment allowed Apple to provide more relevant financial information to investors and stakeholders.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.16,
+            "recall": 0.6666666666666666,
+            "fmeasure": 0.25806451612903225
+          },
+          "rouge2": {
+            "precision": 0.02702702702702703,
+            "recall": 0.11764705882352941,
+            "fmeasure": 0.04395604395604396
+          },
+          "rougeL": {
+            "precision": 0.10666666666666667,
+            "recall": 0.4444444444444444,
+            "fmeasure": 0.17204301075268816
+          }
+        }
+      },
+      "question": "What change was made to the Company's fiscal year end as reported in the 8-K filing on December 23, 1998?",
+      "ground_truth_answer": "The fiscal year end was moved from the last Friday in September to the last Saturday in September."
+    },
+    {
+      "rag": {
+        "answer": "The 2019 Proxy Statement for AAPL does not provide specific information regarding security ownership; instead, it references that such information is included in the 2020 Proxy Statement, which will be filed within 120 days after September 28, 2019.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.21052631578947367,
+            "recall": 0.23529411764705882,
+            "fmeasure": 0.2222222222222222
+          },
+          "rouge2": {
+            "precision": 0.08108108108108109,
+            "recall": 0.09090909090909091,
+            "fmeasure": 0.08571428571428572
+          },
+          "rougeL": {
+            "precision": 0.18421052631578946,
+            "recall": 0.20588235294117646,
+            "fmeasure": 0.19444444444444445
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The information regarding security ownership provided by the Company in its 2019 Proxy Statement includes details under the headings \u201cOther Information-Security Ownership of Certain Beneficial Owners and Management\u201d and \u201cOther Information-Equity Compensation Plan Information.\u201d This information is incorporated by reference in the Company's 2018 Form 10-K.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.52,
+            "recall": 0.7647058823529411,
+            "fmeasure": 0.6190476190476191
+          },
+          "rouge2": {
+            "precision": 0.46938775510204084,
+            "recall": 0.696969696969697,
+            "fmeasure": 0.5609756097560976
+          },
+          "rougeL": {
+            "precision": 0.5,
+            "recall": 0.7352941176470589,
+            "fmeasure": 0.5952380952380952
+          }
+        }
+      },
+      "web_search": {
+        "answer": "In the 2019 Proxy Statement for Apple Inc. (AAPL), the company typically provides detailed information regarding security ownership, which includes:\n\n1. **Principal Shareholders**: This section lists individuals or entities that own a significant percentage of the company's shares, often including major institutional investors and insiders.\n\n2. **Director and Executive Officer Ownership**: The Proxy Statement usually details the number of shares owned by each director and executive officer, including any options or restricted stock units (RSUs) they may hold.\n\n3. **Total Shares Outstanding**: The document often provides the total number of shares outstanding, which helps in understanding the ownership percentages.\n\n4. **Ownership Percentages**: The Proxy Statement typically includes the percentage of shares owned by directors, executive officers, and significant shareholders relative to the total shares outstanding.\n\n5. **Changes in Ownership**: If there have been any significant changes in ownership since the last filing, this information may also be included.\n\n6. **Equity Awards**: Information about equity awards granted to executives and directors, including the number of shares subject to options or RSUs, may also be provided.\n\nFor the most accurate and specific details, it is advisable to refer directly to the 2019 Proxy Statement filed with the SEC.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.08121827411167512,
+            "recall": 0.47058823529411764,
+            "fmeasure": 0.1385281385281385
+          },
+          "rouge2": {
+            "precision": 0.015306122448979591,
+            "recall": 0.09090909090909091,
+            "fmeasure": 0.026200873362445413
+          },
+          "rougeL": {
+            "precision": 0.07106598984771574,
+            "recall": 0.4117647058823529,
+            "fmeasure": 0.12121212121212122
+          }
+        }
+      },
+      "question": "What information regarding security ownership is provided by the Company in its 2019 Proxy Statement?",
+      "ground_truth_answer": "The information regarding security ownership of certain beneficial owners and management is set forth under the headings 'Other Information-Security Ownership of Certain Beneficial Owners and Management' and 'Other Information-Equity Compensation Plan Information'."
+    },
+    {
+      "rag": {
+        "answer": "The context does not provide a specific date for when AAPL's 2019 Proxy Statement will be filed with the SEC. It only mentions that the company is subject to the informational requirements of the Exchange Act and files proxy statements with the SEC.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "mrr": 0.0,
+          "retrieved_position": null
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2727272727272727,
+            "recall": 0.631578947368421,
+            "fmeasure": 0.38095238095238093
+          },
+          "rouge2": {
+            "precision": 0.23255813953488372,
+            "recall": 0.5555555555555556,
+            "fmeasure": 0.3278688524590164
+          },
+          "rougeL": {
+            "precision": 0.25,
+            "recall": 0.5789473684210527,
+            "fmeasure": 0.3492063492063492
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The Company's 2019 Proxy Statement will be filed with the SEC within 120 days after September 29, 2018.",
+        "rouge": {
+          "rouge1": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "fmeasure": 1.0
+          },
+          "rouge2": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "fmeasure": 1.0
+          },
+          "rougeL": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "fmeasure": 1.0
+          }
+        }
+      },
+      "web_search": {
+        "answer": "The Proxy Statement for a company is typically filed with the SEC in advance of its annual shareholder meeting. For Apple Inc. (AAPL), the Proxy Statement for the year 2019 would generally be filed in early 2019, likely around the same time as their annual meeting, which usually occurs in late February or early March.\n\nTo be more specific, Apple typically files its Proxy Statement about 30-40 days before the annual meeting. Therefore, you can expect the 2019 Proxy Statement to be filed with the SEC in January or February of 2019. For the exact date, you would need to check the SEC's EDGAR database or Apple's investor relations website for the specific filing date.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.1016949152542373,
+            "recall": 0.631578947368421,
+            "fmeasure": 0.17518248175182483
+          },
+          "rouge2": {
+            "precision": 0.05128205128205128,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.08888888888888889
+          },
+          "rougeL": {
+            "precision": 0.0847457627118644,
+            "recall": 0.5263157894736842,
+            "fmeasure": 0.145985401459854
+          }
+        }
+      },
+      "question": "When will the Company's 2019 Proxy Statement be filed with the SEC?",
+      "ground_truth_answer": "The Company's 2019 Proxy Statement will be filed with the SEC within 120 days after September 29, 2018."
+    },
+    {
+      "rag": {
+        "answer": "As of December 31, 2020, the CEO and CFO of META concluded that the company's disclosure controls and procedures are effective and designed to provide reasonable assurance that required information is recorded, processed, summarized, and reported within the specified time periods. They confirmed that these controls allow for timely decisions regarding required disclosures.",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 1.0,
+          "retrieved_position": 1
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.4074074074074074,
+            "recall": 0.8461538461538461,
+            "fmeasure": 0.5499999999999999
+          },
+          "rouge2": {
+            "precision": 0.2830188679245283,
+            "recall": 0.6,
+            "fmeasure": 0.3846153846153846
+          },
+          "rougeL": {
+            "precision": 0.2962962962962963,
+            "recall": 0.6153846153846154,
+            "fmeasure": 0.4
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "The CEO and CFO of META concluded that as of December 31, 2020, the company's disclosure controls and procedures are designed at a reasonable assurance level and are effective in providing reasonable assurance that information required to be disclosed in reports filed under the Exchange Act is recorded, processed, summarized, and reported within the specified time periods.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.4482758620689655,
+            "recall": 1.0,
+            "fmeasure": 0.6190476190476191
+          },
+          "rouge2": {
+            "precision": 0.40350877192982454,
+            "recall": 0.92,
+            "fmeasure": 0.5609756097560975
+          },
+          "rougeL": {
+            "precision": 0.4482758620689655,
+            "recall": 1.0,
+            "fmeasure": 0.6190476190476191
+          }
+        }
+      },
+      "web_search": {
+        "answer": "As of December 31, 2020, the CEO and CFO of META (formerly Facebook, Inc.) would have assessed the effectiveness of the company's disclosure controls and procedures as part of their responsibilities under the Sarbanes-Oxley Act. Typically, in SEC filings, the CEO and CFO would conclude whether these controls were effective in ensuring that information required to be disclosed in the reports filed under the Securities Exchange Act of 1934 was recorded, processed, summarized, and reported within the time periods specified.\n\nIn the 2020 SEC filing, it is likely that the CEO and CFO would have stated that they had evaluated the effectiveness of the disclosure controls and procedures and concluded that they were effective as of the end of the reporting period. This conclusion would be based on their assessment of the design and operation of the controls, as well as any identified deficiencies or material weaknesses.\n\nFor the specific language and details, one would need to refer to the actual SEC filing for that year, but generally, companies like META would aim to affirm the effectiveness of their disclosure controls to maintain investor confidence and comply with regulatory requirements.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.09895833333333333,
+            "recall": 0.7307692307692307,
+            "fmeasure": 0.17431192660550457
+          },
+          "rouge2": {
+            "precision": 0.06806282722513089,
+            "recall": 0.52,
+            "fmeasure": 0.12037037037037038
+          },
+          "rougeL": {
+            "precision": 0.08333333333333333,
+            "recall": 0.6153846153846154,
+            "fmeasure": 0.14678899082568805
+          }
+        }
+      },
+      "question": "What conclusion did the CEO and CFO of the company reach regarding the effectiveness of disclosure controls and procedures as of December 31, 2020?",
+      "ground_truth_answer": "The CEO and CFO concluded that as of December 31, 2020, the disclosure controls and procedures are designed at a reasonable assurance level and are effective."
+    },
+    {
+      "rag": {
+        "answer": "Management assessed the effectiveness of internal control over financial reporting for the fiscal year ending December 31, 2020, using the criteria set forth in the Internal Control-Integrated Framework issued by the Committee of Sponsoring Organizations of the Treadway Commission (2013 framework). They concluded that the internal control over financial reporting was effective as of that date.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "mrr": 0.5,
+          "retrieved_position": 2
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.45614035087719296,
+            "recall": 0.896551724137931,
+            "fmeasure": 0.6046511627906976
+          },
+          "rouge2": {
+            "precision": 0.39285714285714285,
+            "recall": 0.7857142857142857,
+            "fmeasure": 0.5238095238095237
+          },
+          "rougeL": {
+            "precision": 0.43859649122807015,
+            "recall": 0.8620689655172413,
+            "fmeasure": 0.5813953488372092
+          }
+        }
+      },
+      "unfiltered": {
+        "answer": "Management used the criteria set forth in Internal Control - Integrated Framework issued by the Committee of Sponsoring Organizations of the Treadway Commission (2013 framework) to assess the effectiveness of internal control over financial reporting for the fiscal year ending December 31, 2020.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.6190476190476191,
+            "recall": 0.896551724137931,
+            "fmeasure": 0.732394366197183
+          },
+          "rouge2": {
+            "precision": 0.4878048780487805,
+            "recall": 0.7142857142857143,
+            "fmeasure": 0.5797101449275363
+          },
+          "rougeL": {
+            "precision": 0.5476190476190477,
+            "recall": 0.7931034482758621,
+            "fmeasure": 0.647887323943662
+          }
+        }
+      },
+      "web_search": {
+        "answer": "For the fiscal year ending December 31, 2020, META (formerly known as Facebook, Inc.) likely used the framework established by the Committee of Sponsoring Organizations of the Treadway Commission (COSO) to assess the effectiveness of its internal control over financial reporting. The COSO framework is widely recognized and utilized by companies for evaluating internal controls, and it provides a comprehensive approach to risk management and internal control systems.\n\nIn their SEC filings, companies typically disclose the framework they used for their assessment, and COSO's Internal Control - Integrated Framework is a common choice among publicly traded companies. You can verify this information by reviewing META's specific SEC filings for that year, such as their Form 10-K, which would detail their internal control assessment process.",
+        "rouge": {
+          "rouge1": {
+            "precision": 0.16666666666666666,
+            "recall": 0.7241379310344828,
+            "fmeasure": 0.27096774193548384
+          },
+          "rouge2": {
+            "precision": 0.096,
+            "recall": 0.42857142857142855,
+            "fmeasure": 0.1568627450980392
+          },
+          "rougeL": {
+            "precision": 0.1111111111111111,
+            "recall": 0.4827586206896552,
+            "fmeasure": 0.18064516129032257
+          }
+        }
+      },
+      "question": "What framework did management use to assess the effectiveness of internal control over financial reporting for the fiscal year ending December 31, 2020?",
+      "ground_truth_answer": "Management conducted the assessment based on the criteria set forth in the Internal Control-Integrated Framework issued by the Committee of Sponsoring Organizations of the Treadway Commission (2013 framework)."
     }
   ]
 }
