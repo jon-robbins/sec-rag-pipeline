@@ -9,13 +9,17 @@ Defines the three evaluation scenarios for the RAG pipeline.
 from typing import Dict, Any, Tuple
 from openai import OpenAI
 from rag.pipeline import RAGPipeline
+from rag.document_store import DocumentStore
 
 def _format_question_with_context(question: str, ticker: str, fiscal_year: int) -> str:
-    """Add company and year context to the question."""
-    return f"Company: {ticker}\nSEC Filing year: {fiscal_year}\n\n{question}"
+    """Add company and year context to the question for better parsing."""
+    # Format with explicit ticker and fiscal year for optimal parsing
+    formatted = f"Question about ticker {ticker} for fiscal year {fiscal_year}: {question}"
+    print(f"🔍 Formatted question: {formatted}")
+    return formatted
 
 def run_unfiltered_context_scenario(
-    pipeline: RAGPipeline,
+    doc_store: "DocumentStore",
     openai_client: OpenAI,
     qa_item: Dict[str, Any]
 ) -> str:
@@ -24,13 +28,10 @@ def run_unfiltered_context_scenario(
     ticker = qa_item["ticker"]
     year = qa_item["year"]
     
-    full_text = pipeline.document_store.get_full_filing_text(ticker, year)
+    full_text = doc_store.get_full_filing_text(ticker, year)
     
     if not full_text:
-        chunks = pipeline.retrieve_by_filter(ticker=ticker, fiscal_year=year, limit=100)
-        if not chunks:
-            return f"[No SEC filing data available for {ticker} {year}]"
-        full_text = "\n\n".join([chunk.get("text", "") for chunk in chunks])[:50000]
+        return f"[No SEC filing data available for {ticker} {year}]"
 
     system_prompt = "You are a financial analyst. Answer the question based ONLY on the provided SEC filing context. Be accurate and concise."
     formatted_question = _format_question_with_context(question, ticker, year)

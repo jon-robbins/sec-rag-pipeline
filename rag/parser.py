@@ -3,11 +3,27 @@ Query parsing utilities for the SEC Vector Store.
 """
 
 import json
-from typing import Dict, Any, Tuple, Union
+from typing import Dict, Any, Tuple, Union, Callable
+import backoff
+from openai import OpenAIError
 
-from .openai_helpers import retry_openai_call
 from .config import DEFAULT_OPENAI_KEY
 import openai
+
+# Decorator for retrying OpenAI API calls with exponential backoff
+@backoff.on_exception(backoff.expo, OpenAIError, max_tries=5, factor=1.5)
+def retry_openai_call(api_call: Callable[..., Any], **kwargs) -> Any:
+    """
+    Retries an OpenAI API call with exponential backoff.
+    
+    Args:
+        api_call: The OpenAI API function to call.
+        **kwargs: Arguments to pass to the API call.
+        
+    Returns:
+        The result of the API call.
+    """
+    return api_call(**kwargs)
 
 
 class QueryParser:
@@ -81,9 +97,9 @@ Use these SEC 10-K item codes when identifying relevant sections:
   "Item 2": "Properties",
   "Item 3": "Legal Proceedings",
   "Item 4": "Mine Safety Disclosures (mining companies only)",
-  "Item 5": "Market for Registrant’s Common Equity and Related Stockholder Matters",
+  "Item 5": "Market for Registrant's Common Equity and Related Stockholder Matters",
   "Item 6": "[Removed and Reserved]",
-  "Item 7": "Management’s Discussion and Analysis (MD&A)",
+  "Item 7": "Management's Discussion and Analysis (MD&A)",
   "Item 7A": "Quantitative and Qualitative Disclosures About Market Risk",
   "Item 8": "Financial Statements and Supplementary Data",
   "Item 9": "Changes in and Disagreements with Accountants on Accounting/Financial Disclosure",

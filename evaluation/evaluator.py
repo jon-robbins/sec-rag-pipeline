@@ -9,6 +9,7 @@ import random
 from pathlib import Path
 from typing import List, Dict, Any
 from collections import defaultdict
+import time
 
 from openai import OpenAI
 from tqdm.auto import tqdm
@@ -25,6 +26,8 @@ from evaluation.scenarios import (
 )
 from evaluation.metrics import calculate_retrieval_metrics, calculate_rouge_scores
 from evaluation.generate_qa_dataset import generate_qa_pairs, BalancedChunkSampler
+from rag.config import QA_DATASET_PATH
+from rag.document_store import DocumentStore
 
 
 class ComprehensiveEvaluator:
@@ -40,62 +43,77 @@ class ComprehensiveEvaluator:
         """
         self.pipeline = pipeline
         self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.qa_dataset_path = QA_DATASET_PATH
         self.qa_dataset = None
+        self.doc_store = DocumentStore(tickers_of_interest=pipeline.document_store.tickers)
 
     def _get_chunks_from_pipeline(self):
         """
         Get chunks directly from the RAG pipeline (always fresh).
         """
-        if not hasattr(self.pipeline, 'chunks') or not self.pipeline.chunks:
+        if not hasattr(self.pipeline, 'get_chunks') or not self.pipeline.get_chunks():
             raise RuntimeError("Pipeline chunks not available. Ensure the RAG pipeline is properly initialized.")
-        return self.pipeline.chunks
+        return self.pipeline.get_chunks()
 
     def _load_or_generate_qa_dataset(self, num_questions: int) -> List[Dict[str, Any]]:
         """
-        Loads the QA dataset or generates a new one if it doesn't exist or is empty.
-        Only generates enough questions to satisfy the test size.
+        Loads the QA dataset, generates more questions if needed, and samples
+        the requested number of questions for the evaluation.
         """
-        qa_dataset_path = Path("data/qa_dataset.jsonl")
+        qa_data = []
+        if self.qa_dataset_path.exists():
+            with open(self.qa_dataset_path, "r") as f:
+                for line in f:
+                    try:
+                        qa_data.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        print(f"Warning: Skipping malformed line in {self.qa_dataset_path}")
         
-        if qa_dataset_path.exists():
-            with open(qa_dataset_path, "r") as f:
-                qa_data = [json.loads(line) for line in f]
-            if len(qa_data) >= num_questions:
-                print(f"✅ Loaded {len(qa_data)} QA pairs from {qa_dataset_path}.")
-                # Randomly sample to the number of questions needed
-                return random.sample(qa_data, num_questions)
+        print(f"✅ Found {len(qa_data)} existing QA pairs in {self.qa_dataset_path}.")
 
-        print(f"QA dataset not found or insufficient. Generating {num_questions} new QA pairs...")
-        
-        # Get chunks from the pipeline (always fresh)
-        chunks = self._get_chunks_from_pipeline()
+        # --- Generate more questions if needed ---
+        if len(qa_data) < num_questions:
+            num_to_generate = num_questions - len(qa_data)
+            print(f" Generating {num_to_generate} missing questions")
 
-        # Create a balanced sample
-        sampler = BalancedChunkSampler()
-        grouped_chunks = sampler.group_chunks_by_keys(chunks)
-        balanced_chunks = sampler.stratified_sample(grouped_chunks)
+            # Get chunks from the pipeline
+            chunks = self._get_chunks_from_pipeline()
 
-        # We need to sample enough chunks to generate the desired number of questions.
-        # The generator creates 2 questions per chunk.
-        num_chunks_to_sample = (num_questions + 1) // 2
-        if len(balanced_chunks) < num_chunks_to_sample:
-            print(f"⚠️ Warning: Not enough balanced chunks ({len(balanced_chunks)}) to generate {num_questions} questions. Using all available.")
-            chunks_for_qa = balanced_chunks
-        else:
-            chunks_for_qa = random.sample(balanced_chunks, num_chunks_to_sample)
-        
-        print(f"Selected {len(chunks_for_qa)} chunks to generate ~{num_questions} questions.")
-        
-        generate_qa_pairs(chunks_for_qa, str(qa_dataset_path))
-        
-        with open(qa_dataset_path, "r") as f:
-            qa_data = [json.loads(line) for line in f]
-        
-        # Final check and sample
-        if len(qa_data) > num_questions:
+            # Create a balanced sample of chunks for new QA generation
+            sampler = BalancedChunkSampler()
+            grouped_chunks = sampler.group_chunks_by_keys(chunks)
+            balanced_chunks = sampler.stratified_sample(grouped_chunks)
+            
+            # We need to sample enough chunks to generate the desired number of questions.
+            # The generator creates ~2 questions per chunk.
+            num_chunks_to_sample = (num_to_generate + 1) // 2
+            if len(balanced_chunks) < num_chunks_to_sample:
+                print(f"⚠️ Warning: Not enough balanced chunks ({len(balanced_chunks)}) to generate {num_to_generate} new questions. Using all available.")
+                chunks_for_qa = balanced_chunks
+            else:
+                chunks_for_qa = random.sample(balanced_chunks, num_chunks_to_sample)
+            
+            print(f"Selected {len(chunks_for_qa)} chunks to generate ~{num_to_generate} new questions.")
+            
+            # Generate new QA pairs and append to the existing file
+            generate_qa_pairs(chunks_for_qa, str(self.qa_dataset_path), append=True)
+            
+            # --- Reload the full dataset ---
+            qa_data = []
+            with open(self.qa_dataset_path, "r") as f:
+                for line in f:
+                    try:
+                        qa_data.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        print(f"Warning: Skipping malformed line in {self.qa_dataset_path}")
+            print(f"✅ Reloaded dataset with a total of {len(qa_data)} QA pairs.")
+
+        # --- Final sampling ---
+        if len(qa_data) >= num_questions:
             return random.sample(qa_data, num_questions)
-        return qa_data
-
+        else:
+            print(f"⚠️ Warning: Final dataset size ({len(qa_data)}) is less than requested ({num_questions}). Using all available questions.")
+            return qa_data
 
     def evaluate_single_question(self, qa_item: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -118,7 +136,11 @@ class ComprehensiveEvaluator:
         }
 
         # 2. Unfiltered Context Scenario
-        unfiltered_answer = run_unfiltered_context_scenario(self.pipeline, self.openai_client, qa_item)
+        unfiltered_answer = run_unfiltered_context_scenario(
+            doc_store=self.doc_store,
+            openai_client=self.openai_client,
+            qa_item=qa_item
+        )
         results["unfiltered"] = {
             "answer": unfiltered_answer,
             "rouge": calculate_rouge_scores(unfiltered_answer, ground_truth_answer)
@@ -133,10 +155,14 @@ class ComprehensiveEvaluator:
         
         return results
 
-    def evaluate_all_scenarios(self, num_questions: int = 20) -> Dict[str, Any]:
+    def evaluate_all_scenarios(self, num_questions: int = 50) -> Dict[str, Any]:
         """
         Runs the full evaluation across all scenarios and aggregates the results.
         """
+        # Pre-load all necessary data before starting the evaluation loop
+        print("Pre-loading all necessary data for evaluation...")
+        self.doc_store.get_all_sentences()  # This will load the document store data
+        
         self.qa_dataset = self._load_or_generate_qa_dataset(num_questions)
         
         all_results = []
@@ -147,6 +173,7 @@ class ComprehensiveEvaluator:
             single_result["question"] = qa_item["question"]
             single_result["ground_truth_answer"] = qa_item["answer"]
             all_results.append(single_result)
+            time.sleep(2)  # Add a delay to avoid rate limiting
         
         return self._aggregate_results(all_results)
 

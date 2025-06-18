@@ -3,11 +3,27 @@ Answer generation using GPT based on retrieved document chunks.
 """
 
 import json
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Callable
+import backoff
+from openai import OpenAIError
 
-from .openai_helpers import retry_openai_call
 from .config import DEFAULT_OPENAI_KEY
 import openai
+
+# Decorator for retrying OpenAI API calls with exponential backoff
+@backoff.on_exception(backoff.expo, OpenAIError, max_tries=5, factor=1.5)
+def retry_openai_call(api_call: Callable[..., Any], **kwargs) -> Any:
+    """
+    Retries an OpenAI API call with exponential backoff.
+    
+    Args:
+        api_call: The OpenAI API function to call.
+        **kwargs: Arguments to pass to the API call.
+        
+    Returns:
+        The result of the API call.
+    """
+    return api_call(**kwargs)
 
 
 class AnswerGenerator:
@@ -182,7 +198,8 @@ class AnswerGenerator:
         Returns:
             Full OpenAI API response object
         """
-        system_prompt = """You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context.
+        system_prompt = """
+You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context.
 
 IMPORTANT GUIDELINES:
 1. Answer based ONLY on the information provided in the context
@@ -199,7 +216,8 @@ RESPONSE FORMAT:
 - Be professional but conversational
 - If you're unsure, express appropriate uncertainty"""
 
-        user_prompt = f"""Question: {question}
+        user_prompt = f"""
+Question: {question}
 
 Context from SEC filings:
 {context}

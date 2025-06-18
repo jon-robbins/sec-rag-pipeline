@@ -1,1 +1,0 @@
-import duckdb; result = duckdb.query("SELECT COUNT(*) FROM read_parquet('data/df_filings_full.parquet') WHERE UNNEST(tickers) IN ('AAPL', 'META', 'TSLA', 'NVDA', 'AMZN')").fetchone(); print(f'Records with target tickers: {result[0]}')

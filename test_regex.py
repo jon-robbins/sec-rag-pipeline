@@ -1,1 +1,0 @@
-import duckdb; print('Testing regex...'); result = duckdb.query("SELECT docID, regexp_extract(docID, '_(\\d{4})$', 1) as year FROM read_parquet('data/df_filings_full.parquet') LIMIT 5").fetchall(); [print(f'docID: {row[0]}, year: {row[1]}') for row in result]

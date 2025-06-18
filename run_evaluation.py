@@ -11,17 +11,22 @@ evaluation across three different scenarios:
 import os
 import sys
 from pathlib import Path
+import argparse
 
-def run_pipeline_evaluation():
+from rag.pipeline import RAGPipeline
+from evaluation.evaluator import ComprehensiveEvaluator
+
+def run_pipeline_evaluation(num_questions: int = 20):
     """
     Initializes the RAG pipeline, runs the comprehensive evaluation,
     and prints the results.
+    
+    Args:
+        num_questions: The number of questions to evaluate.
     """
     # Ensure the main project directory is in the Python path
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
-    from rag.pipeline import RAGPipeline
-    from evaluation.evaluator import ComprehensiveEvaluator
 
     if not os.getenv("OPENAI_API_KEY"):
         print("❌ OPENAI_API_KEY environment variable not set.")
@@ -31,14 +36,16 @@ def run_pipeline_evaluation():
         # 1. Initialize the entire RAG system.
         print("="*80)
         print("STEP 1: Initializing RAG Pipeline...")
-        pipeline = RAGPipeline()
+        pipeline = RAGPipeline(
+            target_tokens=750,
+            overlap_tokens=150
+        )
         print("="*80)
 
         # 2. Run the evaluation using the pipeline
         print("STEP 2: Running RAG Pipeline Evaluation...")
         evaluator = ComprehensiveEvaluator(pipeline)
-        # Only evaluate the RAG scenario with 20 questions as requested
-        results = evaluator.evaluate_all_scenarios(num_questions=20)
+        results = evaluator.evaluate_all_scenarios(num_questions=num_questions)
         print("="*80)
         
         # 3. Print the final comparison
@@ -61,4 +68,13 @@ def run_pipeline_evaluation():
     return 0
 
 if __name__ == "__main__":
-    sys.exit(run_pipeline_evaluation())
+    parser = argparse.ArgumentParser(description="Run the RAG pipeline evaluation.")
+    parser.add_argument(
+        "--num-questions",
+        type=int,
+        default=50,
+        help="The number of questions to run the evaluation on."
+    )
+    args = parser.parse_args()
+    
+    sys.exit(run_pipeline_evaluation(num_questions=args.num_questions))

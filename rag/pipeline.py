@@ -3,91 +3,100 @@ The RAGPipeline class, which orchestrates the entire RAG system,
 from data loading to answer generation.
 """
 from __future__ import annotations
-import os
+import logging
+from typing import Dict, Any, Optional, List
 import pickle
 from pathlib import Path
-from typing import Dict, Any, Optional, List
+
 import pandas as pd
 
-from .vector_store import VectorStore
+from .chunkers import SmartChunker
+# from .config import RAW_DATA_PATH
 from .document_store import DocumentStore
-from .data_processing.prepare_data import prepare_and_save_data
-from .data_processing.chunkers import SmartChunker
 from .embedding import EmbeddingManager
+from .generation import AnswerGenerator
+from .parser import QueryParser
+from .search import SearchManager
+from .vector_store import VectorStore
+from .config import CACHE_DIR
 
-# Define cache paths
-CACHE_DIR = Path("cache")
-PROCESSED_DATA_PATH = CACHE_DIR / "filings_processed.parquet"
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class RAGPipeline:
     """
     Orchestrates the entire RAG pipeline from data loading to querying.
-    The constructor handles the entire setup process, including data
-    preparation, chunking, and embedding generation. Chunks are always
-    generated fresh to ensure consistency.
     """
-    def __init__(self):
-        """
-        Initializes the full RAG pipeline, processing data if necessary.
-        """
-        print("🔧 Initializing RAG Pipeline...")
-        CACHE_DIR.mkdir(exist_ok=True)
+    def __init__(self, tickers_of_interest=None, target_tokens=750, overlap_tokens=150):
+        if tickers_of_interest is None:
+            tickers_of_interest = ['AAPL', 'META', 'TSLA', 'NVDA', 'AMZN']
 
-        # 1. Prepare and load processed filings
-        if not PROCESSED_DATA_PATH.exists():
-            print(f"Processed data not found. Generating from source...")
-            prepare_and_save_data(output_path=str(PROCESSED_DATA_PATH))
-        else:
-            print(f"✅ Found processed data at {PROCESSED_DATA_PATH}")
-        self.document_store = DocumentStore(processed_path=str(PROCESSED_DATA_PATH))
-
-        # 2. Always generate chunks fresh from processed data
-        print("🔄 Generating chunks fresh from processed data...")
-        df_processed = self.document_store.get_all_filings_for_chunking()
+        logger.info("Initializing RAG pipeline...")
+        self.document_store = DocumentStore(tickers_of_interest=tickers_of_interest)
         
-        exploded_data = []
-        for _, row in df_processed.iterrows():
-            report = row.get('report', {})
-            for section, sentences in report.items():
-                # Bug fix: Ensure sentences is a list before joining
-                if isinstance(sentences, list):
-                    text = ' '.join(sentences)
-                    exploded_data.append({
-                        'text': text,
-                        'ticker': row['ticker'],
-                        'fiscal_year': row['fiscal_year'],
-                        'section': section,
-                        'item': section
-                    })
-        df_exploded = pd.DataFrame(exploded_data)
-        print(f"📄 Exploded into {len(df_exploded)} section documents for chunking.")
+        # --- Caching Logic ---
+        hard_ceiling = 1000
+        cache_dir_name = f"target_{target_tokens}_overlap_{overlap_tokens}_ceiling_{hard_ceiling}"
+        embedding_cache_dir = CACHE_DIR / "embeddings"
+        embedding_cache_dir.mkdir(parents=True, exist_ok=True)
+        chunk_cache_file = embedding_cache_dir / f"{cache_dir_name}.pkl"
 
-        chunker = SmartChunker()
-        chunk_objects = chunker.run(df_exploded)
-        chunks = [chunk.to_dict() for chunk in chunk_objects]
-        self.chunks = chunks  # Store chunks for evaluation access
-        print(f"✅ Generated {len(chunks)} chunks fresh")
-
-        # 3. Generate embeddings fresh each run
-        print("🔄 Generating embeddings for chunks...")
-        embedding_manager = EmbeddingManager()
-        texts = [chunk["text"] for chunk in chunks]
-        embeddings = embedding_manager.embed_texts_in_batches(texts)
-        print(f"✅ Generated {len(embeddings)} embeddings")
-
-        # 4. Initialize and load Vector Store
-        print("🧠 Initializing vector store...")
-        self.vector_store = VectorStore(use_docker=False)
-        if self.vector_store.get_status().get("points_count", 0) != len(chunks):
-            print("Vector store is out of sync. Loading data...")
-            
-            # The chunk 'id' is now the UUID. 'human_readable_id' is in metadata.
-            self.vector_store.upsert_chunks_with_embeddings(chunks, embeddings)
+        if chunk_cache_file.exists():
+            logger.info(f"✅ Loading cached chunks and embeddings from {chunk_cache_file}")
+            with open(chunk_cache_file, "rb") as f:
+                self.chunks = pickle.load(f)
         else:
-            print("✅ Vector store is already up to date.")
+            logger.info(f"💾 Cached chunks not found at {chunk_cache_file}. Generating fresh...")
             
-        print("✅ RAG Pipeline Initialized Successfully!")
+            logger.info("🔄 Generating chunks from sorted sentences...")
+            df_sentences = self.document_store.get_all_sentences() # This will trigger data loading
+            
+            # Add 'item' column for compatibility with chunker
+            df_sentences['item'] = df_sentences['section']
+            
+            chunker = SmartChunker(
+                target_tokens=target_tokens,
+                hard_ceiling=hard_ceiling,
+                overlap_tokens=overlap_tokens
+            )
+            chunk_objects = chunker.run(df_sentences)
+
+            logger.info("🔄 Generating embeddings for chunks...")
+            embedding_manager = EmbeddingManager()
+            texts = [chunk.text for chunk in chunk_objects]
+            embeddings = embedding_manager.embed_texts_in_batches(texts)
+            logger.info(f"✅ Generated {len(embeddings)} embeddings")
+
+            if len(chunk_objects) != len(embeddings):
+                raise ValueError("Mismatch between number of chunks and embeddings")
+            
+            for i, chunk in enumerate(chunk_objects):
+                chunk.embedding = embeddings[i]
+
+            self.chunks = chunk_objects
+            
+            logger.info(f"💾 Saving {len(self.chunks)} chunks with embeddings to cache...")
+            with open(chunk_cache_file, "wb") as f:
+                pickle.dump(self.chunks, f)
+
+        # --- Vector Store Upsert ---
+        logger.info("🧠 Initializing vector store...")
+        self.vector_store = VectorStore(use_docker=False)
+        
+        chunk_dicts = [chunk.to_dict() for chunk in self.chunks]
+        embeddings_list = [chunk.embedding for chunk in self.chunks]
+        
+        if any(e is None for e in embeddings_list):
+            raise ValueError("Some chunks are missing embeddings. Clear cache and re-run.")
+
+        if self.vector_store.get_status().get("points_count", 0) != len(chunk_dicts):
+            logger.info("Vector store is out of sync. Loading data...")
+            self.vector_store.upsert_chunks_with_embeddings(chunk_dicts, embeddings_list)
+        else:
+            logger.info("✅ Vector store is already up to date.")
+            
+        logger.info("✅ RAG Pipeline Initialized Successfully!")
 
     def answer(self, question: str, **kwargs) -> Dict[str, Any]:
         """Answer a question using the RAG pipeline."""
@@ -162,4 +171,7 @@ class RAGPipeline:
             "summary": summary,
             "sources": sources[:10],  # Limit to top 10 sources
             "chunks_used": len(chunks)
-        } 
+        }
+    
+    def get_chunks(self) -> List[Dict[str, Any]]:
+        return [chunk.to_dict() for chunk in self.chunks] 

@@ -20,68 +20,46 @@ class SearchManager:
     
     def search(
         self,
-        query: str,
+        query: Optional[str] = None,
         *,
         ticker: Optional[str] = None,
         fiscal_year: Optional[int] = None,
         sections: Optional[List[str]] = None,
         top_k: int = 10,
+        query_vector: Optional[List[float]] = None
     ) -> List[Dict[str, Any]]:
         """
-        Search for similar documents with optional filtering.
-        
-        Args:
-            query: Search query string
-            ticker: Optional ticker symbol filter
-            fiscal_year: Optional fiscal year filter
-            sections: Optional SEC sections filter
-            top_k: Number of results to return
-            
-        Returns:
-            List of search results with scores and metadata
+        Search for documents using a query string and/or metadata filters.
         """
-        # Auto-extract constraints from query if not provided
-        if ticker is None and fiscal_year is None and sections is None:
-            if self.query_parser:
-                parsed = self.query_parser.parse_query(query)
-                ticker = parsed.get("ticker")
-                fiscal_year = parsed.get("fiscal_year")
-                sections = parsed.get("sections")
-
+        query_vector = None  # Initialize to None
+        
+        parsed_query = self.query_parser.parse_query(query or "")
+        
+        # Auto-extract constraints from query if not provided explicitly
+        ticker = ticker or parsed_query.get("ticker")
+        fiscal_year = fiscal_year or parsed_query.get("fiscal_year")
+        sections = sections or parsed_query.get("sections")
+        
         # Build query filter
         query_filter = self._build_filter(ticker, fiscal_year, sections)
-
-        # Get query vector
-        if self.embedding_manager is None:
-            raise ValueError("EmbeddingManager required for search")
         
-        query_vector = self.embedding_manager.embed_texts([query])[0]
-
+        # Embed the query
+        if query_vector is None:
+            if not query:
+                raise ValueError("Either `query` or `query_vector` must be provided.")
+            
+            # Use the batch embedding method for consistency
+            query_vector = self.embedding_manager.embed_texts_in_batches([query])[0]
+        
         # Execute search
-        result = self.client.query_points(
+        results = self.client.search(
             collection_name=self.config.collection_name,
-            query=query_vector,
+            query_vector=query_vector,
             query_filter=query_filter,
             limit=top_k,
-            with_payload=True,
         )
-
-        # Normalize result format
-        if isinstance(result, tuple):  # ("points", list)
-            result = result[1]
-        elif hasattr(result, "points"):  # QueryResponse
-            result = result.points
-
-        # Format results
-        return [
-            {
-                "id": point.id,
-                "score": point.score,
-                **point.payload,
-                "text": point.payload.get("text", ""),
-            }
-            for point in result
-        ]
+        
+        return [result.model_dump() for result in results]
     
     def retrieve_by_filter(
         self,

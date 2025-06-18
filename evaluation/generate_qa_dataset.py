@@ -21,6 +21,7 @@ import tiktoken
 from pathlib import Path
 from collections import defaultdict, Counter
 from typing import List, Dict
+from rag.config import QA_DATASET_PATH
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -123,8 +124,15 @@ class BalancedChunkSampler:
                     }
                 f.write(json.dumps(chunk_data) + "\n")
 
-def generate_qa_pairs(chunks: List, output_path: str):
-    """Generate QA pairs using LangChain's ChatOpenAI."""
+def generate_qa_pairs(chunks: List, output_path: str, append: bool = False):
+    """
+    Generate QA pairs using LangChain's ChatOpenAI.
+    
+    Args:
+        chunks: List of chunk dictionaries or objects.
+        output_path: Path to save the QA dataset.
+        append: If True, append to existing file. Otherwise, overwrite.
+    """
     try:
         from langchain_openai import ChatOpenAI
         from langchain.schema import HumanMessage, SystemMessage
@@ -137,6 +145,8 @@ def generate_qa_pairs(chunks: List, output_path: str):
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
+    file_mode = "a" if append else "w"
+    
     system_prompt = """
 You are a financial analyst assistant. Your job is to generate high-quality question-answer pairs based on SEC filing text.
 INSTRUCTIONS:
@@ -147,7 +157,7 @@ INSTRUCTIONS:
 """
 
     progress_bar = tqdm(chunks, desc="🤖 Generating QA pairs (via LangChain)", unit="chunk")
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(output_path, file_mode, encoding="utf-8") as f:
         for chunk in progress_bar:
             try:
                 # Handle both dict and object formats
@@ -191,49 +201,37 @@ INSTRUCTIONS:
 # --- Main Orchestration ---
 
 def main():
-    """Main function to generate the QA dataset."""
-    print("🚀 Starting QA dataset generation...")
+    """Main function to run the full QA generation pipeline."""
+    # Initialize the document store to get access to all sentences
+    print("Initializing DocumentStore to get chunks...")
+    doc_store = DocumentStore()
+    df_sentences = doc_store.get_all_sentences()
+
+    # Create section-level documents for chunking
+    section_docs = df_sentences.groupby(['docID', 'ticker', 'fiscal_year', 'section']).agg(
+        text=('sentence', ' '.join)
+    ).reset_index()
+    section_docs.rename(columns={'section': 'item'}, inplace=True)
+    section_docs['section'] = section_docs['item']
+
+    # Initialize the chunker
+    chunker = SmartChunker(
+        target_tokens=750,
+        hard_ceiling=1000,
+        overlap_tokens=150
+    )
+    all_chunks = chunker.run(section_docs)
     
-    if not os.getenv("OPENAI_API_KEY"):
-        print("❌ OPENAI_API_KEY environment variable not set.")
-        return 1
-    
-    chunks_path = Path("data/chunks.pkl")
-    if not chunks_path.exists():
-        print(f"❌ {chunks_path} not found. Please create it first.")
-        return 1
-    
-    with open(chunks_path, "rb") as f:
-        chunks = pickle.load(f)
-    print(f"📊 Loaded {len(chunks)} chunks from {chunks_path}")
-    
-    print("\n🎯 Creating balanced sample...")
-    sampler = BalancedChunkSampler(max_per_group=3, balance_companies=True)
-    grouped = sampler.group_chunks_by_keys(chunks)
-    balanced_chunks = sampler.stratified_sample(grouped)
-    
-    company_dist = Counter(c.metadata["ticker"] for c in balanced_chunks)
-    print("\n📈 Final distribution after balancing:")
-    print(f"   - By company: {dict(company_dist)}")
-    
-    balanced_chunks_path = Path("data/balanced_chunks_for_eval.jsonl")
-    sampler.save_chunks_to_jsonl(balanced_chunks, balanced_chunks_path)
-    print(f"\n💾 Balanced chunk sample saved for reference to {balanced_chunks_path}")
-    
-    print("\n🤖 Generating QA pairs...")
-    qa_output_path = Path("data/qa_dataset.jsonl")
+    # Balance the chunks
+    sampler = BalancedChunkSampler()
+    grouped_chunks = sampler.group_chunks_by_keys(all_chunks)
+    balanced_chunks = sampler.stratified_sample(grouped_chunks)
+
+    # Generate QA pairs
+    qa_output_path = QA_DATASET_PATH
+    print(f"\n🚀 Generating QA pairs from {len(balanced_chunks)} balanced chunks...")
     generate_qa_pairs(balanced_chunks, str(qa_output_path))
-    
-    if qa_output_path.exists():
-        with open(qa_output_path, "r") as f:
-            lines = f.readlines()
-        print(f"\n🎉 Success! Generated {len(lines)} QA pairs.")
-        print(f"   -> Saved to: {qa_output_path}")
-    else:
-        print("\n❌ QA dataset generation failed.")
-        return 1
-        
-    return 0
+    print(f"\n✅ All done! QA dataset saved to: {qa_output_path}")
 
 if __name__ == "__main__":
     sys.exit(main()) 

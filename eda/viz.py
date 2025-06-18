@@ -42,7 +42,7 @@ def count_tokens(row):
     return len(enc.encode(str(row)))
 
 #plot tight graph of distribution of num_tokens by ticker and year
-def plot_token_distribution(df, log_scale=False):
+def plot_token_distribution(df, log_scale=False, title=None, ylim=None):
     """
     Plot the distribution of token counts by ticker and fiscal year.
     Each company gets its own subplot showing token distribution across years.
@@ -68,18 +68,18 @@ def plot_token_distribution(df, log_scale=False):
         
         # Create violin plot
         sns.violinplot(data=ticker_data, x='fiscal_year', y='num_tokens', ax=axes[idx])
-        
+        if ylim:
+            axes[idx].set_ylim(ylim)
         # Customize subplot
-        if log_scale:
-            axes[idx].set_yscale('log')
-            axes[idx].set_ylabel('Number of Tokens (log scale)')
-            plt.suptitle('Token Distribution by Company and Year (log scale)', y=1.02)
-        else:
-            axes[idx].set_ylabel('Number of Tokens')
-            plt.suptitle('Token Distribution by Company and Year', y=1.02)
+        axes[idx].set_yscale('log' if log_scale else 'linear')
+        axes[idx].set_ylabel(f'Number of Tokens{" (log scale)" if log_scale else ""}')
+        
+        # Set title
+        default_title = f'Token Distribution by Company and Year{" (log scale)" if log_scale else ""}'
+        plt.suptitle(title if title else default_title, y=1.02)
+        
         axes[idx].set_title(f'{ticker}')
         axes[idx].set_xlabel('Fiscal Year')
-        
         axes[idx].tick_params(axis='x', rotation=45)
     
     # Remove empty subplots
