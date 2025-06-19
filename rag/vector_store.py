@@ -29,6 +29,7 @@ Example Usage:
 
 from __future__ import annotations
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
+import logging
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
@@ -43,6 +44,7 @@ from .generation import AnswerGenerator
 if TYPE_CHECKING:
     from .pipeline import RAGPipeline
 
+logger = logging.getLogger(__name__)
 
 class VectorStore:
     """A wrapper for the Qdrant client that simplifies interactions."""
@@ -95,7 +97,7 @@ class VectorStore:
                 print("✅ Docker Qdrant connection successful.")
                 return client
             except Exception as e:
-                print(f"❌ Docker connection failed: {e}")
+                logger.error(f"❌ Docker connection failed: {e}")
                 raise
         else:
             print("🧠 Using in-memory Qdrant")
@@ -107,6 +109,13 @@ class VectorStore:
         """
         # First, search for relevant chunks
         chunks = self.search(query=question, **kwargs)
+        
+        # Assert that we have chunks with actual text content
+        if chunks:
+            assert any(
+                c.get("text") or c.get("payload", {}).get("text") 
+                for c in chunks
+            ), "Search returned chunks without text content in top-level or payload"
         
         # Then, generate an answer using the retrieved chunks
         result = self.answer_generator.generate_answer(
@@ -146,10 +155,6 @@ class VectorStore:
             vectors=embeddings,
             texts=[chunk['text'] for chunk in chunks]
         )
-
-    def generate_summary(self, topic: str, chunks: List[Dict[str, Any]]) -> str:
-        """Helper method to generate a summary from chunks."""
-        return self.answer_generator.generate_summary(chunks, topic)
 
     def get_status(self) -> Dict[str, Any]:
         """Get the status of the vector store and its collection."""

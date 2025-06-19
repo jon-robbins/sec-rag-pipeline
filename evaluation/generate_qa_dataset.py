@@ -141,7 +141,7 @@ def generate_qa_pairs(chunks: List, output_path: str, append: bool = False):
         print("❌ Required packages not installed. Run: pip install langchain langchain-openai tqdm")
         return
 
-    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=60)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     

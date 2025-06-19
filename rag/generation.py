@@ -156,13 +156,29 @@ class AnswerGenerator:
         chunks_used = 0
         
         for i, chunk in enumerate(chunks[:max_chunks]):
-            chunk_text = chunk.get("text", "")
+            # Extract text - try top level first, then payload
+            chunk_text = (
+                chunk.get("text")
+                or chunk.get("payload", {}).get("text", "")
+            )
             
-            # Create source reference
-            ticker = chunk.get("ticker", "UNKNOWN")
-            year = chunk.get("fiscal_year", "UNKNOWN")
-            section = chunk.get("item", "UNKNOWN")
-            section_desc = chunk.get("item_desc", "")
+            # Extract metadata - try top level first, then payload
+            ticker = (
+                chunk.get("ticker")
+                or chunk.get("payload", {}).get("ticker", "UNKNOWN")
+            )
+            year = (
+                chunk.get("fiscal_year")
+                or chunk.get("payload", {}).get("fiscal_year", "UNKNOWN")
+            )
+            section = (
+                chunk.get("item")
+                or chunk.get("payload", {}).get("item", "UNKNOWN")
+            )
+            section_desc = (
+                chunk.get("item_desc")
+                or chunk.get("payload", {}).get("item_desc", "")
+            )
             score = chunk.get("score", 0.0)
             
             source_info = f"{ticker} {year} Section {section}"
@@ -232,7 +248,7 @@ Please provide a brief, accurate answer based on the above context."""
                 {"role": "user", "content": user_prompt}
             ],
             temperature=0.1,  # Low temperature for factual accuracy
-            max_tokens=500,   # Limit response length
+            max_tokens=60,   # Limit response length
         )
     
     def _assess_confidence(self, chunks: List[Dict[str, Any]], chunks_used: int) -> str:
@@ -259,43 +275,3 @@ Please provide a brief, accurate answer based on the above context."""
             return "medium"
         else:
             return "low"
-    
-    def generate_summary(self, chunks: List[Dict[str, Any]], topic: str = None) -> str:
-        """
-        Generate a summary of the retrieved chunks.
-        
-        Args:
-            chunks: Retrieved chunks
-            topic: Optional topic focus for the summary
-            
-        Returns:
-            Generated summary string
-        """
-        if not chunks:
-            return "No relevant information found."
-        
-        context = self._prepare_context(chunks, max_chunks=15, max_context_length=12000)
-        
-        topic_clause = f" about {topic}" if topic else ""
-        
-        summary_prompt = f"""Please provide a comprehensive summary of the key information{topic_clause} from the following SEC filing excerpts:
-
-{context['text']}
-
-Focus on the most important facts, figures, and insights. Organize the information logically and be specific with details."""
-
-        try:
-            response = retry_openai_call(
-                self.openai_client.chat.completions.create,
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": "You are a financial analyst. Provide clear, well-organized summaries of SEC filing information."},
-                    {"role": "user", "content": summary_prompt}
-                ],
-                temperature=0.2,
-                max_tokens=800,
-            )
-            
-            return response.choices[0].message.content.strip()
-        except Exception as e:
-            return f"Error generating summary: {str(e)}" 

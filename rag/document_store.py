@@ -92,6 +92,19 @@ class DocumentStore:
         self._load_data_if_needed()
         return self.df
 
+    def get_sentences_by_filter(self, tickers: List[str], fiscal_years: List[int]) -> pd.DataFrame:
+        """
+        Retrieves sentences based on a filter of tickers and fiscal years.
+        """
+        self._load_data_if_needed()
+        
+        filtered_df = self.df[
+            self.df['ticker'].isin(tickers) &
+            self.df['fiscal_year'].isin(fiscal_years)
+        ]
+        
+        return filtered_df.copy()
+
     def get_full_filing_text(self, ticker: str, fiscal_year: int) -> Optional[str]:
         """
         Get the complete, concatenated SEC filing text for a given ticker and year.
