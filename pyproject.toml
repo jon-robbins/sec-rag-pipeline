@@ -29,6 +29,11 @@ tqdm = "^4.66.4"
 tiktoken = "^0.7.0"
 torch = "^2.3.1"
 transformers = "^4.41.2"
+sentence-transformers = "^4.1.0"
+einops = "^0.8.1"
+umap = "^0.1.1"
+plotly = "^6.1.2"
+umap-learn = "^0.5.7"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -142,7 +142,7 @@ class SearchManager:
         if sections:
             conditions.append(
                 models.FieldCondition(
-                    key="item",
+                    key="section",
                     match=models.MatchAny(any=sections),
                 )
             )

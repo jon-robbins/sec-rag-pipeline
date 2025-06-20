@@ -18,11 +18,13 @@ import pickle
 import json
 import random
 import tiktoken
+import time
+import numpy as np
 from pathlib import Path
 from collections import defaultdict, Counter
-from typing import List, Dict
+from typing import List, Dict, Any
 from rag.config import QA_DATASET_PATH
-
+from pprint import pprint
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -48,7 +50,7 @@ class BalancedChunkSampler:
         self.balance_companies = balance_companies
 
     def group_chunks_by_keys(self, chunks: List) -> Dict:
-        """Group chunks by (ticker, fiscal_year, item, chunk_class)."""
+        """Group chunks by (ticker, fiscal_year, section, chunk_class)."""
         grouped = defaultdict(list)
         for chunk in chunks:
             # Handle both dict and object formats
@@ -58,11 +60,14 @@ class BalancedChunkSampler:
             else:
                 metadata = chunk.metadata
                 text = chunk.text
+            
+            # Handle both old ('item') and new ('section') field names
+            section = metadata.get("section") or metadata.get("item")
                 
             key = (
                 metadata["ticker"],
                 metadata["fiscal_year"],
-                metadata["item"],
+                section,
                 classify_chunk_by_tokens(text)
             )
             grouped[key].append(chunk)
@@ -124,7 +129,10 @@ class BalancedChunkSampler:
                     }
                 f.write(json.dumps(chunk_data) + "\n")
 
-def generate_qa_pairs(chunks: List, output_path: str, append: bool = False):
+def generate_qa_pairs(chunks: List, 
+                      output_path: str = Path(os.getcwd()) / 'qa_dataset.jsonl', 
+                      append: bool = False,
+                      debug_mode: bool = False):
     """
     Generate QA pairs using LangChain's ChatOpenAI.
     
@@ -141,7 +149,7 @@ def generate_qa_pairs(chunks: List, output_path: str, append: bool = False):
         print("❌ Required packages not installed. Run: pip install langchain langchain-openai tqdm")
         return
 
-    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=60)
+    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=300)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -169,6 +177,16 @@ INSTRUCTIONS:
                     chunk_text = chunk.text
                     chunk_id = chunk.id
                     metadata = chunk.metadata
+                
+                # Ensure metadata values are JSON serializable
+                clean_metadata = {}
+                for key, value in metadata.items():
+                    if isinstance(value, (np.integer, np.int64)):
+                        clean_metadata[key] = int(value)
+                    elif isinstance(value, (np.floating, np.float64)):
+                        clean_metadata[key] = float(value)
+                    else:
+                        clean_metadata[key] = value
                     
                 user_prompt = f"Generate question-answer pairs for this SEC filing text:\n\n{chunk_text}"
                 messages = [
@@ -177,6 +195,7 @@ INSTRUCTIONS:
                 ]
                 
                 response = llm.invoke(messages)
+                time.sleep(1)  # Add rate limiting to avoid empty responses
                 qa_data = json.loads(response.content.strip())
 
                 for qa_pair in qa_data.get("qa_pairs", []):
@@ -184,17 +203,25 @@ INSTRUCTIONS:
                     answer = qa_pair.get("answer", "").strip()
                     
                     if question and answer:
+                        # Handle both old ('item') and new ('section') field names
+                        section = clean_metadata.get("section") or clean_metadata.get("item")
+                        
                         qa_entry = {
                             "chunk_id": chunk_id,
-                            "human_readable_id": metadata.get("human_readable_id"),
-                            "ticker": metadata["ticker"],
-                            "year": metadata["fiscal_year"],
-                            "section": metadata["item"],
+                            "human_readable_id": clean_metadata.get("human_readable_id"),
+                            "ticker": clean_metadata["ticker"],
+                            "year": clean_metadata["fiscal_year"],
+                            "section": section,
+                            "section_num": clean_metadata.get("section_num"),
+                            "section_letter": clean_metadata.get("section_letter"),
                             "question": question,
                             "answer": answer,
                             "source_text": chunk_text,
                         }
                         f.write(json.dumps(qa_entry) + "\n")
+                        if debug_mode:
+                            pprint(qa_entry)
+                            print("-"*100)
             except Exception as e:
                 progress_bar.write(f"⚠️ Error on chunk {chunk_id}: {e}")
 
@@ -202,17 +229,31 @@ INSTRUCTIONS:
 
 def main():
     """Main function to run the full QA generation pipeline."""
+    # This script requires DocumentStore and SmartChunker, which might not be available
+    # in the same environment as the langchain packages.
+    try:
+        from rag.document_store import DocumentStore
+        from rag.chunkers import SmartChunker
+    except ImportError:
+        print("Could not import from rag package. Make sure it's installed and in the python path.")
+        sys.exit(1)
+
+
     # Initialize the document store to get access to all sentences
     print("Initializing DocumentStore to get chunks...")
     doc_store = DocumentStore()
     df_sentences = doc_store.get_all_sentences()
 
-    # Create section-level documents for chunking
+    # Create section-level documents for chunking.
+    # The SmartChunker expects sentence-level input, but for QA generation,
+    # we want to chunk entire sections to get broader context.
+    print("Aggregating sentences into section-level documents...")
     section_docs = df_sentences.groupby(['docID', 'ticker', 'fiscal_year', 'section']).agg(
-        text=('sentence', ' '.join)
+        sentence=('sentence', ' '.join)
     ).reset_index()
-    section_docs.rename(columns={'section': 'item'}, inplace=True)
-    section_docs['section'] = section_docs['item']
+
+    # The chunker expects a 'sentence_token_count' column.
+    section_docs['sentence_token_count'] = section_docs['sentence'].apply(count_tokens)
 
     # Initialize the chunker
     chunker = SmartChunker(
@@ -232,6 +273,58 @@ def main():
     print(f"\n🚀 Generating QA pairs from {len(balanced_chunks)} balanced chunks...")
     generate_qa_pairs(balanced_chunks, str(qa_output_path))
     print(f"\n✅ All done! QA dataset saved to: {qa_output_path}")
+
+
+
+#--------Helper Functions--------
+
+def convert_numpy_types(obj: Any) -> Any:
+    """Convert numpy types to native Python types for JSON serialization."""
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, dict):
+        return {key: convert_numpy_types(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_numpy_types(item) for item in obj]
+    return obj
+
+def prepare_chunks_for_qa_generation(chunks: List[Any]) -> List[Dict[str, Any]]:
+    """
+    Convert chunk objects to dictionaries compatible with generate_qa_pairs.
+    
+    Args:
+        chunks: List of chunk objects or dictionaries
+        
+    Returns:
+        List of dictionaries with JSON-serializable values
+    """
+    prepared_chunks = []
+    
+    for chunk in chunks:
+        if hasattr(chunk, 'to_dict'):
+            # If chunk has a to_dict method, use it
+            chunk_dict = chunk.to_dict()
+        elif isinstance(chunk, dict):
+            # Already a dictionary
+            chunk_dict = chunk.copy()
+        else:
+            # Convert object attributes to dictionary
+            chunk_dict = {
+                "id": chunk.id,
+                "text": chunk.text,
+                "metadata": chunk.metadata,
+                "embedding": getattr(chunk, 'embedding', None)
+            }
+        
+        # Ensure all values are JSON serializable
+        chunk_dict = convert_numpy_types(chunk_dict)
+        prepared_chunks.append(chunk_dict)
+    
+    return prepared_chunks
 
 if __name__ == "__main__":
     sys.exit(main()) 

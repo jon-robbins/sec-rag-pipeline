@@ -97,6 +97,47 @@ class RAGPipeline:
             
         print("✅ RAG Pipeline Initialized Successfully!")
 
+        # --- Build adjacency map for evaluation ---
+        self.adjacent_map = self._build_adjacent_map()
+
+    def _build_adjacent_map(self):
+        """Create a mapping from chunk_id to its immediate neighbours (prev, next)."""
+        from collections import defaultdict
+
+        section_groups = defaultdict(list)
+        # Group chunks by (ticker, year, section)
+        for ch in self.chunks:
+            md = ch.metadata
+            # Handle both old ('item') and new ('section') field names
+            section = md.get("section") or md.get("item")
+            key = (md["ticker"], md["fiscal_year"], section)
+            
+            # Use seq / slice_idx for ordering; fall back to parsing human_readable_id
+            seq = md.get("seq")
+            slice_idx = md.get("slice_idx", 0)
+            if seq is None:
+                # Try to parse from human_readable_id
+                try:
+                    parts = md.get("human_readable_id", "").split("_")
+                    seq = int(parts[-1])
+                except Exception:
+                    seq = 0
+            section_groups[key].append((seq, slice_idx, ch))
+
+        adjacent_map = {}
+        for group in section_groups.values():
+            # sort by seq then slice_idx
+            group.sort(key=lambda t: (t[0], t[1]))
+            for i, (_, __, ch) in enumerate(group):
+                neighbours = []
+                if i > 0:
+                    neighbours.append(group[i-1][2].id)
+                if i < len(group) - 1:
+                    neighbours.append(group[i+1][2].id)
+                adjacent_map[ch.id] = neighbours
+
+        return adjacent_map
+
     def answer(self, question: str, **kwargs) -> Dict[str, Any]:
         """Answer a question using the RAG pipeline."""
         return self.vector_store.answer(question=question, **kwargs)

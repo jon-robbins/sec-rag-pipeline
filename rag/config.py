@@ -36,9 +36,12 @@ MAX_TOKENS_PER_BATCH = 150_000  # Reduced for safety
 MAX_RETRIES = 3
 
 #openai pricing
-PRICING = {
+PRICING_PER_TOKEN = {
     "gpt-4o-mini": {"input": 0.15/1_000_000, "output": 0.60/1_000_000},
     "text-embedding-3-small": {"input": 0.02/1_000_000, "output": 0.0}
+}
+PRICING_PER_CALL = {
+    "gpt-4o-mini-search-preview": 27.5/1_000,
 }
 
 # --- Directories ---
@@ -72,17 +75,36 @@ QDRANT_HOST = "qdrant" if IN_DOCKER else "localhost"
 QDRANT_PORT = 6333
 
 # --- Models ---
-GENERATION_MODEL_NAME = "gpt-3.5-turbo-0125"
-# MAX_CONTEXT_LENGTH = 16385 # For gpt-3.5-turbo-0125
-# Update: Use a smaller context length to be safe
+
 MAX_CONTEXT_LENGTH = 8192
 
-# --- Evaluation ---
-EVAL_NUM_QUESTIONS = 50
-EVAL_TARGET_LLM = "gpt-4-0125-preview"
-EVAL_JUDGE_LLM = "gpt-4-turbo-preview"
-
-# --- Chunking ---
-CHUNK_TARGET_TOKENS = 350
-CHUNK_OVERLAP_TOKENS = 50
-CHUNK_HARD_CEILING = CHUNK_TARGET_TOKENS + 300
+# --- Section metadata ---
+# ──────────────────────────────── SEC mapping ────────────────────────────────
+SEC_10K_SECTIONS = {
+    "1":  "Business",
+    "1A": "Risk Factors",
+    "1B": "Unresolved Staff Comments",
+    "2":  "Properties",
+    "3":  "Legal Proceedings",
+    "4":  "Mine Safety Disclosures",
+    "5":  "Market for Registrant's Common Equity, Related Stockholder Matters "
+          "and Issuer Purchases of Equity Securities",
+    "6":  "Selected Financial Data",
+    "7":  "Management's Discussion and Analysis of Financial Condition and "
+          "Results of Operations (MD&A)",
+    "7A": "Quantitative and Qualitative Disclosures About Market Risk",
+    "8":  "Financial Statements and Supplementary Data",
+    "9":  "Changes in and Disagreements with Accountants on Accounting and "
+          "Financial Disclosure",
+    "9A": "Controls and Procedures",
+    "9B": "Other Information",
+    "9C": "Disclosure Regarding Foreign Jurisdictions that Prevent Inspections",
+    "10": "Directors, Executive Officers and Corporate Governance",
+    "11": "Executive Compensation",
+    "12": "Security Ownership of Certain Beneficial Owners and Management and "
+          "Related Stockholder Matters",
+    "13": "Certain Relationships and Related Transactions, and Director "
+          "Independence",
+    "14": "Principal Accounting Fees and Services",
+    "15": "Exhibits and Financial Statement Schedules",
+}

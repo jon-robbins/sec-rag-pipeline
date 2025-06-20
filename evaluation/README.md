@@ -40,10 +40,10 @@ This will create:
 
 ## Components
 
-### 1. Balanced Chunk Sampler (`normalize_qa_sample.py`)
+### 1. Balanced Chunk Sampler (`generate_qa_dataset.py`)
 
 ```python
-from evaluation.normalize_qa_sample import BalancedChunkSampler
+from evaluation.generate_qa_dataset import BalancedChunkSampler
 
 sampler = BalancedChunkSampler(max_per_group=3)
 grouped = sampler.group_chunks_by_keys(chunks)
@@ -51,14 +51,14 @@ balanced_chunks = sampler.stratified_sample(grouped)
 ```
 
 **Features:**
-- Groups chunks by `(ticker, fiscal_year, item, chunk_class)`
-- Chunk classes: "short" (≤350 tokens), "medium" (≤500), "extra_large" (>500)
+- Groups chunks by `(ticker, fiscal_year, section, chunk_class)`
+- Chunk classes: "short" (≤350 tokens), "medium" (≤500), "large" (>500)
 - Limits chunks per group to prevent overrepresentation
 
 ### 2. QA Generation (`generate_qa_pairs()`)
 
 ```python
-from evaluation.normalize_qa_sample import generate_qa_pairs
+from evaluation.generate_qa_dataset import generate_qa_pairs
 
 generate_qa_pairs(balanced_chunks, "data/qa_dataset.jsonl")
 ```
@@ -82,9 +82,17 @@ Complete pipeline that:
 ### Balanced Chunks (`balanced_chunks_for_eval.jsonl`)
 ```json
 {
-  "id": "TSLA_2020_1A_0",
+  "id": "some_uuid",
   "text": "Risk factors include...",
-  "metadata": {"ticker": "TSLA", "fiscal_year": 2020, "item": "1A"},
+  "metadata": {
+    "ticker": "TSLA",
+    "fiscal_year": 2020,
+    "section": "1A",
+    "section_num": "1",
+    "section_letter": "A",
+    "section_desc": "Risk Factors",
+    "human_readable_id": "TSLA_2020_1A_0"
+  },
   "token_count": 450,
   "chunk_class": "medium"
 }
@@ -109,7 +117,7 @@ Complete pipeline that:
 
 ### In Notebook
 ```python
-from evaluation.normalize_qa_sample import BalancedChunkSampler
+from evaluation.generate_qa_dataset import BalancedChunkSampler
 import pickle
 
 # Load chunks
@@ -208,4 +216,52 @@ for qa in qa_pairs[:5]:  # Test first 5
     print("---")
 ```
 
-This creates a comprehensive evaluation framework for testing the SEC VectorStore system! 
+This creates a comprehensive evaluation framework for testing the SEC VectorStore system!
+
+## Additional Details
+
+### Balanced Chunk Sampling
+The script includes a `BalancedChunkSampler` class with two key functions:
+- `group_chunks_by_keys`: Groups chunks by `(ticker, fiscal_year, section, chunk_class)`. This ensures that documents are categorized based on their company, year, section, and complexity (length).
+- `stratified_sample`: From these groups, it performs a stratified sample to create a balanced dataset. It also supports a `balance_companies` flag to ensure each company has the same number of chunks, preventing bias towards companies with more filings.
+
+### QA Pair Generation
+A `qa_entry` looks like this:
+```json
+{
+  "chunk_id": "some_uuid",
+  "human_readable_id": "TSLA_2020_1A_0",
+  "ticker": "TSLA",
+  "year": 2020,
+  "section": "1A",
+  "question": "What were the primary risk factors for Tesla in 2020?",
+  "answer": "The primary risk factors for Tesla in 2020 included...",
+  "source_text": "The full text of the chunk from which the QA pair was generated..."
+}
+```
+
+The output is a JSONL file where each line is a dictionary containing a single QA pair.
+
+Example `metadata` for a chunk:
+```json
+{
+  "ticker": "TSLA",
+  "fiscal_year": 2020,
+  "section": "1A",
+  "section_num": "1",
+  "section_letter": "A",
+  "section_desc": "Risk Factors",
+  "human_readable_id": "TSLA_2020_1A_0"
+}
+```
+
+## Usage
+
+```bash
+# Generate full QA dataset
+python evaluation/generate_qa_dataset.py
+
+# Check the results
+wc -l data/qa_dataset.jsonl
+head -5 data/qa_dataset.jsonl
+``` 

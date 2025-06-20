@@ -1,0 +1,222 @@
+[
+    {
+        "rag": {
+            "answer": "I couldn't find any relevant information to answer your question.",
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_10": 0.0,
+                "adj_recall_at_10": 0.0,
+                "mrr": 0.0,
+                "adj_mrr": 0.0,
+                "ndcg_at_10": 0.0
+            },
+            "rouge": {
+                "rouge1": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rouge2": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rougeL": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                }
+            },
+            "tokens": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        },
+        "question": "What is the status of mine safety disclosures for the company in the fiscal year?",
+        "ground_truth_answer": "Not applicable.",
+        "section": "4",
+        "chunk_text": "N/A"
+    },
+    {
+        "rag": {
+            "answer": "I couldn't find any relevant information to answer your question.",
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_10": 0.0,
+                "adj_recall_at_10": 0.0,
+                "mrr": 0.0,
+                "adj_mrr": 0.0,
+                "ndcg_at_10": 0.0
+            },
+            "rouge": {
+                "rouge1": {
+                    "precision": 0.09090909090909091,
+                    "recall": 0.07692307692307693,
+                    "fmeasure": 0.08333333333333334
+                },
+                "rouge2": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rougeL": {
+                    "precision": 0.09090909090909091,
+                    "recall": 0.07692307692307693,
+                    "fmeasure": 0.08333333333333334
+                }
+            },
+            "tokens": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        },
+        "question": "Which fiscal year does the company reference for the information on director independence?",
+        "ground_truth_answer": "The company references the fiscal year 2017 for the information on director independence.",
+        "section": "13",
+        "chunk_text": "N/A"
+    },
+    {
+        "rag": {
+            "answer": "I couldn't find any relevant information to answer your question.",
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_10": 0.0,
+                "adj_recall_at_10": 0.0,
+                "mrr": 0.0,
+                "adj_mrr": 0.0,
+                "ndcg_at_10": 0.0
+            },
+            "rouge": {
+                "rouge1": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rouge2": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rougeL": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                }
+            },
+            "tokens": {
+                "prompt_tokens": 1675,
+                "completion_tokens": 60,
+                "total_tokens": 1735
+            }
+        },
+        "question": "What are the key components of internal control over financial reporting for the company in fiscal year 2021?",
+        "ground_truth_answer": "The key components include policies and procedures for maintaining accurate records of transactions and asset dispositions, ensuring transactions are recorded for financial statement preparation in accordance with GAAP, and providing assurance against unauthorized asset acquisition or use.",
+        "section": "9A",
+        "chunk_text": "N/A"
+    },
+    {
+        "rag": {
+            "answer": "I couldn't find any relevant information to answer your question.",
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_10": 0.0,
+                "adj_recall_at_10": 0.0,
+                "mrr": 0.0,
+                "adj_mrr": 0.0,
+                "ndcg_at_10": 0.0
+            },
+            "rouge": {
+                "rouge1": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rouge2": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rougeL": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                }
+            },
+            "tokens": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        },
+        "question": "What is the status of changes in and disagreements with accountants for the company in the fiscal year?",
+        "ground_truth_answer": "None.",
+        "section": "9",
+        "chunk_text": "N/A"
+    },
+    {
+        "rag": {
+            "answer": "I couldn't find any relevant information to answer your question.",
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_10": 0.0,
+                "adj_recall_at_10": 0.0,
+                "mrr": 0.0,
+                "adj_mrr": 0.0,
+                "ndcg_at_10": 0.0
+            },
+            "rouge": {
+                "rouge1": {
+                    "precision": 0.09090909090909091,
+                    "recall": 0.034482758620689655,
+                    "fmeasure": 0.05
+                },
+                "rouge2": {
+                    "precision": 0.0,
+                    "recall": 0.0,
+                    "fmeasure": 0.0
+                },
+                "rougeL": {
+                    "precision": 0.09090909090909091,
+                    "recall": 0.034482758620689655,
+                    "fmeasure": 0.05
+                }
+            },
+            "tokens": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        },
+        "question": "What challenges did Facebook face in maintaining developer relationships in the fiscal year 2020?",
+        "ground_truth_answer": "In fiscal year 2020, Facebook faced challenges in maintaining developer relationships due to actions taken to enhance user experience, which reduced distribution from developers, user engagement, and monetization opportunities.",
+        "section": "1A",
+        "chunk_text": "N/A"
+    }
+]

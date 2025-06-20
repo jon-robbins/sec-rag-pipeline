@@ -31,9 +31,10 @@ from evaluation.scenarios import (
     run_baseline_scenario,
     format_question_with_context,
 )
+from evaluation.scenarios_financerag import ensemble_rerank_rag
 from evaluation.metrics import calculate_retrieval_metrics, calculate_rouge_scores
 from evaluation.generate_qa_dataset import generate_qa_pairs, BalancedChunkSampler
-from rag.config import QA_DATASET_PATH
+from rag.config import QA_DATASET_PATH, RESULTS_DIR
 from rag.document_store import DocumentStore
 
 
@@ -95,9 +96,14 @@ class ComprehensiveEvaluator:
             chunks = self._get_chunks_from_pipeline()
 
             # Create a balanced sample of chunks for new QA generation
-            sampler = BalancedChunkSampler()
+            # Scale max_per_group conservatively based on questions needed
+            max_per_group = max(3, min(10, (num_to_generate + 19) // 20))  # 3-10 range, +1 per 20 questions
+            sampler = BalancedChunkSampler(max_per_group=max_per_group)
             grouped_chunks = sampler.group_chunks_by_keys(chunks)
             balanced_chunks = sampler.stratified_sample(grouped_chunks)
+            
+            if not self.quiet:
+                print(f"📊 Using max_per_group={max_per_group} for {num_to_generate} questions (found {len(balanced_chunks)} balanced chunks)")
             
             # We need to sample enough chunks to generate the desired number of questions.
             # The generator creates ~2 questions per chunk.
@@ -149,9 +155,11 @@ class ComprehensiveEvaluator:
             results["rag"] = {
                 "answer": rag_answer,
                 "retrieval": calculate_retrieval_metrics(
-                    retrieved_chunk_ids=retrieved_ids,
+                    retrieved_ids=retrieved_ids,
                     true_chunk_id=ground_truth_chunk_id,
-                    k_values=k_values
+                    k_values=k_values,
+                    adjacent_map=self.pipeline.adjacent_map,
+                    adjacent_credit=0.5
                 ),
                 "rouge": calculate_rouge_scores(rag_answer, ground_truth_answer),
                 "tokens": rag_tokens
@@ -167,15 +175,42 @@ class ComprehensiveEvaluator:
             results["reranked_rag"] = {
                 "answer": reranked_answer,
                 "retrieval": calculate_retrieval_metrics(
-                    retrieved_chunk_ids=reranked_ids,
+                    retrieved_ids=reranked_ids,
                     true_chunk_id=ground_truth_chunk_id,
-                    k_values=k_values
+                    k_values=k_values,
+                    adjacent_map=self.pipeline.adjacent_map,
+                    adjacent_credit=0.5
                 ),
                 "rouge": calculate_rouge_scores(reranked_answer, ground_truth_answer),
                 "tokens": reranked_tokens
             }
 
-        # 3. Unfiltered Context Scenario
+        # 3. Ensemble Reranked RAG Scenario
+        if "ensemble_rerank_rag" in methods:
+            augmented_question = format_question_with_context(
+                qa_item["question"], qa_item["ticker"], qa_item["year"]
+            )
+
+            # The scenario now returns a dictionary with answer, contexts, retrieval, and tokens
+            scenario_output = ensemble_rerank_rag(
+                rag_pipeline=self.pipeline,
+                question=augmented_question,
+                ground_truth_chunks=[ground_truth_chunk_id],
+                k_values=k_values,
+            )
+            
+            # We need to manually calculate ROUGE scores here
+            rouge_scores = calculate_rouge_scores(scenario_output["answer"], ground_truth_answer)
+            
+            results["ensemble_rerank_rag"] = {
+                "answer": scenario_output["answer"],
+                "retrieval": scenario_output["retrieval"], # The metrics are pre-calculated
+                "rouge": rouge_scores,
+                "tokens": scenario_output.get("tokens", {}), # Use .get for safety
+                "contexts": scenario_output.get("contexts", [])
+            }
+
+        # 4. Unfiltered Context Scenario
         if "unfiltered" in methods:
             unfiltered_answer, unfiltered_tokens = run_unfiltered_context_scenario(
                 doc_store=self.doc_store,
@@ -188,7 +223,7 @@ class ComprehensiveEvaluator:
                 "tokens": unfiltered_tokens
             }
 
-        # 4. Web Search Scenario
+        # 5. Web Search Scenario
         if "web_search" in methods:
             web_search_answer, web_search_tokens = run_web_search_scenario(self.openai_client, qa_item)
             results["web_search"] = {
@@ -197,7 +232,7 @@ class ComprehensiveEvaluator:
                 "tokens": web_search_tokens
             }
         
-        # 5. Baseline Scenario
+        # 6. Baseline Scenario
         if "baseline" in methods:
             baseline_answer, baseline_tokens = run_baseline_scenario(self.openai_client, qa_item)
             results["baseline"] = {
@@ -212,15 +247,21 @@ class ComprehensiveEvaluator:
         self, 
         num_questions: int = 50,
         methods: List[str] = None,
-        k_values: List[int] = None
+        k_values: List[int] = None,
+        resume: bool = True,
+        run_id: str = None
     ) -> Dict[str, Any]:
         """
         Runs the full evaluation across all scenarios and aggregates the results.
         """
         if methods is None:
-            methods = ["rag", "reranked_rag", "unfiltered", "web_search", "baseline"]
+            methods = ["rag", "reranked_rag", "unfiltered", "web_search", "baseline", "ensemble_rerank_rag"]
         if k_values is None:
-            k_values = [1, 3, 5, 10]
+            k_values = [1, 3, 5, 7, 10]
+            
+        # Generate run ID if not provided
+        if run_id is None:
+            run_id = time.strftime("%Y%m%d_%H%M%S")
             
         # Pre-load all necessary data before starting the evaluation loop
         if not self.quiet:
@@ -229,157 +270,341 @@ class ComprehensiveEvaluator:
         
         self.qa_dataset = self._load_or_generate_qa_dataset(num_questions)
         
+        # Try to load existing checkpoint
         all_results = []
+        start_index = 0
+
+        if resume:
+            checkpoint = self._load_checkpoint(run_id)
+            if checkpoint:
+                # Validate checkpoint compatibility
+                if (checkpoint.get("methods") == methods and 
+                    checkpoint.get("k_values") == k_values and
+                    len(checkpoint.get("qa_dataset", [])) == len(self.qa_dataset)):
+                    
+                    all_results = checkpoint["completed_results"]
+                    start_index = checkpoint["current_index"]
+                    
+                    if not self.quiet:
+                        print(f"🔄 Resuming from question {start_index + 1}/{len(self.qa_dataset)}")
+                else:
+                    if not self.quiet:
+                        print("⚠️ Checkpoint incompatible with current run parameters. Starting fresh.")
+
+        # Evaluation loop with checkpointing
         progress_bar = tqdm(
-            self.qa_dataset, 
+            self.qa_dataset[start_index:], 
             desc="🔬 Evaluating scenarios", 
             unit="question",
-            disable=self.quiet
+            disable=self.quiet,
+            initial=start_index,
+            total=len(self.qa_dataset)
         )
 
-        for qa_item in progress_bar:
-            single_result = self.evaluate_single_question(qa_item, methods, k_values)
-            single_result["question"] = qa_item["question"]
-            single_result["ground_truth_answer"] = qa_item["answer"]
-            single_result["section"] = qa_item.get("section", "N/A")
-            single_result["chunk_text"] = qa_item.get("chunk_text", "N/A")
-            all_results.append(single_result)
+        try:
+            for i, qa_item in enumerate(progress_bar, start=start_index):
+                single_result = self.evaluate_single_question(qa_item, methods, k_values)
+                single_result["question"] = qa_item["question"]
+                single_result["ground_truth_answer"] = qa_item["answer"]
+                single_result["section"] = qa_item.get("section", "N/A")
+                single_result["chunk_text"] = qa_item.get("chunk_text", "N/A")
+                all_results.append(single_result)
 
-            # --- Print QA Results ---
+                # --- Print QA Results ---
+                if not self.quiet:
+                    augmented_question = format_question_with_context(
+                        qa_item["question"], qa_item["ticker"], qa_item["year"]
+                    )
+                    progress_bar.write("\n" + "="*80)
+                    progress_bar.write(f"❓ Question (Original): {single_result['question']}")
+                    progress_bar.write(f"❓ Question (Augmented): {augmented_question}")
+                    progress_bar.write(f"📄 Ground Truth Section: {qa_item.get('section', 'N/A')}")
+                    progress_bar.write(f"💬 Ground Truth Context: {qa_item.get('chunk_text', 'N/A')}")
+                    progress_bar.write(f"✅ Ground Truth Answer: {single_result['ground_truth_answer']}")
+                    progress_bar.write("-"*80)
+                    
+                    for scenario in methods:
+                        if scenario in single_result:
+                            answer = single_result[scenario].get('answer', '[No answer generated]')
+                            tokens = single_result[scenario].get('tokens', {})
+                            total_tokens = tokens.get('total_tokens', 0)
+                            progress_bar.write(f"🤖 {scenario.upper()}: {answer} [Tokens: {total_tokens}]")
+                
+                    progress_bar.write("="*80)
+
+                # Save checkpoint every 10 questions
+                if (i + 1) % 10 == 0:
+                    self._save_checkpoint(all_results, self.qa_dataset, i + 1, methods, k_values, run_id)
+
+                time.sleep(2)  # Rate limiting
+
+            # Clean up checkpoint on successful completion
+            self._cleanup_checkpoint(run_id)
+
+        except KeyboardInterrupt:
             if not self.quiet:
-                augmented_question = format_question_with_context(
-                    qa_item["question"], qa_item["ticker"], qa_item["year"]
-                )
-                progress_bar.write("\n" + "="*80)
-                progress_bar.write(f"❓ Question (Original): {single_result['question']}")
-                progress_bar.write(f"❓ Question (Augmented): {augmented_question}")
-                progress_bar.write(f"📄 Ground Truth Section: {qa_item.get('section', 'N/A')}")
-                progress_bar.write(f"💬 Ground Truth Context: {qa_item.get('chunk_text', 'N/A')}")
-                progress_bar.write(f"✅ Ground Truth Answer: {single_result['ground_truth_answer']}")
-                progress_bar.write("-"*80)
-                
-                for scenario in methods:
-                    if scenario in single_result:
-                        answer = single_result[scenario].get('answer', '[No answer generated]')
-                        tokens = single_result[scenario].get('tokens', {})
-                        total_tokens = tokens.get('total_tokens', 0)
-                        progress_bar.write(f"🤖 {scenario.upper()}: {answer} [Tokens: {total_tokens}]")
-                
-                progress_bar.write("="*80)
+                print(f"\n⚠️ Evaluation interrupted. Progress saved to checkpoint.")
+            self._save_checkpoint(all_results, self.qa_dataset, len(all_results), methods, k_values, run_id)
+            raise
+        except Exception as e:
+            if not self.quiet:
+                print(f"\n❌ Evaluation failed: {e}. Progress saved to checkpoint.")
+            self._save_checkpoint(all_results, self.qa_dataset, len(all_results), methods, k_values, run_id)
+            raise
 
-            time.sleep(2)  # Add a delay to avoid rate limiting
+        # --- Save raw results before aggregation for recovery ---
+        run_timestamp = time.strftime("%Y%m%d-%H%M%S")
+        temp_results_dir = RESULTS_DIR / f"run_{run_timestamp}"
+        temp_results_dir.mkdir(parents=True, exist_ok=True)
+        raw_results_path = temp_results_dir / "raw_results.json"
         
-        return self._aggregate_results(all_results)
+        if not self.quiet:
+            print(f"💾 Saving raw, unprocessed results to {raw_results_path}")
+        with open(raw_results_path, "w") as f:
+            json.dump(all_results, f, indent=4)
+        
+        aggregated_results = self._aggregate_results(all_results)
+        return aggregated_results, temp_results_dir
 
     def _aggregate_results(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        Aggregates metrics from all evaluation runs.
+        Aggregates results from all evaluation runs.
         """
-        # Determine scenarios from the first result item
-        scenarios = list(results[0].keys())
-        scenarios.remove("question")
-        scenarios.remove("ground_truth_answer")
-        scenarios.remove("section")
-        scenarios.remove("chunk_text")
+        aggregated = defaultdict(lambda: defaultdict(list))
+        scenario_token_metrics = defaultdict(lambda: defaultdict(list))
 
-        summary = {
-            s: {"retrieval": defaultdict(list), "rouge": defaultdict(list), "tokens": defaultdict(list)}
-            for s in scenarios
-        }
-
-        for res in results:
-            for scenario in scenarios:
-                if scenario not in res:
+        for item_result in results:
+            for scenario, metrics in item_result.items():
+                # Skip non-scenario keys like 'question', 'ground_truth_answer', etc.
+                if scenario in ["question", "ground_truth_answer", "section", "chunk_text"]:
                     continue
                     
-                # Rouge scores
-                for metric, values in res[scenario].get("rouge", {}).items():
-                    summary[scenario]["rouge"][metric].append(values["f"]) # f-measure
+                # ROUGE scores
+                if "rouge" in metrics:
+                    for rouge_type, scores in metrics["rouge"].items():
+                        # The value from rouge-score can be a dict of f, p, r
+                        # We are interested in the F-score
+                        if isinstance(scores, dict) and 'fmeasure' in scores:
+                            aggregated[scenario][f"{rouge_type}_f"].append(scores['fmeasure'])
+                        elif isinstance(scores, dict) and 'f' in scores: # for backwards compatibility
+                            aggregated[scenario][f"{rouge_type}_f"].append(scores['f'])
+                        else:
+                             # Handle cases where it might just be a float (older format)
+                            aggregated[scenario][f"{rouge_type}_f"].append(scores)
 
                 # Retrieval metrics
-                if "retrieval" in res[scenario]:
-                    for metric, value in res[scenario]["retrieval"].items():
-                        summary[scenario]["retrieval"][metric].append(value)
-                        
-                # Token counts
-                for token_type, value in res[scenario].get("tokens", {}).items():
-                    summary[scenario]["tokens"][token_type].append(value)
+                if "retrieval" in metrics and metrics["retrieval"]:
+                    for metric, value in metrics["retrieval"].items():
+                        aggregated[scenario][metric].append(value)
+                
+                # Token counts - track per scenario
+                if "tokens" in metrics and metrics["tokens"]:
+                    for token_type, value in metrics["tokens"].items():
+                        scenario_token_metrics[scenario][token_type].append(value)
         
+        num_questions = len(results)
         final_summary = {}
-        for scenario, metrics in summary.items():
+        for scenario, metrics in aggregated.items():
+            # Separate ROUGE and retrieval metrics
+            rouge_metrics = {m: np.mean(v) for m, v in metrics.items() if "_f" in m}
+            retrieval_metrics = {m: np.mean(v) for m, v in metrics.items() if m in ["recall_at_1", "recall_at_3", "recall_at_5", "recall_at_7", "recall_at_10", "mrr", "ndcg_at_10", "adj_recall_at_1", "adj_recall_at_3", "adj_recall_at_5", "adj_recall_at_7", "adj_recall_at_10", "adj_mrr"]}
+            
+            # Get scenario-specific token metrics
+            scenario_tokens = scenario_token_metrics.get(scenario, {})
+            token_summary = {t: np.mean(v) for t, v in scenario_tokens.items()}
+            
             final_summary[scenario] = {
-                "rouge": {m: np.mean(v) for m, v in metrics["rouge"].items()},
-                "retrieval": {m: np.mean(v) for m, v in metrics["retrieval"].items()},
-                "tokens": {t: np.mean(v) for t, v in metrics["tokens"].items()},
-                "total_cost": self._calculate_cost(metrics["tokens"])
+                "rouge": rouge_metrics,
+                "retrieval": retrieval_metrics,
+                "tokens": token_summary,
+                "total_cost": self._calculate_cost(scenario_tokens, scenario, num_questions)
             }
         
-        return {"summary": final_summary, "individual": results}
+        return {
+            "summary": final_summary, 
+            "individual": results,
+            "per_question_metrics": self._extract_per_question_metrics(results)
+        }
 
-    def _calculate_cost(self, token_metrics: Dict[str, List[int]]) -> float:
-        # This method needs to be implemented to calculate the total cost
-        # based on the token metrics.
-        # For now, we'll return a placeholder value
-        return 0.0
+    def _extract_per_question_metrics(self, results: List[Dict[str, Any]]) -> Dict[str, Dict[str, List[float]]]:
+        """
+        Extract per-question metrics for bootstrap analysis.
+        
+        Args:
+            results: List of per-question evaluation results
+            
+        Returns:
+            Dictionary mapping method names to metric arrays
+        """
+        per_question_metrics = defaultdict(lambda: defaultdict(list))
+        
+        for item_result in results:
+            for scenario, metrics in item_result.items():
+                # Skip non-scenario keys
+                if scenario in ["question", "ground_truth_answer", "section", "chunk_text"]:
+                    continue
+                
+                # Extract ROUGE F-scores
+                if "rouge" in metrics and metrics["rouge"]:
+                    for rouge_type, scores in metrics["rouge"].items():
+                        if isinstance(scores, dict) and 'fmeasure' in scores:
+                            per_question_metrics[scenario][f"{rouge_type}_f"].append(scores['fmeasure'])
+                        elif isinstance(scores, dict) and 'f' in scores:
+                            per_question_metrics[scenario][f"{rouge_type}_f"].append(scores['f'])
+                        else:
+                            # Handle cases where it might just be a float
+                            per_question_metrics[scenario][f"{rouge_type}_f"].append(scores)
+                
+                # Extract retrieval metrics
+                if "retrieval" in metrics and metrics["retrieval"]:
+                    for metric, value in metrics["retrieval"].items():
+                        per_question_metrics[scenario][metric].append(value)
+        
+        # Convert to regular dict for JSON serialization
+        return {scenario: dict(metrics) for scenario, metrics in per_question_metrics.items()}
+
+    def _calculate_cost(self, token_metrics: Dict[str, List[int]], scenario: str = "", num_questions: int = 1) -> float:
+        """
+        Calculate the total cost based on token metrics and pricing.
+        
+        Args:
+            token_metrics: Dictionary of token counts (prompt_tokens, completion_tokens, etc.)
+            scenario: The scenario name (for special pricing like web_search)
+            num_questions: Number of questions evaluated
+            
+        Returns:
+            Total cost in USD
+        """
+        total_cost = 0.0
+        
+        # GPT-4o-mini pricing (used for generation and query expansion)
+        gpt4_mini_input_price = 0.15 / 1_000_000  # $0.15 per 1M input tokens
+        gpt4_mini_output_price = 0.60 / 1_000_000  # $0.60 per 1M output tokens
+        
+        # Text embedding pricing (used for retrieval)
+        embedding_price = 0.02 / 1_000_000  # $0.02 per 1M input tokens
+        
+        # Web search per-call pricing
+        web_search_price = 27.5 / 1_000  # $27.5 per 1K calls
+        
+        # Calculate GPT-4o-mini costs (generation + query expansion)
+        if "prompt_tokens" in token_metrics and token_metrics["prompt_tokens"]:
+            avg_prompt_tokens = np.mean(token_metrics["prompt_tokens"])
+            total_prompt_tokens = avg_prompt_tokens * num_questions
+            total_cost += total_prompt_tokens * gpt4_mini_input_price
+            
+        if "completion_tokens" in token_metrics and token_metrics["completion_tokens"]:
+            avg_completion_tokens = np.mean(token_metrics["completion_tokens"])
+            total_completion_tokens = avg_completion_tokens * num_questions
+            total_cost += total_completion_tokens * gpt4_mini_output_price
+        
+        # Add embedding costs (retrieval queries)
+        # Each question involves 1 embedding call for the query
+        if scenario in ["rag", "reranked_rag", "ensemble_rerank_rag"]:
+            # Estimate ~50-100 tokens per query for embedding
+            estimated_embedding_tokens = 75 * num_questions
+            total_cost += estimated_embedding_tokens * embedding_price
+        
+        # Add web search per-call costs
+        if scenario == "web_search":
+            total_cost += num_questions * web_search_price
+            
+        return total_cost
 
     def print_results(self, results: Dict[str, Any]):
         """
-        Prints the aggregated evaluation results in a formatted table.
+        Prints the aggregated evaluation results in a formatted way.
         """
-        summary = results.get("summary", {})
-        if not summary:
-            print("No summary found in results.")
+        if self.quiet:
             return
-
-        print("\n" + "="*20 + " 📊 Evaluation Summary " + "="*20)
-        
-        # Determine k values from the first RAG result if available
-        k_values = []
-        if "rag" in summary and "retrieval" in summary["rag"]:
-            k_values = sorted([int(k.split('@')[1]) for k in summary["rag"]["retrieval"].keys() if k.startswith('recall@')])
-
-        header = ["Scenario", "ROUGE-1", "ROUGE-2", "ROUGE-L"]
-        if k_values:
-            header.extend([f"Recall@{k}" for k in k_values])
-            header.append("MRR")
-        header.extend(["Avg Tokens", "Total Cost ($)"])
-        
-        print(f"{header[0]:<15} | {header[1]:<10} | {header[2]:<10} | {header[3]:<10} | " +
-              " | ".join([f"{h:<8}" for h in header[4:-2]]) + 
-              (" | " if k_values else "") +
-              f"{header[-2]:<12} | {header[-1]:<15}")
-        print("-" * (len(header) * 14))
-
-        for scenario, metrics in summary.items():
-            rouge = metrics.get("rouge", {})
-            retrieval = metrics.get("retrieval", {})
-            tokens = metrics.get("tokens", {})
             
-            row = [
-                scenario,
-                f"{rouge.get('rouge1', 0):.4f}",
-                f"{rouge.get('rouge2', 0):.4f}",
-                f"{rouge.get('rougeL', 0):.4f}"
-            ]
-            
-            if k_values:
-                for k in k_values:
-                    row.append(f"{retrieval.get(f'recall@{k}', 0):.4f}")
-                row.append(f"{retrieval.get('mrr', 0):.4f}")
+        print("\n" + "="*50)
+        print("          🎉 Comprehensive Evaluation Results 🎉")
+        print("="*50 + "\n")
 
-            row.append(f"{tokens.get('total_tokens', 0):.2f}")
-            row.append(f"{metrics.get('total_cost', 0):.4f}")
+        summary = results.get("summary", {})
+
+        for scenario, scenario_data in sorted(summary.items()):
+            print(f"--- Scenario: {scenario.replace('_', ' ').title()} ---")
             
-            print(f"{row[0]:<15} | {row[1]:<10} | {row[2]:<10} | {row[3]:<10} | " +
-                  " | ".join([f"{str(v):<8}" for v in row[4:-2]]) +
-                  (" | " if k_values else "") +
-                  f"{row[-2]:<12} | {row[-1]:<15}")
-                  
-        print("="*55)
-    
+            # Print Retrieval Metrics
+            retrieval_metrics = scenario_data.get("retrieval", {})
+            rouge_data = scenario_data.get("rouge", {})
+            
+            # Check if retrieval metrics are in the wrong place (legacy format)
+            retrieval_from_rouge = {}
+            for k in [1, 3, 5, 7, 10]:
+                recall_key = f"recall_at_{k}"
+                if recall_key in rouge_data:
+                    retrieval_from_rouge[recall_key] = rouge_data[recall_key]
+            if "mrr" in rouge_data:
+                retrieval_from_rouge["mrr"] = rouge_data["mrr"]
+            if "ndcg_at_10" in rouge_data:
+                retrieval_from_rouge["ndcg_at_10"] = rouge_data["ndcg_at_10"]
+            
+            # Use retrieval metrics from the proper place or legacy location
+            # Check if retrieval_metrics actually contains retrieval data (not just ROUGE data)
+            has_real_retrieval = any(k in retrieval_metrics for k in ["recall_at_1", "recall_at_3", "recall_at_5", "recall_at_7", "recall_at_10", "mrr", "ndcg_at_10", "adj_recall_at_1", "adj_recall_at_3", "adj_recall_at_5", "adj_recall_at_7", "adj_recall_at_10", "adj_mrr"])
+            final_retrieval_metrics = retrieval_metrics if has_real_retrieval else retrieval_from_rouge
+            
+            if final_retrieval_metrics:
+                print("  Retrieval Metrics:")
+                
+                # Print recall metrics in order
+                for k in [1, 3, 5, 7, 10]:
+                    recall_key = f"recall_at_{k}"
+                    if recall_key in final_retrieval_metrics:
+                        print(f"    - Recall@{k}: {final_retrieval_metrics[recall_key]:.2%}")
+                
+                # Print MRR
+                if "mrr" in final_retrieval_metrics:
+                    print(f"    - MRR: {final_retrieval_metrics['mrr']:.4f}")
+                
+                # Print NDCG@10
+                if "ndcg_at_10" in final_retrieval_metrics:
+                    print(f"    - NDCG@10: {final_retrieval_metrics['ndcg_at_10']:.4f}")
+            
+            # Print ROUGE Scores
+            rouge_metrics = scenario_data.get("rouge", {})
+            if rouge_metrics:
+                print("\n  Generation Quality (ROUGE-F):")
+                for rouge_type in ["rouge1_f", "rouge2_f", "rougeL_f"]:
+                    if rouge_type in rouge_metrics:
+                        display_name = rouge_type.replace("_f", "").upper()
+                        print(f"    - {display_name}: {rouge_metrics[rouge_type]:.4f}")
+            
+            # Print Token Usage and Cost
+            token_data = scenario_data.get("tokens", {})
+            total_cost = scenario_data.get("total_cost", 0)
+            
+            if token_data or total_cost > 0:
+                print("\n  Token Usage & Cost:")
+                if "prompt_tokens" in token_data:
+                    print(f"    - Avg Prompt Tokens: {token_data['prompt_tokens']:.0f}")
+                if "completion_tokens" in token_data:
+                    print(f"    - Avg Completion Tokens: {token_data['completion_tokens']:.0f}")
+                if "total_tokens" in token_data:
+                    print(f"    - Avg Total Tokens: {token_data['total_tokens']:.0f}")
+                
+                if total_cost > 0:
+                    print(f"    - Total Cost: ${total_cost:.6f}")
+                    # Show cost per question
+                    num_questions = len(results.get("individual", []))
+                    if num_questions > 0:
+                        cost_per_question = total_cost / num_questions
+                        print(f"    - Cost per Question: ${cost_per_question:.6f}")
+                    
+                    # Show cost breakdown if it's ensemble (has query expansion)
+                    if scenario == "ensemble_rerank_rag":
+                        print(f"    - Note: Includes query expansion + generation + embedding costs")
+            
+            print("-"*(30 + len(scenario)) + "\n")
+
+        print("="*50 + "\n")
+
     def results_to_dataframe(self, results: Dict[str, Any]) -> pd.DataFrame:
         """
-        Converts the summary results into a pandas DataFrame.
+        Converts the final results dictionary to a pandas DataFrame.
         """
         summary = results.get("summary", {})
         if not summary:
@@ -388,8 +613,35 @@ class ComprehensiveEvaluator:
         records = []
         for scenario, metrics in summary.items():
             record = {"scenario": scenario}
-            record.update(metrics.get("rouge", {}))
-            record.update(metrics.get("retrieval", {}))
+            
+            # Get base data
+            rouge_data = metrics.get("rouge", {})
+            retrieval_data = metrics.get("retrieval", {})
+            
+            # Check for retrieval metrics in rouge section (legacy format)
+            legacy_retrieval = {}
+            for k in [1, 3, 5, 7, 10]:
+                recall_key = f"recall_at_{k}"
+                if recall_key in rouge_data:
+                    legacy_retrieval[recall_key] = rouge_data[recall_key]
+            if "mrr" in rouge_data:
+                legacy_retrieval["mrr"] = rouge_data["mrr"]
+            if "ndcg_at_10" in rouge_data:
+                legacy_retrieval["ndcg_at_10"] = rouge_data["ndcg_at_10"]
+            
+            # Use retrieval metrics from proper location or legacy location
+            # Check if retrieval_data actually contains retrieval metrics (not just ROUGE data)
+            has_real_retrieval = any(k in retrieval_data for k in ["recall_at_1", "recall_at_3", "recall_at_5", "recall_at_7", "recall_at_10", "mrr", "ndcg_at_10", "adj_recall_at_1", "adj_recall_at_3", "adj_recall_at_5", "adj_recall_at_7", "adj_recall_at_10", "adj_mrr"])
+            final_retrieval_data = retrieval_data if has_real_retrieval else legacy_retrieval
+            
+            # Filter out retrieval metrics from ROUGE data for clean separation
+            clean_rouge_data = {k: v for k, v in rouge_data.items() if k not in legacy_retrieval}
+            
+            # Add clean ROUGE metrics
+            record.update(clean_rouge_data)
+            
+            # Add retrieval metrics
+            record.update(final_retrieval_data)
             
             # Add token and cost info
             tokens = metrics.get("tokens", {})
@@ -398,109 +650,117 @@ class ComprehensiveEvaluator:
             record["avg_total_tokens"] = tokens.get("total_tokens")
             record["total_cost"] = metrics.get("total_cost")
             
+            # Calculate cost per question if we have the data
+            num_questions = len(results.get("individual", []))
+            if record["total_cost"] and num_questions > 0:
+                record["cost_per_question"] = record["total_cost"] / num_questions
+            
             records.append(record)
             
         df = pd.DataFrame(records)
         
         # Reorder columns for better readability
-        cols = ["scenario", "rouge1", "rouge2", "rougeL"]
-        retrieval_cols = sorted([col for col in df.columns if col.startswith("recall@") or col == "mrr"])
-        cols.extend(retrieval_cols)
-        token_cols = ["avg_prompt_tokens", "avg_completion_tokens", "avg_total_tokens", "total_cost"]
-        cols.extend(token_cols)
+        cols = ["scenario"]
         
-        # Ensure all expected columns exist
+        # ROUGE columns
+        rouge_cols = ["rouge1_f", "rouge2_f", "rougeL_f"]
+        cols.extend([col for col in rouge_cols if col in df.columns])
+        
+        # Retrieval columns in logical order
+        retrieval_cols = ["recall_at_1", "recall_at_3", "recall_at_5", "recall_at_7", "recall_at_10", "mrr", "ndcg_at_10", "adj_recall_at_1", "adj_recall_at_3", "adj_recall_at_5", "adj_recall_at_7", "adj_recall_at_10", "adj_mrr"]
+        cols.extend([col for col in retrieval_cols if col in df.columns])
+        
+        # Token and cost columns
+        token_cols = ["avg_prompt_tokens", "avg_completion_tokens", "avg_total_tokens", "total_cost", "cost_per_question"]
+        cols.extend([col for col in token_cols if col in df.columns])
+        
+        # Ensure all expected columns exist and reorder
         final_cols = [col for col in cols if col in df.columns]
+        remaining_cols = [col for col in df.columns if col not in final_cols]
+        final_cols.extend(remaining_cols)
 
         return df[final_cols]
 
     def export_to_csv(self, results: Dict[str, Any], filename: str):
         """
-        Exports the individual evaluation results to a detailed CSV file.
+        Exports the aggregated evaluation results to a CSV file.
         """
-        if not results.get("individual"):
-            print("No individual results found in the provided results.")
+        summary = results.get("summary", {})
+        if not summary:
+            print("No summary results found to export.")
             return
 
-        detailed_results = results["individual"]
-        with open(filename, "w", newline="") as csvfile:
-            csvwriter = csv.writer(csvfile)
-            
-            # Write header
-            header = [
-                "Question", "Ground Truth Answer", "Ground Truth Section", "Ground Truth Context",
-                "RAG Answer", "RAG Prompt Tokens", "RAG Completion Tokens", "RAG Total Tokens",
-                "RAG ROUGE-1 F1", "RAG ROUGE-2 F1", "RAG ROUGE-L F1", "RAG Recall@1", "RAG Recall@3", "RAG MRR",
-                "Reranked RAG Answer", "Reranked RAG Prompt Tokens", "Reranked RAG Completion Tokens", "Reranked RAG Total Tokens",
-                "Reranked RAG ROUGE-1 F1", "Reranked RAG ROUGE-2 F1", "Reranked RAG ROUGE-L F1", "Reranked RAG Recall@1", "Reranked RAG Recall@3", "Reranked RAG MRR",
-                "Unfiltered Answer", "Unfiltered Prompt Tokens", "Unfiltered Completion Tokens", "Unfiltered Total Tokens",
-                "Unfiltered ROUGE-1 F1", "Unfiltered ROUGE-2 F1", "Unfiltered ROUGE-L F1",
-                "Web Search Answer", "Web Search Prompt Tokens", "Web Search Completion Tokens", "Web Search Total Tokens",
-                "Web Search ROUGE-1 F1", "Web Search ROUGE-2 F1", "Web Search ROUGE-L F1",
-                "Baseline Answer", "Baseline Prompt Tokens", "Baseline Completion Tokens", "Baseline Total Tokens",
-                "Baseline ROUGE-1 F1", "Baseline ROUGE-2 F1", "Baseline ROUGE-L F1"
-            ]
-            csvwriter.writerow(header)
-            
-            # Write data rows
-            for res in detailed_results:
-                row = [
-                    res["question"],
-                    res["ground_truth_answer"],
-                    res.get("section", "N/A"),
-                    res.get("chunk_text", "N/A"),
-                    
-                    # RAG metrics
-                    res["rag"]["answer"],
-                    res["rag"]["tokens"]["prompt_tokens"],
-                    res["rag"]["tokens"]["completion_tokens"],
-                    res["rag"]["tokens"]["total_tokens"],
-                    res["rag"]["rouge"]["rouge1"]["fmeasure"],
-                    res["rag"]["rouge"]["rouge2"]["fmeasure"],
-                    res["rag"]["rouge"]["rougeL"]["fmeasure"],
-                    res["rag"]["retrieval"]["recall_at_1"],
-                    res["rag"]["retrieval"]["recall_at_3"],
-                    res["rag"]["retrieval"]["mrr"],
-                    
-                    # Reranked RAG metrics
-                    res["reranked_rag"]["answer"],
-                    res["reranked_rag"]["tokens"]["prompt_tokens"],
-                    res["reranked_rag"]["tokens"]["completion_tokens"],
-                    res["reranked_rag"]["tokens"]["total_tokens"],
-                    res["reranked_rag"]["rouge"]["rouge1"]["fmeasure"],
-                    res["reranked_rag"]["rouge"]["rouge2"]["fmeasure"],
-                    res["reranked_rag"]["rouge"]["rougeL"]["fmeasure"],
-                    res["reranked_rag"]["retrieval"]["recall_at_1"],
-                    res["reranked_rag"]["retrieval"]["recall_at_3"],
-                    res["reranked_rag"]["retrieval"]["mrr"],
-                    
-                    # Unfiltered metrics
-                    res["unfiltered"]["answer"],
-                    res["unfiltered"]["tokens"]["prompt_tokens"],
-                    res["unfiltered"]["tokens"]["completion_tokens"],
-                    res["unfiltered"]["tokens"]["total_tokens"],
-                    res["unfiltered"]["rouge"]["rouge1"]["fmeasure"],
-                    res["unfiltered"]["rouge"]["rouge2"]["fmeasure"],
-                    res["unfiltered"]["rouge"]["rougeL"]["fmeasure"],
-                    
-                    # Web Search metrics
-                    res["web_search"]["answer"],
-                    res["web_search"]["tokens"]["prompt_tokens"],
-                    res["web_search"]["tokens"]["completion_tokens"],
-                    res["web_search"]["tokens"]["total_tokens"],
-                    res["web_search"]["rouge"]["rouge1"]["fmeasure"],
-                    res["web_search"]["rouge"]["rouge2"]["fmeasure"],
-                    res["web_search"]["rouge"]["rougeL"]["fmeasure"],
-                    
-                    # Baseline metrics
-                    res["baseline"]["answer"],
-                    res["baseline"]["tokens"]["prompt_tokens"],
-                    res["baseline"]["tokens"]["completion_tokens"],
-                    res["baseline"]["tokens"]["total_tokens"],
-                    res["baseline"]["rouge"]["rouge1"]["fmeasure"],
-                    res["baseline"]["rouge"]["rouge2"]["fmeasure"],
-                    res["baseline"]["rouge"]["rougeL"]["fmeasure"],
-                ]
-                csvwriter.writerow(row)
+        # Use the results_to_dataframe method to get the data
+        df = self.results_to_dataframe(results)
+        
+        if df.empty:
+            print("No data to export to CSV.")
+            return
 
-        print(f"✅ Results exported to {filename}") 
+        df.to_csv(filename, index=False)
+        print(f"✅ Results exported to {filename}")
+
+    # ============================================================================
+    # Checkpoint Methods for Resume Functionality
+    # ============================================================================
+    
+    def _get_checkpoint_path(self, run_id: str = None) -> Path:
+        """Get the path for checkpoint file."""
+        if run_id is None:
+            run_id = "current"
+        in_process_dir = RESULTS_DIR / "in_process"
+        in_process_dir.mkdir(parents=True, exist_ok=True)
+        return in_process_dir / f"checkpoint_{run_id}.json"
+
+    def _save_checkpoint(self, results: List[Dict], qa_dataset: List[Dict], 
+                        current_index: int, methods: List[str], k_values: List[int], 
+                        run_id: str) -> None:
+        """Save evaluation progress to checkpoint file."""
+        checkpoint_data = {
+            "completed_results": results,
+            "qa_dataset": qa_dataset,
+            "current_index": current_index,
+            "methods": methods,
+            "k_values": k_values,
+            "run_id": run_id,
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        
+        checkpoint_path = self._get_checkpoint_path(run_id)
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with open(checkpoint_path, "w") as f:
+            json.dump(checkpoint_data, f, indent=2)
+        
+        if not self.quiet:
+            print(f"💾 Checkpoint saved: {len(results)}/{len(qa_dataset)} questions completed")
+
+    def _load_checkpoint(self, run_id: str = None) -> Dict[str, Any]:
+        """Load evaluation progress from checkpoint file."""
+        checkpoint_path = self._get_checkpoint_path(run_id)
+        
+        if not checkpoint_path.exists():
+            return None
+        
+        try:
+            with open(checkpoint_path, "r") as f:
+                checkpoint_data = json.load(f)
+            
+            if not self.quiet:
+                completed = len(checkpoint_data.get("completed_results", []))
+                total = len(checkpoint_data.get("qa_dataset", []))
+                print(f"📂 Found checkpoint: {completed}/{total} questions completed")
+            
+            return checkpoint_data
+        except Exception as e:
+            if not self.quiet:
+                print(f"⚠️ Error loading checkpoint: {e}")
+            return None
+
+    def _cleanup_checkpoint(self, run_id: str) -> None:
+        """Remove checkpoint file after successful completion."""
+        checkpoint_path = self._get_checkpoint_path(run_id)
+        if checkpoint_path.exists():
+            checkpoint_path.unlink()
+            if not self.quiet:
+                print(f"🗑️ Checkpoint cleaned up: {checkpoint_path}") 

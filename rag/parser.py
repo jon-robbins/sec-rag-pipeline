@@ -85,34 +85,34 @@ Return a JSON object with these optional keys (omit if unknown):
 
 - `"ticker"`: 2–5 letter uppercase US stock symbol.
 - `"fiscal_year"`: 4-digit year between 1995–2030.
-- `"sections"`: An array of up to 3 SEC 10-K item codes as strings (see below).
+- `"sections"`: An array of up to 3 SEC 10-K section codes as strings (see below).
 
 ## SECTION CODES
-Use these SEC 10-K item codes when identifying relevant sections:
+Use these SEC 10-K section codes when identifying relevant sections:
 
 {
-  "Item 1": "Business Operations, Products, Services (including competitors, market details)",
-  "Item 1A": "Risk Factors",
-  "Item 1B": "Unresolved Staff Comments",
-  "Item 2": "Properties",
-  "Item 3": "Legal Proceedings",
-  "Item 4": "Mine Safety Disclosures (mining companies only)",
-  "Item 5": "Market for Registrant's Common Equity and Related Stockholder Matters",
-  "Item 6": "[Removed and Reserved]",
-  "Item 7": "Management's Discussion and Analysis (MD&A)",
-  "Item 7A": "Quantitative and Qualitative Disclosures About Market Risk",
-  "Item 8": "Financial Statements and Supplementary Data",
-  "Item 9": "Changes in and Disagreements with Accountants on Accounting/Financial Disclosure",
-  "Item 9A": "Controls and Procedures",
-  "Item 9B": "Other Information",
-  "Item 9C": "Disclosure Regarding Foreign Jurisdictions (HFCAA)",
-  "Item 10": "Directors, Executive Officers, and Corporate Governance",
-  "Item 11": "Executive Compensation",
-  "Item 12": "Security Ownership of Certain Beneficial Owners, Management, and Related Matters",
-  "Item 13": "Certain Relationships, Related Transactions, Director Independence",
-  "Item 14": "Principal Accounting Fees and Services",
-  "Item 15": "Exhibits and Financial Statement Schedules",
-  "Item 16": "Form 10-K Summary (optional)"
+  "Section 1": "Business Operations, Products, Services (including competitors, market details)",
+  "Section 1A": "Risk Factors",
+  "Section 1B": "Unresolved Staff Comments",
+  "Section 2": "Properties",
+  "Section 3": "Legal Proceedings",
+  "Section 4": "Mine Safety Disclosures (mining companies only)",
+  "Section 5": "Market for Registrant's Common Equity and Related Stockholder Matters",
+  "Section 6": "[Removed and Reserved]",
+  "Section 7": "Management's Discussion and Analysis (MD&A)",
+  "Section 7A": "Quantitative and Qualitative Disclosures About Market Risk",
+  "Section 8": "Financial Statements and Supplementary Data",
+  "Section 9": "Changes in and Disagreements with Accountants on Accounting/Financial Disclosure",
+  "Section 9A": "Controls and Procedures",
+  "Section 9B": "Other Information",
+  "Section 9C": "Disclosure Regarding Foreign Jurisdictions (HFCAA)",
+  "Section 10": "Directors, Executive Officers, and Corporate Governance",
+  "Section 11": "Executive Compensation",
+  "Section 12": "Security Ownership of Certain Beneficial Owners, Management, and Related Matters",
+  "Section 13": "Certain Relationships, Related Transactions, Director Independence",
+  "Section 14": "Principal Accounting Fees and Services",
+  "Section 15": "Exhibits and Financial Statement Schedules",
+  "Section 16": "Form 10-K Summary (optional)"
 }
 
 ## COMMON COMPANY NAMES (Ticker Reference)

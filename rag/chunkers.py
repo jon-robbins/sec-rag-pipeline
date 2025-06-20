@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 import uuid
 import numpy as np
-
+from rag.config import SEC_10K_SECTIONS
 import pandas as pd
 import tiktoken
 
@@ -18,35 +18,7 @@ ENC = tiktoken.encoding_for_model("gpt-3.5-turbo")
 _tok   = ENC.encode
 _detok = ENC.decode
 
-# ──────────────────────────────── SEC mapping ────────────────────────────────
-SEC_10K_ITEMS = {
-    "1":  "Business",
-    "1A": "Risk Factors",
-    "1B": "Unresolved Staff Comments",
-    "2":  "Properties",
-    "3":  "Legal Proceedings",
-    "4":  "Mine Safety Disclosures",
-    "5":  "Market for Registrant's Common Equity, Related Stockholder Matters "
-          "and Issuer Purchases of Equity Securities",
-    "6":  "Selected Financial Data",
-    "7":  "Management's Discussion and Analysis of Financial Condition and "
-          "Results of Operations (MD&A)",
-    "7A": "Quantitative and Qualitative Disclosures About Market Risk",
-    "8":  "Financial Statements and Supplementary Data",
-    "9":  "Changes in and Disagreements with Accountants on Accounting and "
-          "Financial Disclosure",
-    "9A": "Controls and Procedures",
-    "9B": "Other Information",
-    "9C": "Disclosure Regarding Foreign Jurisdictions that Prevent Inspections",
-    "10": "Directors, Executive Officers and Corporate Governance",
-    "11": "Executive Compensation",
-    "12": "Security Ownership of Certain Beneficial Owners and Management and "
-          "Related Stockholder Matters",
-    "13": "Certain Relationships and Related Transactions, and Director "
-          "Independence",
-    "14": "Principal Accounting Fees and Services",
-    "15": "Exhibits and Financial Statement Schedules",
-}
+
 
 # ────────────────────────────── regex helpers ────────────────────────────────
 _BULLETS  = re.compile(r"^[\s»\-–•\*]+\s*", re.MULTILINE)
@@ -58,7 +30,7 @@ SENT_SPLIT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z])")  # fallback splitter
 class Chunk:
     id: str
     text: str
-    metadata: Dict[str, Any]   # ticker, fiscal_year, item, item_desc, section
+    metadata: Dict[str, Any]   # ticker, fiscal_year, section, section_num, section_letter, section_desc
     embedding: Optional[List[float]] = None
 
     def to_dict(self):
@@ -100,12 +72,20 @@ class SmartChunker:
         Processes a DataFrame of sentences and returns a list of chunks.
 
         The input DataFrame must have columns: 'sentence', 'sentence_token_count',
-        and metadata columns ('ticker', 'fiscal_year', 'section', 'item').
+        and metadata columns ('ticker', 'fiscal_year', 'section').
         """
         all_chunks: list[Chunk] = []
+        if 'section' not in df_sentences.columns:
+            raise ValueError("Input DataFrame must contain a 'section' column.")
+
+        # Parse section into num and letter
+        section_parts = df_sentences['section'].astype(str).str.extract(r'(\d+)([A-Z]?)', expand=True)
+        df_sentences['section_num'] = section_parts[0]
+        df_sentences['section_letter'] = section_parts[1].fillna('')
 
         # Group by document section to process each section independently
-        for (ticker, fiscal_year, section, item), group in df_sentences.groupby([ 'ticker', 'fiscal_year', 'section', 'item']):
+        group_cols = ['ticker', 'fiscal_year', 'section', 'section_num', 'section_letter']
+        for (ticker, fiscal_year, section, section_num, section_letter), group in df_sentences.groupby(group_cols):
             sentences = group['sentence'].tolist()
             sent_token_lens = group['sentence_token_count'].tolist()
             
@@ -115,7 +95,8 @@ class SmartChunker:
                 ticker=ticker,
                 fiscal_year=fiscal_year,
                 section=section,
-                item=item
+                section_num=section_num,
+                section_letter=section_letter
             )
             all_chunks.extend(section_chunks)
             
@@ -129,7 +110,8 @@ class SmartChunker:
         ticker: str,
         fiscal_year: int,
         section: str,
-        item: str
+        section_num: str,
+        section_letter: str
     ) -> List[Chunk]:
         """Helper to process a group of sentences for a single document section."""
         chunks, buf, buf_tokens = [], [], 0
@@ -141,7 +123,7 @@ class SmartChunker:
             if buf_tokens and buf_tokens + n_tok > self.target:
                 chunks.extend(
                     self._emit_chunk(" ".join(buf), ticker, fiscal_year,
-                                     section, item, len(chunks))
+                                     section, section_num, section_letter, len(chunks))
                 )
                 buf, buf_tokens = self._apply_overlap(buf, sent_token_lens, i)
 
@@ -151,7 +133,7 @@ class SmartChunker:
                 for slice_txt in self._force_slice(sentences[i], n_tok):
                     chunks.extend(
                         self._emit_chunk(slice_txt, ticker, fiscal_year,
-                                         section, item, len(chunks))
+                                         section, section_num, section_letter, len(chunks))
                     )
                 i += 1
                 continue
@@ -163,7 +145,7 @@ class SmartChunker:
         if buf:
             chunks.extend(
                 self._emit_chunk(" ".join(buf), ticker, fiscal_year,
-                                 section, item, len(chunks))
+                                 section, section_num, section_letter, len(chunks))
             )
         return chunks
 
@@ -204,10 +186,13 @@ class SmartChunker:
                     ticker: str,
                     fiscal_year: int,
                     section: str,
-                    item: str,
+                    section_num: str,
+                    section_letter: str,
                     seq: int) -> List[Chunk]:
 
-        item_desc = SEC_10K_ITEMS.get(item, "")
+        # Look up section description using section_num and section_letter
+        section_key = section_num + section_letter
+        section_desc = SEC_10K_SECTIONS.get(section_key, "")
         
         # Final safety check: split any chunk that is still too large
         # This can happen if a single "sentence" from the source is massive.
@@ -221,10 +206,10 @@ class SmartChunker:
             if not slice_txt:
                 continue
                 
-            human_readable_id = f"{ticker}_{fiscal_year}_{item}_{seq}" + (f"_{i}" if i > 0 else "")
+            human_readable_id = f"{ticker}_{fiscal_year}_{section}_{seq}" + (f"_{i}" if i > 0 else "")
             
             # Best Practice: Combine metadata and content for a unique, deterministic ID
-            unique_string = f"{ticker}|{fiscal_year}|{item}|{seq}|{i}|{slice_txt}"
+            unique_string = f"{ticker}|{fiscal_year}|{section}|{seq}|{i}|{slice_txt}"
             deterministic_uuid = str(uuid.uuid5(CHUNK_UUID_NAMESPACE, unique_string))
             
             final_chunks.append(
@@ -234,9 +219,13 @@ class SmartChunker:
                     metadata={
                         "ticker": ticker,
                         "fiscal_year": fiscal_year,
-                        "item": item,
-                        "item_desc": item_desc,
-                        "human_readable_id": human_readable_id
+                        "section": section,
+                        "section_num": section_num,
+                        "section_letter": section_letter,
+                        "section_desc": section_desc,
+                        "human_readable_id": human_readable_id,
+                        "seq": seq,
+                        "slice_idx": i,
                     },
                 )
             )
