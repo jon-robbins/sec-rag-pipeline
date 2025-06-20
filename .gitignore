@@ -320,3 +320,4 @@ data/sql/sec_filings.duckdb
 *.pkl
 embeddings/chunks_embeddings.pkl
 *.pkl
+FinanceRAG/
