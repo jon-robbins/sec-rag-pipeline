@@ -59,42 +59,54 @@ For details of EDA and implementation, see the following notebooks:
 # Evaluation
 For evaluation of results, I'll use an ensemble of metrics:
 
-##Primary metric: Cost per accurate answer
+## Primary metric: Cost per accurate answer
 
-We define an *accurate answer* as one whose ROUGE-L F1 score exceeds a threshold $\tau$ (e.g., $\tau = 0.5$).
+We define an *accurate answer* as one whose ROUGE-L F1 score exceeds a threshold $\tau$ (e.g. $\tau = 0.5$).
 
 Let:
 
-- $N$ be the total number of evaluated questions.
-- $c_i$ be the cost incurred for generating the $i^{\text{th}}$ answer.
-- $r_i$ be the ROUGE-L F1 score of the $i^{\text{th}}$ answer.
-- $\tau$ be the accuracy threshold of 0.5
-- $\delta_i = \begin{cases}
-1 & \text{if } r_i \geq \tau \\
-0 & \text{otherwise}
-\end{cases}$ — indicator for an accurate answer.
+- $N$ be the total number of evaluated questions.  
+- $c_i$ be the cost incurred for generating the $i^\text{th}$ answer.  
+- $r_i$ be the ROUGE-L F1 score of the $i^\text{th}$ answer.  
+- $\tau$ be the accuracy threshold (e.g. $\tau = 0.5$).  
+- 
+  $$
+  \delta_i = 
+  \begin{cases}
+    1 & \text{if } r_i \ge \tau,\\
+    0 & \text{otherwise}.
+  \end{cases}
+  $$
 
 Then:
 
 $$
-\text{Total Cost}  = \sum_{i=1}^N c_i
+\text{Total Cost} = \sum_{i=1}^N c_i
 $$
 
 $$
-\text{\# of Accurate Answers} = \sum_{i=1}^N \delta_i
+\#\text{ of Accurate Answers} = \sum_{i=1}^N \delta_i
 $$
 
 $$
-\text{Cost per Accurate Answer} = 
-\frac{\text{Total Cost}}{\text{\# of Accurate Answers}}
+\text{Cost per Accurate Answer} 
+= \frac{\text{Total Cost}}{\#\text{ of Accurate Answers}}
 $$
+
+---
 
 ## Secondary metrics
-- Rouge L - Longest common subsequence
-    - Best for factual QA, rewards both accuracy and completeness
-- Recall@k $k \in  \{1,3,5,7,10\}$ (only for RAG)
-    - Helps evaluate the value of k vectors to return to the LLM to balance accuracy and cost
-- NDCG@10 (only for RAG)
-    - Normalized Discounted Cumulative Gain @ rank 10. It measures not only whether or not the correct answer was returned, but how highly it ranked. 
 
-# Recommendations
+- **ROUGE-L** (Longest Common Subsequence)  
+  Best for factual QA; rewards both accuracy and completeness.
+
+- **Recall@k** ($k \in \{1,3,5,7,10\}$) (only for RAG)  
+  Measures the value of returning *k* vectors to the LLM, balancing accuracy and cost.
+
+- **NDCG@10** (only for RAG)  
+  Normalized Discounted Cumulative Gain at rank 10.  
+  Captures not just if the correct answer is returned, but also how highly it’s ranked.
+
+---
+
+## Recommendations

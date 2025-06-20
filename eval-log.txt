@@ -492,3 +492,64 @@ Parsed query: {}
 📄 Ground Truth Section: 12
 💬 Ground Truth Context: N/A
 ✅ Ground Truth Answer: The company's 2020 Proxy Statement will be filed with the SEC within 120 days after September 28, 2019.
+--------------------------------------------------------------------------------
+🤖 RAG: The context does not provide specific information regarding the filing date of Apple's 2020 Proxy Statement with the SEC. Therefore, I cannot answer your question based on the provided information. [Tokens: 1504]
+🤖 RERANKED_RAG: The 2020 Proxy Statement for AAPL will be filed with the SEC within 120 days after the end of its fiscal year, which is September 29, 2019. Therefore, it is expected to be filed by January 28, 2020. [Tokens: 1753]
+🤖 ENSEMBLE_RERANK_RAG: The company's 2020 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which the report relates. Since the fiscal year 2019 ended on September 28, 2019, the 2020 Proxy Statement is expected to be [Tokens: 1932]
+🤖 UNFILTERED: The company's 2020 Proxy Statement is expected to be filed with the SEC within 120 days after September 28, 2019. [Tokens: 37004]
+🤖 WEB_SEARCH: Apple's 2020 Proxy Statement was filed with the SEC on January 3, 2020, and the Annual Meeting of Shareholders was held on February 26, 2020. ([sec.gov](https://www.sec.gov/Archives/edgar/data/320193/000119312520001450/d799303ddef14a.htm?utm_source=openai)) The record date for the meeting was January 2, 2020. ([macdailynews.com](https://macdailynews.com/2020/01/03/apples-2020-annual-meeting-of-shareholders-scheduled-for-february-26th/?utm_source=openai)) [Tokens: 349]
+🤖 BASELINE: The 2020 Proxy Statement for Apple Inc. (AAPL) would typically be filed with the SEC in advance of the company's annual meeting, which usually occurs in late February or early March. For fiscal year 2019, the Proxy Statement would likely have been filed in early 2020, [Tokens: 288]
+================================================================================
+Parsed query: {'ticker': 'AAPL', 'fiscal_year': 2018, 'sections': ['7A', '7']}
+Parsed query: {'ticker': 'AAPL', 'fiscal_year': 2018, 'sections': ['7A']}
+Parsed query: {'ticker': 'AAPL', 'fiscal_year': 2018, 'sections': ['7A']}
+Parsed query: {'ticker': 'AAPL', 'fiscal_year': 2018, 'sections': ['7A', '7']}
+Parsed query: {'ticker': 'AAPL', 'fiscal_year': 2018, 'sections': ['7A', '7']}
+
+================================================================================
+❓ Question (Original): How does the Company manage its investment strategy in relation to interest rate risk in the fiscal year?
+❓ Question (Augmented): Question about ticker AAPL for fiscal year 2018: How does the Company manage its investment strategy in relation to interest rate risk in the fiscal year?
+📄 Ground Truth Section: 7A
+💬 Ground Truth Context: N/A
+✅ Ground Truth Answer: The Company’s investment policy and strategy are focused on preservation of capital and supporting the Company’s liquidity requirements.
+--------------------------------------------------------------------------------
+🤖 RAG: I couldn't find any relevant information to answer your question. [Tokens: 0]
+🤖 RERANKED_RAG: [No documents found to rerank] [Tokens: 0]
+🤖 ENSEMBLE_RERANK_RAG: Could not retrieve any documents. [Tokens: 0]
+🤖 UNFILTERED: The Company manages its investment strategy in relation to interest rate risk by focusing on preservation of capital and supporting liquidity requirements. It typically invests in highly rated securities, with a policy that generally requires securities to be investment grade and limits credit exposure to any one issuer. Additionally, the Company has entered into interest rate [Tokens: 44062]
+🤖 WEB_SEARCH: In fiscal year 2018, Apple Inc. managed its interest rate risk through a combination of investment strategies and hedging activities. The company's investment policy focused on preserving capital and supporting liquidity requirements, primarily investing in highly rated, investment-grade securities to minimize principal loss. To assess the impact of interest rate changes, Apple performed a sensitivity analysis, estimating that a 100 basis point increase in interest rates would result in a $399 million decline in the fair market value of its investment portfolio as of September 29, 2018. Additionally, Apple utilized interest rate swaps to manage interest rate risk on its outstanding term debt, effectively converting fixed-rate payments into floating-rate payments or vice versa. As of September 29, 2018, the company had outstanding floating- and fixed-rate notes with a carrying amount of $102.5 billion. ([sec.gov](https://www.sec.gov/Archives/edgar/data/320193/000119312515356351/d17062d10k.htm?utm_source=openai)) [Tokens: 420]
+🤖 BASELINE: Apple Inc. (AAPL) typically manages its investment strategy concerning interest rate risk by diversifying its investment portfolio and using various financial instruments. The company may invest in fixed-income securities, which are sensitive to interest rate changes, and may also employ hedging strategies to mitigate potential risks associated with rising interest [Tokens: 292]
+================================================================================
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2014, 'sections': ['9']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2014, 'sections': ['9']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2014, 'sections': ['9']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2014, 'sections': ['9']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2014, 'sections': ['9']}
+
+================================================================================
+❓ Question (Original): What is the status of changes in and disagreements with accountants for the company in the fiscal year?
+❓ Question (Augmented): Question about ticker TSLA for fiscal year 2014: What is the status of changes in and disagreements with accountants for the company in the fiscal year?
+📄 Ground Truth Section: 9
+💬 Ground Truth Context: N/A
+✅ Ground Truth Answer: Not applicable.
+--------------------------------------------------------------------------------
+🤖 RAG: I couldn't find any relevant information to answer your question. [Tokens: 0]
+🤖 RERANKED_RAG: [No documents found to rerank] [Tokens: 0]
+🤖 ENSEMBLE_RERANK_RAG: Could not retrieve any documents. [Tokens: 0]
+🤖 UNFILTERED: There were no changes in or disagreements with accountants on accounting and financial disclosure for Tesla Motors, Inc. during the fiscal year 2014. The filing indicates that there were no unresolved staff comments and does not report any disagreements with accountants. [Tokens: 71354]
+🤖 WEB_SEARCH: In Tesla's 2014 Form 10-K, under Item 9, "Changes in and Disagreements with Accountants on Accounting and Financial Disclosure," the company stated:
+
+> "Not applicable." ([sec.gov](https://www.sec.gov/Archives/edgar/data/1318605/000156459015001031/tsla-10k_20141231.htm?utm_source=openai))
+
+This indicates that during the fiscal year 2014, Tesla did not experience any changes in or disagreements with its accountants regarding accounting principles, financial statement disclosures, or auditing procedures. [Tokens: 333]
+🤖 BASELINE: For Tesla (ticker TSLA) in fiscal year 2014, there were no reported changes in or disagreements with accountants. Typically, companies disclose such information in their annual reports (10-K filings) or in specific reports if any issues arise. However, I cannot provide specific details or confirm the absence [Tokens: 292]
+================================================================================
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2013, 'sections': ['9A']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2013, 'sections': ['9A']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2013, 'sections': ['9A']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2013, 'sections': ['9A']}
+Parsed query: {'ticker': 'TSLA', 'fiscal_year': 2013, 'sections': ['9A']}
+
+================================================================================
+❓ Question (Original): What did the management of the company conclude about their internal control over financial reporting as of December 31, 2013?
+❓ Question (Augmented): Question about ticker TSLA for fiscal year 2013: What did the management of the company conclude about their internal control over financial reporting as of December 31, 2013?
