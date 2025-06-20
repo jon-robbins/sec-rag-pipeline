@@ -6,6 +6,7 @@ import numpy as np
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 import warnings
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Import bootstrap analyzer for type hints and functionality
 import sys
@@ -514,5 +515,48 @@ def plot_top_sections_by_tokens(df, top_n=10, figsize=(16, 10)):
     plt.gca().set_yticklabels(section_tokens['section_and_description'], wrap=True)
     plt.gca().yaxis.set_tick_params(pad=20)
     
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_embedding_similarity(df_embeddings, dimension='company', figsize=(10, 8)):
+    """
+    Calculate and plot cosine similarity between embeddings aggregated by a given dimension.
+    
+    Args:
+        df_embeddings: DataFrame with 'embedding' column and the specified dimension column
+        dimension: Column name to aggregate by (e.g., 'company', 'year', 'section_desc')
+        figsize: Tuple for figure size
+    """
+    
+    # Calculate average embeddings for each group
+    group_embeddings = {}
+    for group in df_embeddings[dimension].unique():
+        group_data = df_embeddings[df_embeddings[dimension] == group]
+        avg_embedding = np.mean(group_data['embedding'].tolist(), axis=0)
+        group_embeddings[group] = avg_embedding
+
+    # Convert to matrix format
+    groups = sorted(group_embeddings.keys())
+    embedding_matrix = np.array([group_embeddings[group] for group in groups])
+
+    # Calculate cosine similarity matrix
+    similarity_matrix = cosine_similarity(embedding_matrix)
+
+    # Create heatmap
+    plt.figure(figsize=figsize)
+    sns.heatmap(
+        similarity_matrix, 
+        xticklabels=groups, 
+        yticklabels=groups,
+        annot=True, 
+        cmap='viridis', 
+        vmin=0, 
+        vmax=1,
+        square=True
+    )
+    plt.title(f'Cosine Similarity Between {dimension.title()} Embeddings')
+    plt.xlabel(dimension.title())
+    plt.ylabel(dimension.title())
     plt.tight_layout()
     plt.show()
