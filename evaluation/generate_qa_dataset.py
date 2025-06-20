@@ -152,7 +152,7 @@ def generate_qa_pairs(chunks: List,
         print("❌ Required packages not installed. Run: pip install langchain langchain-openai tqdm")
         return
 
-    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=300)
+    llm = ChatOpenAI(temperature=0, model="gpt-4o-mini", max_tokens=200)
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
@@ -161,7 +161,7 @@ def generate_qa_pairs(chunks: List,
     system_prompt = """
 You are a financial analyst assistant. Your job is to generate high-quality question-answer pairs based on SEC filing text.
 INSTRUCTIONS:
-1. Generate 2 specific, answerable questions based ONLY on the provided text.
+1. Generate 1-2 specific, answerable questions based ONLY on the provided text.
 2. Each question must explicitly include the company name and fiscal year.
 3. Provide accurate, concise answers based solely on the text content.
 4. Return your response as valid JSON in this exact format: {"qa_pairs": [{"question": "...", "answer": "..."}, ...]}

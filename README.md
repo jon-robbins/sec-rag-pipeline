@@ -53,14 +53,13 @@ See the RAG with reranker(s) flow below:
 For details of EDA and implementation, see the following notebooks:
 
 [EDA](./notebooks/EDA.ipynb)
-
-
+[Implementation details](./notebooks/implementation.ipynb)
+[Results analysis](./notebooks/evaluation.ipynb)
 
 # Evaluation
 For evaluation of results, I'll use an ensemble of metrics:
 
 ##Primary metric: Cost per accurate answer
-### Cost per Accurate Answer
 
 We define an *accurate answer* as one whose ROUGE-L F1 score exceeds a threshold $\tau$ (e.g., $\tau = 0.5$).
 

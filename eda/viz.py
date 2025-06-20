@@ -471,52 +471,112 @@ def plot_token_distribution(df, token_col='num_tokens', log_scale=False, title=N
     plt.tight_layout()
     plt.show()
 
-def plot_top_sections_by_tokens(df, top_n=10, figsize=(16, 10)):
+import matplotlib.pyplot as plt
+from textwrap import fill
+
+
+def plot_top_sections_by_tokens(
+    df,
+    top_n: int = 10,
+    figsize: tuple = (12, 8),
+    max_label_chars: int = 40,
+    cmap: str = "tab20",
+):
     """
-    Plot the top N sections by total token count.
-    
-    Args:
-        df: DataFrame with 'section_num', 'section_letter', and 'sentence_token_count' columns
-        top_n: Number of top sections to display (default: 10)
-        figsize: Figure size tuple (default: (16, 10))
+    Stacked horizontal bar chart of the N highest-token 10-K sections,
+    with per-ticker breakdown and a right-aligned total label.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Columns required: 'ticker', 'section_num', 'section_letter',
+        'sentence_token_count'.
+    top_n : int
+        Number of sections to display.
+    figsize : tuple
+        Matplotlib figure size in inches.
+    max_label_chars : int
+        Soft-wrap width for long y-axis labels.
+    cmap : str
+        Any discrete Matplotlib colormap with ≥ number of tickers.
     """
+    # ------------------------------------------------------------------ #
+    # 1. Aggregate
+    # ------------------------------------------------------------------ #
     from rag.config import SEC_10K_SECTIONS
-    
-    # Sum tokens by section
-    section_tokens = df.groupby(['section_num', 'section_letter']).agg({
-        'sentence_token_count': 'sum'
-    }).reset_index()
-    
-    # Create section identifier
-    section_tokens['section_id'] = section_tokens['section_num'].astype(str) + section_tokens['section_letter']
-    
-    # Map to section descriptions
-    section_tokens['section_description'] = section_tokens['section_id'].map(SEC_10K_SECTIONS)
-    section_tokens['section_and_description'] = section_tokens['section_id'] + ' - ' + section_tokens['section_description']
-    
-    # Get top N by token count
-    section_tokens = section_tokens.sort_values('sentence_token_count', ascending=True).head(top_n)
-    
-    # Create bar chart
-    plt.figure(figsize=figsize)
-    bars = plt.barh(section_tokens['section_and_description'], section_tokens['sentence_token_count'])
-    
-    plt.title(f'Top {top_n} Sections by Total Tokens')
-    plt.xlabel('Total Tokens')
-    plt.ylabel('Section')
-    
-    # Add value labels
-    for i, bar in enumerate(bars):
-        width = bar.get_width()
-        plt.text(width + width*0.01, bar.get_y() + bar.get_height()/2, 
-                 f'{int(width):,}', ha='left', va='center')
-    
-    # Format y-axis labels
-    plt.gca().set_yticklabels(section_tokens['section_and_description'], wrap=True)
-    plt.gca().yaxis.set_tick_params(pad=20)
-    
+
+    sec = (
+        df
+        .assign(section_id=lambda d: d["section_num"].astype(str) + d["section_letter"])
+        .assign(section_desc=lambda d: d["section_id"].map(SEC_10K_SECTIONS))
+    )
+    sec["section_and_desc"] = sec["section_id"] + " – " + sec["section_desc"]
+
+    # biggest sections overall
+    section_totals = (
+        sec.groupby("section_and_desc")["sentence_token_count"]
+           .sum()
+           .nlargest(top_n)
+    )
+
+    top_sec = sec[sec["section_and_desc"].isin(section_totals.index)]
+
+    # ------------------------------------------------------------------ #
+    # 2. Pivot for stacked bars (reverse for smallest-top, biggest-bottom)
+    # ------------------------------------------------------------------ #
+    pivot = (
+        top_sec
+        .pivot_table(index="section_and_desc",
+                     columns="ticker",
+                     values="sentence_token_count",
+                     aggfunc="sum",
+                     fill_value=0)
+        .loc[section_totals.index[::-1]]   # reverse for visual order
+    )
+
+    # ------------------------------------------------------------------ #
+    # 3. Plot
+    # ------------------------------------------------------------------ #
+    fig, ax = plt.subplots(figsize=figsize)
+
+    pivot.plot(kind="barh",
+               stacked=True,
+               cmap=cmap,
+               edgecolor="white",
+               alpha=0.85,
+               ax=ax)
+
+    # Right-edge total labels
+    row_totals = pivot.sum(axis=1).to_numpy()
+    pad = 0.01 * row_totals.max()  # 1 % of full scale
+
+    for y, total in enumerate(row_totals):
+        ax.text(total + pad,
+                y,
+                f"{int(total):,}",
+                va="center",
+                ha="left",
+                fontweight="bold")
+
+    # Y-axis: wrap long labels
+    ax.set_yticklabels([fill(lbl, max_label_chars) for lbl in pivot.index])
+
+    # Titles & axis labels
+    ax.set_title(f"Top {top_n} 10-K sections by total tokens", pad=15)
+    ax.set_xlabel("Total tokens")
+    ax.set_ylabel("")
+
+    # Cosmetic polish
+    ax.grid(axis="x", linestyle="--", linewidth=0.5, alpha=0.6)
+    for spine in ("left", "top", "right"):
+        ax.spines[spine].set_visible(False)
+
+    # Legend outside plot
+    ax.legend(title="Ticker", bbox_to_anchor=(1.02, 1), loc="upper left", frameon=False)
+
     plt.tight_layout()
     plt.show()
+
 
 
 def plot_embedding_similarity(df_embeddings, dimension='company', figsize=(10, 8)):
