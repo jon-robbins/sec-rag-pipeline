@@ -61,37 +61,7 @@ For evaluation of results, I'll use an ensemble of metrics:
 
 ## Primary metric: Cost per accurate answer
 
-We define an *accurate answer* as one whose ROUGE-L F1 score exceeds a threshold $\tau$ (e.g. $\tau = 0.5$).
-
-Let:
-
-- $N$ be the total number of evaluated questions.  
-- $c_i$ be the cost incurred for generating the $i^\text{th}$ answer.  
-- $r_i$ be the ROUGE-L F1 score of the $i^\text{th}$ answer.  
-- $\tau$ be the accuracy threshold (e.g. $\tau = 0.5$).  
-- 
-  $$
-  \delta_i = 
-  \begin{cases}
-    1 & \text{if } r_i \ge \tau,\\
-    0 & \text{otherwise}.
-  \end{cases}
-  $$
-
-Then:
-
-$$
-\text{Total Cost} = \sum_{i=1}^N c_i
-$$
-
-$$
-\#\text{ of Accurate Answers} = \sum_{i=1}^N \delta_i
-$$
-
-$$
-\text{Cost per Accurate Answer} 
-= \frac{\text{Total Cost}}{\#\text{ of Accurate Answers}}
-$$
+![CPAA](./images/cpaa.png)
 
 ---
 
