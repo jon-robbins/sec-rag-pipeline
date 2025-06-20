@@ -9911,6 +9911,1691 @@
       "ground_truth_answer": "A decrease in user retention, growth, or engagement could render the company's products less attractive to users, marketers, and developers, likely having a material and adverse impact on its revenue, business, financial condition, and results of operations.",
       "section": "1A",
       "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "The provided context does not contain specific information regarding the financial statements included in the Form 10-K for META for fiscal year 2018. Therefore, I cannot provide an answer to your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.15151515151515152,
+            "recall": 0.1724137931034483,
+            "fmeasure": 0.16129032258064518
+          },
+          "rouge2": {
+            "precision": 0.09375,
+            "recall": 0.10714285714285714,
+            "fmeasure": 0.09999999999999999
+          },
+          "rougeL": {
+            "precision": 0.15151515151515152,
+            "recall": 0.1724137931034483,
+            "fmeasure": 0.16129032258064518
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1402,
+          "completion_tokens": 40,
+          "total_tokens": 1442
+        }
+      },
+      "reranked_rag": {
+        "answer": "The context does not provide specific information about the financial statements included in the Form 10-K for META for fiscal year 2018. Therefore, I cannot answer your question regarding the financial statements for that period.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.16666666666666666,
+            "recall": 0.20689655172413793,
+            "fmeasure": 0.18461538461538463
+          },
+          "rouge2": {
+            "precision": 0.08571428571428572,
+            "recall": 0.10714285714285714,
+            "fmeasure": 0.09523809523809523
+          },
+          "rougeL": {
+            "precision": 0.16666666666666666,
+            "recall": 0.20689655172413793,
+            "fmeasure": 0.18461538461538463
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1308,
+          "completion_tokens": 42,
+          "total_tokens": 1350
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "The context provided does not specify the exact financial statements included in the Form 10-K for the company in fiscal year 2018. However, typically, a Form 10-K includes the following financial statements:\n\n1. Consolidated Balance Sheets\n2. Consolidated Statements of Operations\n3. Consolid",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.28888888888888886,
+            "recall": 0.4482758620689655,
+            "fmeasure": 0.35135135135135137
+          },
+          "rouge2": {
+            "precision": 0.13636363636363635,
+            "recall": 0.21428571428571427,
+            "fmeasure": 0.16666666666666663
+          },
+          "rougeL": {
+            "precision": 0.26666666666666666,
+            "recall": 0.41379310344827586,
+            "fmeasure": 0.32432432432432434
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 737,
+          "completion_tokens": 69,
+          "total_tokens": 806
+        },
+        "contexts": [
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2018 Proxy Statement to be filed with the Securities and Exchange Commission in connection with the solicitation of proxies for our 2018 Annual Meeting of Stockholders and is incorporated herein by reference. The 2018 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 11. EXECUTIVE COMPENSATION The information required by this Item 11 of Form 10-K will be included in our 2018 Proxy Statement and is incorporated herein by reference. ITEM 12.",
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2017 Proxy Statement to be filed with the SEC in connection with the solicitation of proxies for our 2017 Annual Meeting of Stockholders (2017 Proxy Statement) and is incorporated herein by reference. The 2017 Proxy Statement will be filed with the SEC within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 11. EXECUTIVE COMPENSATION The information required by this Item 11 of Form 10-K will be included in our 2017 Proxy Statement and is incorporated herein by reference. ITEM 12.",
+          "ITEM 11. EXECUTIVE COMPENSATION The information required by this Item 11 of Form 10-K will be included in our 2016 Proxy Statement and is incorporated herein by reference. ITEM 12."
+        ]
+      },
+      "question": "What financial statements were included in the Form 10-K for the company in fiscal year 2018?",
+      "ground_truth_answer": "The financial statements included are the Consolidated Balance Sheets, Consolidated Statements of Income, Consolidated Statements of Comprehensive Income, Consolidated Statements of Stockholders' Equity, and Consolidated Statements of Cash Flows.",
+      "section": "15",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "The signing date of the Annual Report on Form 10-K for META for fiscal year 2018 is not provided in the context. Therefore, I cannot determine the specific date of the signing.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.3333333333333333,
+            "recall": 0.6875,
+            "fmeasure": 0.4489795918367347
+          },
+          "rouge2": {
+            "precision": 0.1875,
+            "recall": 0.4,
+            "fmeasure": 0.25531914893617025
+          },
+          "rougeL": {
+            "precision": 0.2727272727272727,
+            "recall": 0.5625,
+            "fmeasure": 0.36734693877551017
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1431,
+          "completion_tokens": 60,
+          "total_tokens": 1491
+        }
+      },
+      "reranked_rag": {
+        "answer": "The Annual Report on Form 10-K for META for fiscal year 2018 was signed on February 2, 2017.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.631578947368421,
+            "recall": 0.75,
+            "fmeasure": 0.6857142857142857
+          },
+          "rouge2": {
+            "precision": 0.4444444444444444,
+            "recall": 0.5333333333333333,
+            "fmeasure": 0.4848484848484848
+          },
+          "rougeL": {
+            "precision": 0.5789473684210527,
+            "recall": 0.6875,
+            "fmeasure": 0.6285714285714286
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1525,
+          "completion_tokens": 27,
+          "total_tokens": 1552
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "The Annual Report on Form 10-K for the company in fiscal year 2018 would typically be signed and filed within 120 days after the end of the fiscal year, which for most companies ends on December 31. Therefore, if the fiscal year 2017 ended on December 31,",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2708333333333333,
+            "recall": 0.8125,
+            "fmeasure": 0.40625
+          },
+          "rouge2": {
+            "precision": 0.1276595744680851,
+            "recall": 0.4,
+            "fmeasure": 0.1935483870967742
+          },
+          "rougeL": {
+            "precision": 0.20833333333333334,
+            "recall": 0.625,
+            "fmeasure": 0.3125
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 945,
+          "completion_tokens": 69,
+          "total_tokens": 1014
+        },
+        "contexts": [
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2018 Proxy Statement to be filed with the Securities and Exchange Commission in connection with the solicitation of proxies for our 2018 Annual Meeting of Stockholders and is incorporated herein by reference. The 2018 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2017 Proxy Statement to be filed with the SEC in connection with the solicitation of proxies for our 2017 Annual Meeting of Stockholders (2017 Proxy Statement) and is incorporated herein by reference. The 2017 Proxy Statement will be filed with the SEC within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2021 Proxy Statement to be filed with the Securities and Exchange Commission in connection with the solicitation of proxies for our 2021 Annual Meeting of Stockholders and is incorporated herein by reference. The 2021 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2016 Proxy Statement to be filed with the SEC in connection with the solicitation of proxies for our 2016 Annual Meeting of Stockholders (2016 Proxy Statement) and is incorporated herein by reference. The 2016 Proxy Statement will be filed with the SEC within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+          "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2015 Proxy Statement to be filed with the SEC in connection with the solicitation of proxies for our 2015 Annual Meeting of Stockholders (2015 Proxy Statement) and is incorporated herein by reference. The 2015 Proxy Statement will be filed with the SEC within 120 days after the end of the fiscal year to which this report relates. ITEM 11."
+        ]
+      },
+      "question": "What is the date of the signing of the Annual Report on Form 10-K for the company in fiscal year 2018?",
+      "ground_truth_answer": "The Annual Report on Form 10-K was signed on the 1st day of February 2018.",
+      "section": "15",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What percentage of the total investment portfolio did government agencies and government sponsored enterprises represent for the company as of January 29, 2012?",
+      "ground_truth_answer": "Approximately 51% of the total investment portfolio.",
+      "section": "7A",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What was the impact of foreign currency transaction gain (loss) on net income for the company in fiscal year 2012?",
+      "ground_truth_answer": "The impact was $1.6 million.",
+      "section": "7A",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What changes in and disagreements with accountants on accounting and financial disclosure were reported by the company in the fiscal year?",
+      "ground_truth_answer": "None",
+      "section": "9",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2,
+            "recall": 1.0,
+            "fmeasure": 0.33333333333333337
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.2,
+            "recall": 1.0,
+            "fmeasure": 0.33333333333333337
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "Did the company report any disagreements with accountants in the fiscal year?",
+      "ground_truth_answer": "No",
+      "section": "9",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What legal proceedings has the company faced since May 22, 2012, related to its initial public offering (IPO) in fiscal year 2015?",
+      "ground_truth_answer": "The company faced multiple putative class actions, derivative actions, and individual actions alleging violation of securities laws or breach of fiduciary duties in connection with its IPO.",
+      "section": "3",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.09090909090909091,
+            "recall": 0.024390243902439025,
+            "fmeasure": 0.038461538461538464
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.09090909090909091,
+            "recall": 0.024390243902439025,
+            "fmeasure": 0.038461538461538464
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2,
+            "recall": 0.024390243902439025,
+            "fmeasure": 0.04347826086956522
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.2,
+            "recall": 0.024390243902439025,
+            "fmeasure": 0.04347826086956522
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What was the outcome of the court's rulings regarding the derivative actions against the company's directors and certain officers in fiscal year 2015?",
+      "ground_truth_answer": "The court denied the company's motion to dismiss the consolidated securities class action but granted the motions to dismiss the derivative actions against the directors and certain officers, which were affirmed by the court of appeals on July 24, 2015.",
+      "section": "3",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "NVIDIA's certificate of incorporation and bylaws include several provisions that could make it more difficult for a third party to acquire a majority of its outstanding voting stock. These provisions are: the ability of the Board of Directors to issue preferred stock without shareholder approval, prohibition of shareholder action by written consent, advance",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "adj_recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "adj_recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 1.0,
+          "adj_mrr": 1.0,
+          "ndcg_at_10": 1.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.6296296296296297,
+            "recall": 0.5074626865671642,
+            "fmeasure": 0.5619834710743802
+          },
+          "rouge2": {
+            "precision": 0.39622641509433965,
+            "recall": 0.3181818181818182,
+            "fmeasure": 0.3529411764705882
+          },
+          "rougeL": {
+            "precision": 0.42592592592592593,
+            "recall": 0.34328358208955223,
+            "fmeasure": 0.38016528925619836
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1308,
+          "completion_tokens": 60,
+          "total_tokens": 1368
+        }
+      },
+      "reranked_rag": {
+        "answer": "NVIDIA's certificate of incorporation and bylaws contain several provisions that could make it more difficult for a third party to acquire a majority of its outstanding voting stock. These include the ability of the Board of Directors to issue preferred stock without shareholder approval, the prohibition of shareholder action by written consent, advance notice",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "adj_recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "adj_recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 1.0,
+          "adj_mrr": 1.0,
+          "ndcg_at_10": 1.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.6363636363636364,
+            "recall": 0.5223880597014925,
+            "fmeasure": 0.5737704918032788
+          },
+          "rouge2": {
+            "precision": 0.4074074074074074,
+            "recall": 0.3333333333333333,
+            "fmeasure": 0.36666666666666664
+          },
+          "rougeL": {
+            "precision": 0.45454545454545453,
+            "recall": 0.373134328358209,
+            "fmeasure": 0.4098360655737705
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1539,
+          "completion_tokens": 60,
+          "total_tokens": 1599
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "In fiscal year 2000, NVIDIA's certificate of incorporation and bylaws contained several provisions that could make it more difficult for a third party to acquire a majority of its outstanding voting stock. These provisions included:\n\n1. The ability of the Board of Directors to create and issue preferred stock without prior shareholder",
+        "retrieval": {
+          "recall_at_1": 1.0,
+          "adj_recall_at_1": 1.0,
+          "recall_at_3": 1.0,
+          "adj_recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 1.0,
+          "adj_mrr": 1.0,
+          "ndcg_at_10": 1.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.49056603773584906,
+            "recall": 0.3880597014925373,
+            "fmeasure": 0.4333333333333333
+          },
+          "rouge2": {
+            "precision": 0.21153846153846154,
+            "recall": 0.16666666666666666,
+            "fmeasure": 0.1864406779661017
+          },
+          "rougeL": {
+            "precision": 0.2830188679245283,
+            "recall": 0.22388059701492538,
+            "fmeasure": 0.25
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 2423,
+          "completion_tokens": 72,
+          "total_tokens": 2495
+        },
+        "contexts": [
+          "In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022 the prohibition of shareholder action by written consent; \u2022 advance notice requirements for director nominations and shareholder proposals; \u2022 the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022 a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022 the inability of our shareholders to call special meetings of shareholders; and \u2022 the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "In addition, regardless of the outcome, litigation can be costly, time-consuming, and disruptive to our operations. Delaware law and provisions in our certificate of incorporation, our bylaws and our agreement with Microsoft Corporation could delay or prevent a change in control. Our status as a Delaware corporation and the anti-takeover provisions of the Delaware General Corporation Law may discourage, delay, or prevent a change in control by prohibiting us from engaging in a business combination with an interested shareholder for a period of three years after the person becomes an interested shareholder, even if a change of control would be beneficial to our existing shareholders. In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022 the prohibition of shareholder action by written consent; \u2022 advance notice requirements for director nominations and shareholder proposals; \u2022 the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022 a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022 the inability of our shareholders to call special meetings of shareholders; and \u2022 the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "These provisions include the following: \u2022the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022the prohibition of shareholder action by written consent; \u2022advance notice requirements for director nominations and shareholder proposals; \u2022the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022the inability of our shareholders to call special meetings of shareholders; and \u2022the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "Despite our efforts, if we identify a material weakness in our internal controls, there can be no assurance that we will be able to remediate that material weakness in a timely manner, or that we will be able to maintain all of the controls necessary to determine that our internal control over financial reporting is effective. In the event that our chief executive officer, interim chief financial officer or our independent registered public accounting firm determine that our internal control over financial reporting is not effective as defined under Section 404, investor perceptions of us may be adversely affected and could cause a decline in the market price of our stock. Changes in financial accounting standards or interpretations of existing standards could affect our reported results of operations. We prepare our consolidated financial statements in conformity with U.S. GAAP. These principles are constantly subject to review and interpretation by the SEC and various bodies formed to interpret and create appropriate accounting principles. A change in these principles can have a significant effect on our reported results and may even retroactively affect previously reported transactions. Additionally, changes in existing accounting rules or practices, including the possible conversion to unified international accounting standards, could have a significant adverse effect on our results of operations or the manner in which we conduct our business. Provisions in our certificate of incorporation, our bylaws and our agreement with Microsoft Corporation could delay or prevent a change in control. Our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior stockholder approval; \u2022 the prohibition of stockholder action by written consent; \u2022 a classified Board of Directors, which will become fully declassified from and after our 2014 Annual Meeting of Stockholders; and \u2022 advance notice requirements for director nominations and stockholder proposals. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. ITEM 1B.",
+          "Litigation and regulatory proceedings are inherently uncertain, and adverse rulings could occur, including monetary damages, or an injunction stopping us from manufacturing or selling certain products, engaging in certain business practices, or requiring other remedies, such as compulsory licensing of patents. An unfavorable outcome or settlement may result in a material adverse impact on our business, results of operations, financial position, and overall trends. In addition, regardless of the outcome, litigation can be costly, time-consuming, and disruptive to our operations. In addition, the laws and regulations our business is subject to are complex, and change frequently. We may be required to incur significant expense to comply with, or remedy violations of, these regulations. Delaware law and provisions in our certificate of incorporation, our bylaws and our agreement with Microsoft Corporation could delay or prevent a change in control. Our status as a Delaware corporation and the anti-takeover provisions of the Delaware General Corporation Law may discourage, delay, or prevent a change in control by prohibiting us from engaging in a business combination with an interested shareholder for a period of three years after the person becomes an interested shareholder, even if a change of control would be beneficial to our existing shareholders. In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022 the prohibition of shareholder action by written consent; \u2022 advance notice requirements for director nominations and shareholder proposals; \u2022 the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022 a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022 the inability of our shareholders to call special meetings of shareholders; and \u2022 the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B."
+        ]
+      },
+      "question": "What provisions in NVIDIA's certificate of incorporation and bylaws could make it more difficult for a third party to acquire a majority of its outstanding voting stock in the fiscal year 2000?",
+      "ground_truth_answer": "Provisions include the ability of the Board of Directors to issue preferred stock without shareholder approval, prohibition of shareholder action by written consent, advance notice requirements for director nominations and proposals, ability to change the number of directors without approval, a super-majority voting requirement to amend certain provisions, inability of shareholders to call special meetings, and the ability of the Board to amend or repeal bylaws.",
+      "section": "1A",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "The context does not provide specific information about an agreement that NVIDIA entered into with Microsoft on March 5, 2000, or the rights it grants Microsoft regarding stock purchases. Therefore, I cannot answer your question based on the provided information.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.275,
+            "recall": 0.2619047619047619,
+            "fmeasure": 0.26829268292682923
+          },
+          "rouge2": {
+            "precision": 0.10256410256410256,
+            "recall": 0.0975609756097561,
+            "fmeasure": 0.1
+          },
+          "rougeL": {
+            "precision": 0.175,
+            "recall": 0.16666666666666666,
+            "fmeasure": 0.17073170731707316
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1739,
+          "completion_tokens": 46,
+          "total_tokens": 1785
+        }
+      },
+      "reranked_rag": {
+        "answer": "On March 5, 2000, NVIDIA entered into an agreement with Microsoft to develop and sell graphics chips and license certain technology for use in the Xbox. This agreement grants Microsoft first and last rights of refusal to purchase shares if an individual or corporation makes an offer to buy 30% or more",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "adj_recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 0.5,
+          "adj_mrr": 0.5,
+          "ndcg_at_10": 0.6309297535714575
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.6538461538461539,
+            "recall": 0.8095238095238095,
+            "fmeasure": 0.7234042553191489
+          },
+          "rouge2": {
+            "precision": 0.5490196078431373,
+            "recall": 0.6829268292682927,
+            "fmeasure": 0.6086956521739131
+          },
+          "rougeL": {
+            "precision": 0.6538461538461539,
+            "recall": 0.8095238095238095,
+            "fmeasure": 0.7234042553191489
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1307,
+          "completion_tokens": 60,
+          "total_tokens": 1367
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "On March 5, 2000, NVIDIA entered into an agreement with Microsoft in which they agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under this agreement, if an individual or corporation makes an offer to purchase shares equal to",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 1.0,
+          "adj_recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 0.5,
+          "adj_mrr": 0.5,
+          "ndcg_at_10": 0.6309297535714575
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.5,
+            "recall": 0.6190476190476191,
+            "fmeasure": 0.5531914893617021
+          },
+          "rouge2": {
+            "precision": 0.29411764705882354,
+            "recall": 0.36585365853658536,
+            "fmeasure": 0.32608695652173914
+          },
+          "rougeL": {
+            "precision": 0.40384615384615385,
+            "recall": 0.5,
+            "fmeasure": 0.44680851063829785
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 2701,
+          "completion_tokens": 69,
+          "total_tokens": 2770
+        },
+        "contexts": [
+          "These provisions include the following: \u2022the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022the prohibition of shareholder action by written consent; \u2022advance notice requirements for director nominations and shareholder proposals; \u2022the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022the inability of our shareholders to call special meetings of shareholders; and \u2022the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022 the prohibition of shareholder action by written consent; \u2022 advance notice requirements for director nominations and shareholder proposals; \u2022 the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022 a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022 the inability of our shareholders to call special meetings of shareholders; and \u2022 the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "In addition, regardless of the outcome, litigation can be costly, time-consuming, and disruptive to our operations. Delaware law and provisions in our certificate of incorporation, our bylaws and our agreement with Microsoft Corporation could delay or prevent a change in control. Our status as a Delaware corporation and the anti-takeover provisions of the Delaware General Corporation Law may discourage, delay, or prevent a change in control by prohibiting us from engaging in a business combination with an interested shareholder for a period of three years after the person becomes an interested shareholder, even if a change of control would be beneficial to our existing shareholders. In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022 the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022 the prohibition of shareholder action by written consent; \u2022 advance notice requirements for director nominations and shareholder proposals; \u2022 the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022 a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022 the inability of our shareholders to call special meetings of shareholders; and \u2022 the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B.",
+          "NVIDIA\u2019s rights to Intel\u2019s patents have certain specified limitations, including but not limited to, NVIDIA was not granted a license to: (1) certain microprocessors, defined in the License Agreement as \u201cIntel Processors\u201d or \u201cIntel Compatible Processors;\u201d (2) certain chipsets that connect to Intel Processors; or (3) certain flash memory products. In connection with the License Agreement, NVIDIA and Intel mutually agreed to settle all outstanding legal disputes. Under the License Agreement, Intel will pay NVIDIA an aggregate amount of $1.5 billion, payable in annual installments, as follows: a $300 million payment on each of January 18, 2011, January 13, 2012 and January 15, 2013 and a $200 million payment on each of January 15, 2014, 2015 and 2016. Please refer to Note 3 of the Notes to the Consolidated Financial Statements in Part IV, Item 15 of this Annual Report on Form 10-K for further information regarding this cross license and the settlement. Stock Repurchase Program In fiscal year 2007, our Board of Directors authorized us, subject to certain specifications, to repurchase shares of our common stock up to an aggregate maximum amount of $2.7 billion through May 2013. In October 2012, the Board extended the program through December 2014. The repurchases will be made from time to time in the open market, in privately negotiated transactions, or in structured stock repurchase programs, and may be made in one or more larger repurchases, in compliance with Rule 10b-18 of the Exchange Act, subject to market conditions, applicable legal requirements, and other factors. The program does not obligate NVIDIA to acquire any particular amount of common stock and the program may be suspended at any time at our discretion. As part of our share repurchase program, we have entered into, and we may continue to enter into, structured share repurchase transactions with financial institutions. These agreements generally require that we make an up-front payment in exchange for the right to receive a fixed number of shares of our common stock upon execution of the agreement, and a potential incremental number of shares of our common stock, within a pre-determined range, at the end of the term of the agreement. Through January 27, 2013, we have repurchased an aggregate of 99.3 million shares under our stock repurchase program for a total cost of $1.56 billion. As of January 27, 2013, we are authorized, subject to certain specifications, to repurchase shares of our common stock up to $1.14 billion through December 2014. Please refer to Note 2 of the Notes to the Consolidated Financial Statements in Part IV, Item 15 of this Annual Report Form 10-K for further discussion regarding our equity incentive plans. In addition to our Board authorized stock repurchases, we withhold common stock shares associated with net share settlements to cover tax withholding obligations upon the vesting of RSU awards under our equity incentive program. During the fiscal year 2013, we withheld approximately 1.8 million shares at a total cost of $25.8 million through net share settlements. Please refer to Note 2 of the Notes to the Consolidated Financial Statements in Part IV, Item 15 of this Annual Report on Form 10-K for further information regarding stock-based compensation related to equity awards granted under our equity incentive programs.. Cash Dividend Program Prior to fiscal year 2013, we had never declared or paid any dividend on shares of our common stock.",
+          "In consideration for the termination of these Warrants, we delivered a total of 48 million shares of common stock to the counterparty bank, the amount of which was determined each day based on the daily volume-weighted average price of our common stock during an observation period beginning December 13, 2016 and ending January 31, 2017. As of January 29, 2017, 44 million of the 48 million shares of our common stock had been issued related to the terminated Warrants. The remaining 4 million shares were issued in the beginning of fiscal year 2018. An aggregate of 12 million Warrants remained outstanding, or the Remaining Warrants, as of January 29, 2017. The Remaining Warrants will be deemed to be automatically exercised on certain dates between March 2019 and June 2019, unless the Warrant holder notifies us otherwise. Delaware law and provisions in our certificate of incorporation, our bylaws and our agreement with Microsoft Corporation could delay or prevent a change in control. Our status as a Delaware corporation and the anti-takeover provisions of the Delaware General Corporation Law may discourage, delay, or prevent a change in control by prohibiting us from engaging in a business combination with an interested shareholder for a period of three years after the person becomes an interested shareholder, even if a change of control would be beneficial to our existing shareholders. In addition, our certificate of incorporation and bylaws contain provisions that could make it more difficult for a third party to acquire a majority of our outstanding voting stock. These provisions include the following: \u2022the ability of our Board of Directors to create and issue preferred stock without prior shareholder approval; \u2022the prohibition of shareholder action by written consent; \u2022advance notice requirements for director nominations and shareholder proposals; \u2022the ability of our Board of Directors to increase or decrease the number of directors without shareholder approval; \u2022a super-majority voting requirement to amend some provisions in our certificate of incorporation and bylaws; \u2022the inability of our shareholders to call special meetings of shareholders; and \u2022the ability of our Board of Directors to make, amend or repeal our bylaws. On March 5, 2000, we entered into an agreement with Microsoft in which we agreed to develop and sell graphics chips and to license certain technology to Microsoft and its licensees for use in the Xbox. Under the agreement, if an individual or corporation makes an offer to purchase shares equal to or greater than 30% of the outstanding shares of our common stock, Microsoft may have first and last rights of refusal to purchase the stock. The Microsoft provision and the other factors listed above could also delay or prevent a change in control of NVIDIA. These provisions could also discourage proxy contests and make it more difficult for shareholders to elect directors of their choosing and to cause us to take other corporate actions they desire. ITEM 1B."
+        ]
+      },
+      "question": "What agreement did NVIDIA enter into with Microsoft on March 5, 2000, and what rights does it grant Microsoft regarding stock purchases?",
+      "ground_truth_answer": "NVIDIA entered into an agreement to develop and sell graphics chips and license technology for the Xbox, granting Microsoft first and last rights of refusal to purchase shares if an offer is made for 30% or more of NVIDIA's outstanding shares.",
+      "section": "1A",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.2,
+            "recall": 0.07142857142857142,
+            "fmeasure": 0.10526315789473682
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.2,
+            "recall": 0.07142857142857142,
+            "fmeasure": 0.10526315789473682
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What was the status of goodwill impairment for Facebook as of December 31, 2014?",
+      "ground_truth_answer": "As of December 31, 2014, no impairment of goodwill has been identified for Facebook.",
+      "section": "7",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "How does Facebook generate revenue from advertising in the fiscal year 2014?",
+      "ground_truth_answer": "In fiscal year 2014, Facebook generated revenue from advertising by displaying ad products on its properties and third-party affiliated websites, with revenue recognized based on clicks, actions, or impressions delivered.",
+      "section": "7",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "What was the interest income for the company in fiscal year 2016?",
+      "ground_truth_answer": "$39 million",
+      "section": "7",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "I couldn't find any relevant information to answer your question.",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "reranked_rag": {
+        "answer": "[No documents found to rerank]",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.0,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "Could not retrieve any documents.",
+        "retrieval": {},
+        "rouge": {
+          "rouge1": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rouge2": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          },
+          "rougeL": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "fmeasure": 0.0
+          }
+        },
+        "tokens": {},
+        "contexts": []
+      },
+      "question": "How much income tax expense did the company recognize in fiscal year 2016?",
+      "ground_truth_answer": "$129 million",
+      "section": "7",
+      "chunk_text": "N/A"
+    },
+    {
+      "rag": {
+        "answer": "The revenue recognition policy for standalone sales of software products at Apple Inc. involves recognizing revenue in accordance with industry-specific software accounting guidance. This means that revenue is recognized when persuasive evidence of an arrangement exists, delivery has occurred, and the sales price is fixed or determinable. For standalone software sales, the",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.5,
+          "mrr": 0.0,
+          "adj_mrr": 0.07142857142857142,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.32075471698113206,
+            "recall": 0.9444444444444444,
+            "fmeasure": 0.4788732394366197
+          },
+          "rouge2": {
+            "precision": 0.2692307692307692,
+            "recall": 0.8235294117647058,
+            "fmeasure": 0.4057971014492754
+          },
+          "rougeL": {
+            "precision": 0.2641509433962264,
+            "recall": 0.7777777777777778,
+            "fmeasure": 0.39436619718309857
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 1010,
+          "completion_tokens": 60,
+          "total_tokens": 1070
+        }
+      },
+      "reranked_rag": {
+        "answer": "For standalone sales of software products in fiscal year 2023, Apple recognizes revenue in accordance with industry-specific software accounting guidance. This includes recognizing revenue when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable, and collection is probable. For standalone software sales,",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "adj_recall_at_5": 1.0,
+          "recall_at_10": 1.0,
+          "adj_recall_at_10": 1.0,
+          "mrr": 0.2,
+          "adj_mrr": 0.2,
+          "ndcg_at_10": 0.38685280723454163
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.34,
+            "recall": 0.9444444444444444,
+            "fmeasure": 0.5
+          },
+          "rouge2": {
+            "precision": 0.2857142857142857,
+            "recall": 0.8235294117647058,
+            "fmeasure": 0.42424242424242414
+          },
+          "rougeL": {
+            "precision": 0.26,
+            "recall": 0.7222222222222222,
+            "fmeasure": 0.3823529411764706
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 967,
+          "completion_tokens": 60,
+          "total_tokens": 1027
+        }
+      },
+      "ensemble_rerank_rag": {
+        "answer": "For standalone sales of software products in fiscal year 2023, the Company recognizes revenue in accordance with industry-specific software accounting guidance. This means that revenue is recognized when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable, and collection is probable. Specifically,",
+        "retrieval": {
+          "recall_at_1": 0.0,
+          "adj_recall_at_1": 0.0,
+          "recall_at_3": 0.0,
+          "adj_recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "adj_recall_at_5": 0.0,
+          "recall_at_10": 0.0,
+          "adj_recall_at_10": 0.0,
+          "mrr": 0.0,
+          "adj_mrr": 0.03333333333333333,
+          "ndcg_at_10": 0.0
+        },
+        "rouge": {
+          "rouge1": {
+            "precision": 0.36,
+            "recall": 1.0,
+            "fmeasure": 0.5294117647058824
+          },
+          "rouge2": {
+            "precision": 0.32653061224489793,
+            "recall": 0.9411764705882353,
+            "fmeasure": 0.48484848484848486
+          },
+          "rougeL": {
+            "precision": 0.26,
+            "recall": 0.7222222222222222,
+            "fmeasure": 0.3823529411764706
+          }
+        },
+        "tokens": {
+          "prompt_tokens": 4021,
+          "completion_tokens": 72,
+          "total_tokens": 4093
+        },
+        "contexts": [
+          "The Company recognizes revenue in accordance with industry specific software accounting guidance for the following types of sales transactions: (i) standalone sales of software products, (ii) sales of software upgrades and (iii) sales of software bundled with hardware not essential to the functionality of the hardware. Apple Inc. | 2014 Form 10-K | 50 For the sale of most third-party products, the Company recognizes revenue based on the gross amount billed to customers because the Company establishes its own pricing for such products, retains related inventory risk for physical products, is the primary obligor to the customer and assumes the credit risk for amounts billed to its customers. For third-party applications sold through the App Store and Mac App Store and certain digital content sold through the iTunes Store, the Company does not determine the selling price of the products and is not the primary obligor to the customer. Therefore, the Company accounts for such sales on a net basis by recognizing in net sales only the commission it retains from each sale. The portion of the gross amount billed to customers that is remitted by the Company to third-party app developers and certain digital content owners is not reflected in the Company\u2019s Consolidated Statements of Operations. The Company records deferred revenue when it receives payments in advance of the delivery of products or the performance of services. This includes amounts that have been deferred for unspecified and specified software upgrade rights and non-software services that are attached to hardware and software products. The Company sells gift cards redeemable at its retail and online stores, and also sells gift cards redeemable on the iTunes Store for the purchase of digital content and software. The Company records deferred revenue upon the sale of the card, which is relieved upon redemption of the card by the customer. Revenue from AppleCare service and support contracts is deferred and recognized over the service coverage periods. AppleCare service and support contracts typically include extended phone support, repair services, web-based support resources and diagnostic tools offered under the Company\u2019s standard limited warranty. The Company records reductions to revenue for estimated commitments related to price protection and other customer incentive programs. For transactions involving price protection, the Company recognizes revenue net of the estimated amount to be refunded. For the Company\u2019s other customer incentive programs, the estimated cost of these programs is recognized at the later of the date at which the Company has sold the product or the date at which the program is offered. The Company also records reductions to revenue for expected future product returns based on the Company\u2019s historical experience. Revenue is recorded net of taxes collected from customers that are remitted to governmental authorities, with the collected taxes recorded as current liabilities until remitted to the relevant government authority. Revenue Recognition for Arrangements with Multiple Deliverables For multi-element arrangements that include hardware products containing software essential to the hardware product\u2019s functionality, undelivered software elements that relate to the hardware product\u2019s essential software, and undelivered non-software services, the Company allocates revenue to all deliverables based on their relative selling prices. In such circumstances, the Company uses a hierarchy to determine the selling price to be used for allocating revenue to deliverables: (i) vendor-specific objective evidence of fair value (\u201cVSOE\u201d), (ii) third-party evidence of selling price (\u201cTPE\u201d) and (iii) best estimate of selling price (\u201cESP\u201d). VSOE generally exists only when the Company sells the deliverable separately and is the price actually charged by the Company for that deliverable. ESPs reflect the Company\u2019s best estimates of what the selling prices of elements would be if they were sold regularly on a stand-alone basis.",
+          "Revenue Recognition Net sales consist primarily of revenue from the sale of hardware, software, digital content and applications, accessories, and service and support contracts. The Company recognizes revenue when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable and collection is probable. Product is considered delivered to the customer once it has been shipped and title, risk of loss and rewards of ownership have been transferred. For most of the Company\u2019s product sales, these criteria are met at the time the product is shipped. For online sales to individuals, for some sales to education customers in the U.S., and for certain other sales, the Company defers revenue until the customer receives the product because the Company retains a portion of the risk of loss on these sales during transit. For payment terms in excess of the Company\u2019s standard payment terms, revenue is recognized as payments become due unless the Company has positive evidence that the sales price is fixed or determinable, such as a successful history of collection, without concession, on comparable arrangements. The Company recognizes revenue from the sale of hardware products, software bundled with hardware that is essential to the functionality of the hardware and third-party digital content sold on the iTunes Store in accordance with general revenue recognition accounting guidance. The Company recognizes revenue in accordance with industry-specific software accounting guidance for the following types of sales transactions: (i) standalone sales of software products, (ii) sales of software upgrades and (iii) sales of software bundled with hardware not essential to the functionality of the hardware. For multi-element arrangements that include hardware products containing software essential to the hardware product\u2019s functionality, undelivered software elements that relate to the hardware product\u2019s essential software and/or undelivered non-software services, the Company allocates revenue to all deliverables based on their relative selling prices. In such circumstances, the Company uses a hierarchy to determine the selling price to be used for allocating revenue to deliverables: (i) vendor-specific objective evidence of fair value (\u201cVSOE\u201d), (ii) third-party evidence of selling price (\u201cTPE\u201d) and (iii) best estimate of selling price (\u201cESP\u201d). VSOE generally exists only when the Company sells the deliverable separately and is the price actually charged by the Company for that deliverable. ESPs reflect the Company\u2019s best estimates of what the selling prices of elements would be if they were sold regularly on a stand-alone basis. For sales of qualifying versions of iOS devices, Mac, Apple Watch and Apple TV, the Company has indicated it may from time to time provide future unspecified software upgrades to the device\u2019s essential software and/or non-software services free of charge. Because the Company has neither VSOE nor TPE for the unspecified software upgrade rights or the non-software services, revenue is allocated to these rights and services based on the Company\u2019s ESPs. Revenue allocated to the unspecified software upgrade rights and non-software services based on the Company\u2019s ESPs is deferred and recognized on a straight-line basis over the estimated period the software upgrades and non-software services are expected to be provided. The Company\u2019s process for determining ESPs involves management\u2019s judgment and considers multiple factors that may vary over time depending upon the unique facts and circumstances related to each deliverable. Should future facts and circumstances change, the Company\u2019s ESPs and the future rate of related amortization for unspecified software upgrades and non-software services related to future sales of these devices could change. Factors subject to change include the unspecified software upgrade rights and non-software services offered, the estimated value of unspecified software upgrade rights and non-software services and the estimated period unspecified software upgrades and non-software services are expected to be provided.",
+          "Management considers these policies critical because they are both important to the portrayal of the Company\u2019s financial condition and operating results, and they require management to make judgments and estimates about inherently uncertain matters. The Company\u2019s senior management has reviewed these critical accounting policies and related disclosures with the Audit and Finance Committee of the Company\u2019s Board of Directors. Revenue Recognition Net sales consist primarily of revenue from the sale of hardware, software, digital content and applications, accessories, and service and support contracts. The Company recognizes revenue when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable and collection is probable. Product is considered delivered to the customer once it has been shipped and title, risk of loss and rewards of ownership have been transferred. For most of the Company\u2019s product sales, these criteria are met at the time the product is shipped. For online sales to individuals, for some sales to education customers in the U.S., and for certain other sales, the Company defers revenue until the customer receives the product because the Company retains a portion of the risk of loss on these sales during transit. For payment terms in excess of the Company\u2019s standard payment terms, revenue is recognized as payments become due unless the Company has positive evidence that the sales price is fixed or determinable, such as a successful history of collection, without concession, on comparable arrangements. The Company recognizes revenue from the sale of hardware products, software bundled with hardware that is essential to the functionality of the hardware and third-party digital content sold on the iTunes Store in accordance with general revenue recognition accounting guidance. The Company recognizes revenue in accordance with industry-specific software accounting guidance for the following types of sales transactions: (i) standalone sales of software products, (ii) sales of software upgrades and (iii) sales of software bundled with hardware not essential to the functionality of the hardware. For multi-element arrangements that include hardware products containing software essential to the hardware product\u2019s functionality, undelivered software elements that relate to the hardware product\u2019s essential software and/or undelivered non-software services, the Company allocates revenue to all deliverables based on their relative selling prices. In such circumstances, the Company uses a hierarchy to determine the selling price to be used for allocating revenue to deliverables: (i) vendor-specific objective evidence of fair value (\u201cVSOE\u201d), (ii) third-party evidence of selling price (\u201cTPE\u201d) and (iii) best estimate of selling price (\u201cESP\u201d). VSOE generally exists only when the Company sells the deliverable separately and is the price actually charged by the Company for that deliverable. ESPs reflect the Company\u2019s best estimates of what the selling prices of elements would be if they were sold regularly on a stand-alone basis. Apple Inc. | 2015 Form 10-K | 33 For sales of qualifying versions of iOS devices, Mac, Apple Watch and Apple TV, the Company has indicated it may from time to time provide future unspecified software upgrades to the device\u2019s essential software and/or non-software services free of charge. Because the Company has neither VSOE nor TPE for the unspecified software upgrade rights or the non-software services, revenue is allocated to these rights and services based on the Company\u2019s ESPs. Revenue allocated to the unspecified software upgrade rights and non-software services based on the Company\u2019s ESPs is deferred and recognized on a straight-line basis over the estimated period the software upgrades and non-software services are expected to be provided. The Company\u2019s process for determining ESPs involves management\u2019s judgment and considers multiple factors that may vary over time depending upon the unique facts and circumstances related to each deliverable.",
+          "Management considers these policies critical because they are both important to the portrayal of the Company\u2019s financial condition and operating results, and they require management to make judgments and estimates about inherently uncertain matters. The Company\u2019s senior management has reviewed these critical accounting policies and related disclosures with the Audit and Finance Committee of the Company\u2019s Board of Directors. Revenue Recognition Net sales consist primarily of revenue from the sale of hardware, software, digital content and applications, peripherals, and service and support contracts. The Company recognizes revenue when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable, and collection is probable. Product is considered delivered to the customer once it has been shipped and title and risk of loss have been transferred. For most of the Company\u2019s product sales, these criteria are met at the time the product is shipped. For online sales to individuals, for some sales to education customers in the U.S., and for certain other sales, the Company defers revenue until the customer receives the product because the Company retains a portion of the risk of loss on these sales during transit. The Company recognizes revenue from the sale of hardware products, software bundled with hardware that is essential to the functionality of the hardware, and third-party digital content sold on the iTunes Store in accordance with general revenue recognition accounting guidance. The Company recognizes revenue in accordance with industry specific software accounting guidance for the following types of sales transactions: (i) standalone sales of software products, (ii) sales of software upgrades and (iii) sales of software bundled with hardware not essential to the functionality of the hardware. For multi-element arrangements that include hardware products containing software essential to the hardware product\u2019s functionality, undelivered software elements that relate to the hardware product\u2019s essential software, and/or undelivered non-software services, the Company allocates revenue to all deliverables based on their relative selling prices. In such circumstances, the Company uses a hierarchy to determine the selling price to be used for allocating revenue to deliverables: (i) vendor-specific objective evidence of fair value (\u201cVSOE\u201d), (ii) third-party evidence of selling price (\u201cTPE\u201d) and (iii) best estimate of selling price (\u201cESP\u201d). VSOE generally exists only when the Company sells the deliverable separately and is the price actually charged by the Company for that deliverable. ESPs reflect the Company\u2019s best estimates of what the selling prices of elements would be if they were sold regularly on a stand-alone basis. For sales of qualifying versions of iOS devices, Mac and Apple TV, the Company has indicated it may from time to time provide future unspecified software upgrades and features free of charge to customers. The Company also provides various non-software services to owners of qualifying versions of iOS devices and Mac. Because the Company has neither VSOE nor TPE for the unspecified software upgrade rights or the non-software services, revenue is allocated to these rights and services based on the Company\u2019s ESPs. Revenue allocated to the unspecified software upgrade rights and non-software services based on the Company\u2019s ESPs is deferred and recognized on a straight-line basis over the estimated period the software upgrades and non-software services are expected to be provided for each of these devices, which ranges from two to four years. The Company\u2019s process for determining ESPs involves management\u2019s judgment and considers multiple factors that may vary over time depending upon the unique facts and circumstances related to each deliverable.",
+          "The Company\u2019s fiscal years 2015, 2014 and 2013 ended on September 26, 2015, September 27, 2014 and September 28, 2013, respectively. An additional week is included in the first fiscal quarter approximately every six years to realign fiscal quarters with calendar quarters. Fiscal years 2015, 2014 and 2013 each spanned 52 weeks. Unless otherwise stated, references to particular years, quarters, months and periods refer to the Company\u2019s fiscal years ended in September and the associated quarters, months and periods of those fiscal years. Revenue Recognition Net sales consist primarily of revenue from the sale of hardware, software, digital content and applications, accessories, and service and support contracts. The Company recognizes revenue when persuasive evidence of an arrangement exists, delivery has occurred, the sales price is fixed or determinable and collection is probable. Product is considered delivered to the customer once it has been shipped and title, risk of loss and rewards of ownership have been transferred. For most of the Company\u2019s product sales, these criteria are met at the time the product is shipped. For online sales to individuals, for some sales to education customers in the U.S., and for certain other sales, the Company defers revenue until the customer receives the product because the Company retains a portion of the risk of loss on these sales during transit. For payment terms in excess of the Company\u2019s standard payment terms, revenue is recognized as payments become due unless the Company has positive evidence that the sales price is fixed or determinable, such as a successful history of collection, without concession, on comparable arrangements. The Company recognizes revenue from the sale of hardware products, software bundled with hardware that is essential to the functionality of the hardware and third-party digital content sold on the iTunes Store in accordance with general revenue recognition accounting guidance. The Company recognizes revenue in accordance with industry specific software accounting guidance for the following types of sales transactions: (i) standalone sales of software products, (ii) sales of software upgrades and (iii) sales of software bundled with hardware not essential to the functionality of the hardware. For the sale of most third-party products, the Company recognizes revenue based on the gross amount billed to customers because the Company establishes its own pricing for such products, retains related inventory risk for physical products, is the primary obligor to the customer and assumes the credit risk for amounts billed to its customers. For third-party applications sold through the App Store and Mac App Store and certain digital content sold through the iTunes Store, the Company does not determine the selling price of the products and is not the primary obligor to the customer. Therefore, the Company accounts for such sales on a net basis by recognizing in net sales only the commission it retains from each sale. The portion of the gross amount billed to customers that is remitted by the Company to third-party app developers and certain digital content owners is not reflected in the Company\u2019s Consolidated Statements of Operations. Apple Inc. | 2015 Form 10-K | 44 The Company records deferred revenue when it receives payments in advance of the delivery of products or the performance of services. This includes amounts that have been deferred for unspecified and specified software upgrade rights and non-software services that are attached to hardware and software products. The Company sells gift cards redeemable at its retail and online stores, and also sells gift cards redeemable on iTunes Store, App Store, Mac App Store and iBooks Store for the purchase of digital content and software. The Company records deferred revenue upon the sale of the card, which is relieved upon redemption of the card by the customer. Revenue from AppleCare service and support contracts is deferred and recognized over the service coverage periods."
+        ]
+      },
+      "question": "What revenue recognition policy does the Company follow for standalone sales of software products in fiscal year 2023?",
+      "ground_truth_answer": "The Company recognizes revenue in accordance with industry-specific software accounting guidance for standalone sales of software products.",
+      "section": "7",
+      "chunk_text": "N/A"
     }
   ],
   "qa_dataset": [
@@ -12867,7 +14552,7 @@
       "source_text": "Item 9. Changes in and Disagreements with Accountants on Accounting and Financial Disclosure None. Item 9A."
     }
   ],
-  "current_index": 90,
+  "current_index": 105,
   "methods": [
     "rag",
     "reranked_rag",
@@ -12880,5 +14565,5 @@
     10
   ],
   "run_id": "only_retrieval_rerun_with_adjacency",
-  "timestamp": "2025-06-20 11:49:36"
+  "timestamp": "2025-06-20 12:12:57"
 }

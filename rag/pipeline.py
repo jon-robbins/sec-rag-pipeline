@@ -27,15 +27,19 @@ class RAGPipeline:
     """
     Orchestrates the entire RAG pipeline from data loading to querying.
     """
-    def __init__(self, tickers_of_interest=None, target_tokens=750, overlap_tokens=150):
+    def __init__(self, tickers_of_interest=None, target_tokens=750, overlap_tokens=150, hard_ceiling=1000):
         if tickers_of_interest is None:
             tickers_of_interest = ['AAPL', 'META', 'TSLA', 'NVDA', 'AMZN']
 
         print("Initializing RAG pipeline...")
         self.document_store = DocumentStore(tickers_of_interest=tickers_of_interest)
         
+        # Store chunking parameters
+        self.target_tokens = target_tokens
+        self.overlap_tokens = overlap_tokens
+        self.hard_ceiling = hard_ceiling
+        
         # --- Caching Logic ---
-        hard_ceiling = 1000
         cache_dir_name = f"target_{target_tokens}_overlap_{overlap_tokens}_ceiling_{hard_ceiling}"
         embedding_cache_dir = CACHE_DIR / "embeddings"
         embedding_cache_dir.mkdir(parents=True, exist_ok=True)
@@ -243,7 +247,7 @@ class RAGPipeline:
         #    This assumes the pipeline's chunking config is what you want to use.
         target_tokens = getattr(self, 'target_tokens', 750)
         overlap_tokens = getattr(self, 'overlap_tokens', 150)
-        hard_ceiling = 1000
+        hard_ceiling = getattr(self, 'hard_ceiling', 1000)
         
         chunker = SmartChunker(
             target_tokens=target_tokens,

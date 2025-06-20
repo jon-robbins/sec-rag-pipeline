@@ -37,7 +37,12 @@ def compare_chunking_configs(num_questions=20,
             
             # Run evaluation
             evaluator = ComprehensiveEvaluator(pipeline)
-            eval_results = evaluator.evaluate_all_scenarios(num_questions=num_questions)
+            eval_results, temp_dir = evaluator.evaluate_all_scenarios(num_questions=num_questions)
+            
+            # Clean up temp directory if it exists
+            if temp_dir:
+                import shutil
+                shutil.rmtree(temp_dir)
             
             # Extract metrics
             if 'rag' in eval_results.get('summary', {}):

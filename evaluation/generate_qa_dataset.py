@@ -14,19 +14,22 @@ Usage:
 
 import os
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pickle
 import json
 import random
 import tiktoken
 import time
 import numpy as np
-from pathlib import Path
 from collections import defaultdict, Counter
 from typing import List, Dict, Any
 from rag.config import QA_DATASET_PATH
 from pprint import pprint
 # Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+
 
 # --- Core Logic for Sampling and QA Generation ---
 
