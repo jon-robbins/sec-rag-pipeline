@@ -1,2 +1,0 @@
-configuration,target_tokens,overlap_tokens,total_chunks,recall_at_1,recall_at_3,recall_at_5,recall_at_10,mrr,rouge1_f,rouge2_f,rougeL_f
-XLarge_750_150,750,150,4919,0.3,0.4,0.4,0.5,0.35,0.34662412579445206,0.20906698785463557,0.3014921758872779
