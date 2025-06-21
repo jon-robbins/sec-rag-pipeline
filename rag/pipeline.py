@@ -27,7 +27,13 @@ class RAGPipeline:
     """
     Orchestrates the entire RAG pipeline from data loading to querying.
     """
-    def __init__(self, tickers_of_interest=None, target_tokens=750, overlap_tokens=150, hard_ceiling=1000):
+    def __init__(self,
+                 tickers_of_interest=None,
+                 target_tokens=750,
+                 overlap_tokens=150,
+                 hard_ceiling=1000,
+                 use_docker: bool = False,
+                 docker_port: int = 6333):
         if tickers_of_interest is None:
             tickers_of_interest = ['AAPL', 'META', 'TSLA', 'NVDA', 'AMZN']
 
@@ -85,7 +91,13 @@ class RAGPipeline:
 
         # --- Vector Store Upsert ---
         print("🧠 Initializing vector store...")
-        self.vector_store = VectorStore(use_docker=False)
+        
+        vector_store_kwargs = { "use_docker": use_docker }
+        if use_docker:
+            vector_store_kwargs["host"] = "localhost"
+            vector_store_kwargs["port"] = docker_port
+            
+        self.vector_store = VectorStore(**vector_store_kwargs)
         
         chunk_dicts = [chunk.to_dict() for chunk in self.chunks]
         embeddings_list = [chunk.embedding for chunk in self.chunks]

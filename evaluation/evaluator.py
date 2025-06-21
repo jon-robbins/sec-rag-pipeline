@@ -489,13 +489,11 @@ class ComprehensiveEvaluator:
         
         # Calculate GPT-4o-mini costs (generation + query expansion)
         if "prompt_tokens" in token_metrics and token_metrics["prompt_tokens"]:
-            avg_prompt_tokens = np.mean(token_metrics["prompt_tokens"])
-            total_prompt_tokens = avg_prompt_tokens * num_questions
+            total_prompt_tokens = np.sum(token_metrics["prompt_tokens"])
             total_cost += total_prompt_tokens * gpt4_mini_input_price
             
         if "completion_tokens" in token_metrics and token_metrics["completion_tokens"]:
-            avg_completion_tokens = np.mean(token_metrics["completion_tokens"])
-            total_completion_tokens = avg_completion_tokens * num_questions
+            total_completion_tokens = np.sum(token_metrics["completion_tokens"])
             total_cost += total_completion_tokens * gpt4_mini_output_price
         
         # Add embedding costs (retrieval queries)

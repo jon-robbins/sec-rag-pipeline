@@ -87,6 +87,12 @@ class VectorStore:
         # Ensure the collection exists
         self.collection_manager.init_collection()
 
+        self.config.use_docker = use_docker
+        if use_docker:
+            # Propagate Docker host/port to the config for downstream components
+            self.config.docker_host = kwargs.get("host", "localhost")
+            self.config.docker_port = kwargs.get("port", 6333)
+
     def _setup_client(self, use_docker: bool, **kwargs) -> QdrantClient:
         """Set up the Qdrant client based on configuration."""
         if use_docker:

@@ -49,15 +49,27 @@ class CollectionManager:
                     else:
                         raise  # Re-raise for in-memory mode
 
-            # Create the collection for in-memory storage, which accepts any ID type
-            print(f"🏗️  Creating in-memory collection '{self.config.collection_name}'...")
-            self.client.recreate_collection(
-                collection_name=self.config.collection_name,
-                vectors_config=models.VectorParams(
-                    size=self.config.dim,
-                    distance=models.Distance.COSINE,
-                ),
+            # Determine the vector parameters
+            vector_params = models.VectorParams(
+                size=self.config.dim,
+                distance=models.Distance.COSINE,
             )
+
+            # Create the collection
+            if self.config.use_docker:
+                print(f"🏗️  Creating Docker collection '{self.config.collection_name}'...")
+                self.client.recreate_collection(
+                    collection_name=self.config.collection_name,
+                    vectors_config=vector_params,
+                )
+            else:
+                # This logic is now correctly scoped to non-docker setups
+                print(f"🏗️  Creating in-memory collection '{self.config.collection_name}'...")
+                self.client.recreate_collection(
+                    collection_name=self.config.collection_name,
+                    vectors_config=vector_params,
+                )
+
             print(f"✅ Collection '{self.config.collection_name}' created successfully")
             
         except Exception as e:

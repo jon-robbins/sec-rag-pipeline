@@ -39,7 +39,17 @@ def generate_answer(
     question: str, context: str, client: OpenAI
 ) -> (str, int, int):
     """Generates an answer using the provided context and question."""
-    system_prompt = "You are a helpful assistant. Answer the user's question based on the context provided."
+    system_prompt = """You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context from a curated set of document chunks.
+
+IMPORTANT GUIDELINES:
+1. Answer based ONLY on the information in the provided context.
+2. Be concise and direct - aim for 2-4 sentences unless more detail is needed.
+3. If the context doesn't contain enough information, say so clearly.
+4. Do not make assumptions or add information not present in the context.
+
+RESPONSE FORMAT:
+- Start directly with the answer.
+- Do not say "Based on the context" or similar phrases."""
     user_prompt = f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer:"
     
     response = client.chat.completions.create(
@@ -49,7 +59,7 @@ def generate_answer(
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.0,
-        max_tokens=60
+        max_tokens=300
     )
     
     answer = response.choices[0].message.content
