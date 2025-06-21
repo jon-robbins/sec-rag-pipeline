@@ -198,7 +198,7 @@ class SmartChunker:
                         len(chunks),
                     )
                 )
-                buf, buf_tokens = self._apply_overlap(buf, sent_token_lens, i)
+                buf, buf_tokens = self._apply_overlap(sentences, sent_token_lens, i)
 
             # Handle single über-long sentence
             if n_tok >= self.ceiling:
@@ -256,15 +256,15 @@ class SmartChunker:
         txt = _MULTI_WS.sub(" ", txt)
         return txt.strip()
 
-    def _apply_overlap(self, buf: List[str], tok_lens: List[int], idx: int):
+    def _apply_overlap(self, sentences: List[str], tok_lens: List[int], idx: int):
         leftover: list[str] = []
         tok_cnt = 0
         j = idx - 1
         while j >= 0 and tok_cnt < self.overlap:
-            leftover.insert(0, buf[j])
+            leftover.insert(0, sentences[j])
             tok_cnt += tok_lens[j]
             j -= 1
-        return leftover
+        return leftover, tok_cnt
 
     def _force_slice(self, sentence: str, n_tok: int) -> List[str]:
         """Aggressively slice a very long sentence into target-sized pieces."""
