@@ -4,37 +4,37 @@ A common need in most industries is to have an LLM that can answer questions abo
 
 - They can upload the relevant document to an LLM, but this can be inaccurate, costly, and potentially create compliance issues
 - They can do a keyword search to find the relevant passage in the text, but this can be inaccurate and potentially open the company up to compliance issues
-- They can read through the document manually, but if there are potentially thousands of documents to sort through, it can be tedious and time consuming. 
+- They can read through the document manually, but if there are potentially thousands of documents to sort through, it can be tedious and time consuming.
 
 A common solution to these problems is for companies to create a RAG pipeline that can retrieve and summarize information relevant to the user queries. However, depending on implementation methodology this could have its own set of problems:
 
 - **Cost**: High-context API calls can be expensive
 - **Accuracy**: Vanilla RAG models tend to underperform, especially with data with lots of noise
-- **Expertise**: Building and maintaining the system requires specialized skills/resources. It can be outsourced but creating an accurate model often requires specific domain knowledge that a consultant may not have. 
+- **Expertise**: Building and maintaining the system requires specialized skills/resources. It can be outsourced but creating an accurate model often requires specific domain knowledge that a consultant may not have.
 
 **Problem statement**: How can we create a QA engine on specialized texts, while optimizing for cost and relevance of answers retrieved?
 
 # Dataset Sourcing
 
-To build a proof of concept of a QA engine optimized for precision and cost, I chose to use the [JanosAudran/financial-reports-sec](https://huggingface.co/datasets/JanosAudran/financial-reports-sec) dataset from HuggingFace. This includes the annual SEC filings of publicly listed companies in the US. 
+To build a proof of concept of a QA engine optimized for precision and cost, I chose to use the [JanosAudran/financial-reports-sec](https://huggingface.co/datasets/JanosAudran/financial-reports-sec) dataset from HuggingFace. This includes the annual SEC filings of publicly listed companies in the US.
 
 I chose this dataset because:
-1. The dataset is already split into sentences and labeled by semantic section; this limits the data cleaning necessary. 
+1. The dataset is already split into sentences and labeled by semantic section; this limits the data cleaning necessary.
 2. The dataset has limited noise; much of the language is boilerplate or using finance domain terms. This is good in that it limits cleaning requirements, but  creates a challenge for the RAG to get the right answer from a large database semantically similar phrases.
-3. We can leverage finance domain specific models, of which there are many. 
+3. We can leverage finance domain specific models, of which there are many.
 
 
 ![Data example](./images/data_example.png 'Sample from the raw dataset')
 
-While this dataset comes pre-processed in a way that most real-world practitioners don't have the luxury of receiving, for the purposes of this exercise I'm skipping most pre-processing. 
+While this dataset comes pre-processed in a way that most real-world practitioners don't have the luxury of receiving, for the purposes of this exercise I'm skipping most pre-processing.
 
-Note that for the purpose of this exercise in order to limit computational requirements and the API costs, I chose to only include 5 companies: Apple, Tesla, Meta, Nvidia, and Amazon, and only the years 2012-2020 (the only years for which I could find structured data for all companies). 
+Note that for the purpose of this exercise in order to limit computational requirements and the API costs, I chose to only include 5 companies: Apple, Tesla, Meta, Nvidia, and Amazon, and only the years 2012-2020 (the only years for which I could find structured data for all companies).
 
-I chose similar companies because I want the documents to be relatively similar. Since they're all tech companies, if one of the words in the query is "GPU" or "AI" or "computers", it's not necessarily correlated with one specific company. However, if the query asks about an oil company, for exmaple, since there would only be one oil company in the dataset the query would automatically have a higher cosine similarity score. However this does mean that the results we get from this model might not be transferrable to all industries. 
+I chose similar companies because I want the documents to be relatively similar. Since they're all tech companies, if one of the words in the query is "GPU" or "AI" or "computers", it's not necessarily correlated with one specific company. However, if the query asks about an oil company, for exmaple, since there would only be one oil company in the dataset the query would automatically have a higher cosine similarity score. However this does mean that the results we get from this model might not be transferrable to all industries.
 
 # Approach and Pipeline
 
-My approach to creating an efficient, precise, and cost-effective QA engine is to implement several baselines alongside a few different implementations of RAG pipelines. 
+My approach to creating an efficient, precise, and cost-effective QA engine is to implement several baselines alongside a few different implementations of RAG pipelines.
 | Model                                      | Evaluation Use | Implementation                                                                                                                                                                                                                                     | Advantages                                                                                                                                                        | Disadvantages                                                                                                           |
 |-------------------------------------------|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
 | **Vanilla gpt-4o-mini**                   | Baseline       | Send question about a company’s SEC filing directly into the API. Provide no context.                                                                                                                                                             | - Cheap  <br> - Extremely easy to set up                                                                                                                          | - Only has access to training data  <br> - Low precision  <br> - Prone to hallucinations                              |
@@ -67,14 +67,14 @@ For evaluation of results, I'll use an ensemble of metrics:
 
 ## Secondary metrics
 
-- **ROUGE-L** (Longest Common Subsequence)  
+- **ROUGE-L** (Longest Common Subsequence)
   Best for factual QA; rewards both accuracy and completeness.
 
-- **Recall@k** ($k \in \{1,3,5,7,10\}$) (only for RAG)  
+- **Recall@k** ($k \in \{1,3,5,7,10\}$) (only for RAG)
   Measures the value of returning *k* vectors to the LLM, balancing accuracy and cost.
 
-- **NDCG@10** (only for RAG)  
-  Normalized Discounted Cumulative Gain at rank 10.  
+- **NDCG@10** (only for RAG)
+  Normalized Discounted Cumulative Gain at rank 10.
   Captures not just if the correct answer is returned, but also how highly it’s ranked.
 
 ---

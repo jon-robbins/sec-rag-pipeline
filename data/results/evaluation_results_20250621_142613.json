@@ -1,0 +1,1464 @@
+{
+    "summary": {
+        "rag": {
+            "rouge": {
+                "rouge1_f": 0.11247392574050899,
+                "rouge2_f": 0.048979591836734684,
+                "rougeL_f": 0.08827701293283272
+            },
+            "retrieval": {
+                "recall_at_1": 0.0,
+                "adj_recall_at_1": 0.0,
+                "recall_at_3": 0.0,
+                "adj_recall_at_3": 0.0,
+                "recall_at_5": 0.0,
+                "adj_recall_at_5": 0.0,
+                "recall_at_7": 0.0,
+                "adj_recall_at_7": 0.0,
+                "recall_at_10": 0.2,
+                "adj_recall_at_10": 0.2,
+                "mrr": 0.02,
+                "adj_mrr": 0.02,
+                "ndcg_at_10": 0.05781296526357758
+            },
+            "tokens": {
+                "prompt_tokens": 688.2,
+                "completion_tokens": 15.8,
+                "total_tokens": 704.0
+            },
+            "total_cost": 0.0005635499999999999
+        },
+        "reranked_rag": {
+            "rouge": {
+                "rouge1_f": 0.23290398126463702,
+                "rouge2_f": 0.19861895794099182,
+                "rougeL_f": 0.23290398126463702
+            },
+            "retrieval": {
+                "recall_at_1": 0.2,
+                "adj_recall_at_1": 0.2,
+                "recall_at_3": 0.2,
+                "adj_recall_at_3": 0.2,
+                "recall_at_5": 0.2,
+                "adj_recall_at_5": 0.2,
+                "recall_at_7": 0.2,
+                "adj_recall_at_7": 0.2,
+                "recall_at_10": 0.2,
+                "adj_recall_at_10": 0.2,
+                "mrr": 0.2,
+                "adj_mrr": 0.2,
+                "ndcg_at_10": 0.2
+            },
+            "tokens": {
+                "prompt_tokens": 600.8,
+                "completion_tokens": 24.0,
+                "total_tokens": 624.8
+            },
+            "total_cost": 0.0005226
+        },
+        "ensemble_rerank_rag": {
+            "rouge": {
+                "rouge1_f": 0.2693333333333333,
+                "rouge2_f": 0.23928571428571427,
+                "rougeL_f": 0.2693333333333333
+            },
+            "retrieval": {
+                "recall_at_1": 0.5,
+                "adj_recall_at_1": 0.5,
+                "recall_at_3": 0.5,
+                "adj_recall_at_3": 0.5,
+                "recall_at_5": 0.5,
+                "adj_recall_at_5": 0.5,
+                "recall_at_7": 0.5,
+                "adj_recall_at_7": 0.5,
+                "recall_at_10": 0.5,
+                "adj_recall_at_10": 0.5,
+                "mrr": 0.5,
+                "adj_mrr": 0.5,
+                "ndcg_at_10": 0.5
+            },
+            "tokens": {
+                "prompt_tokens": 2451.5,
+                "completion_tokens": 55.5,
+                "total_tokens": 2507.0
+            },
+            "total_cost": 0.00080205
+        },
+        "unfiltered": {
+            "rouge": {
+                "rouge1_f": 0.5639521276595745,
+                "rouge2_f": 0.5210737104565997,
+                "rougeL_f": 0.5639521276595745
+            },
+            "retrieval": {},
+            "tokens": {
+                "prompt_tokens": 49599.6,
+                "completion_tokens": 39.8,
+                "total_tokens": 49639.4
+            },
+            "total_cost": 0.037319099999999994
+        },
+        "web_search": {
+            "rouge": {
+                "rouge1_f": 0.21459717449408172,
+                "rouge2_f": 0.12521477607061132,
+                "rougeL_f": 0.18845697729263527
+            },
+            "retrieval": {},
+            "tokens": {
+                "prompt_tokens": 210.6,
+                "completion_tokens": 124.0,
+                "total_tokens": 334.6
+            },
+            "total_cost": 0.13802995
+        },
+        "baseline": {
+            "rouge": {
+                "rouge1_f": 0.18772764869539063,
+                "rouge2_f": 0.07858695652173912,
+                "rougeL_f": 0.16727310324084516
+            },
+            "retrieval": {},
+            "tokens": {
+                "prompt_tokens": 229.6,
+                "completion_tokens": 58.4,
+                "total_tokens": 288.0
+            },
+            "total_cost": 0.0003474
+        }
+    },
+    "individual": [
+        {
+            "rag": {
+                "answer": "I couldn't find any relevant information to answer your question.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "reranked_rag": {
+                "answer": "[No documents found to rerank]",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "ensemble_rerank_rag": {
+                "answer": "Could not retrieve any documents.",
+                "retrieval": {},
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {},
+                "contexts": []
+            },
+            "unfiltered": {
+                "answer": "Interest on the notes payable for NVIDIA in fiscal year 2017 was payable on March 16 and September 16 of each year, beginning on March 16, 2017.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.7037037037037037,
+                        "recall": 0.95,
+                        "fmeasure": 0.8085106382978724
+                    },
+                    "rouge2": {
+                        "precision": 0.6538461538461539,
+                        "recall": 0.8947368421052632,
+                        "fmeasure": 0.7555555555555555
+                    },
+                    "rougeL": {
+                        "precision": 0.7037037037037037,
+                        "recall": 0.95,
+                        "fmeasure": 0.8085106382978724
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 44079,
+                    "completion_tokens": 37,
+                    "total_tokens": 44116
+                }
+            },
+            "web_search": {
+                "answer": "In fiscal year 2017, NVIDIA issued $1.00 billion of 2.20% Notes Due 2021 and $1.00 billion of 3.20% Notes Due 2026. Interest on these notes is payable semi-annually on March 16 and September 16, beginning March 16, 2017. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581017000027/nvda-2017x10k.htm?utm_source=openai)) Therefore, the interest payment dates for fiscal year 2017 were March 16, 2017, and September 16, 2017.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.23376623376623376,
+                        "recall": 0.9,
+                        "fmeasure": 0.37113402061855666
+                    },
+                    "rouge2": {
+                        "precision": 0.13157894736842105,
+                        "recall": 0.5263157894736842,
+                        "fmeasure": 0.21052631578947367
+                    },
+                    "rougeL": {
+                        "precision": 0.19480519480519481,
+                        "recall": 0.75,
+                        "fmeasure": 0.309278350515464
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 212,
+                    "completion_tokens": 143,
+                    "total_tokens": 355
+                }
+            },
+            "baseline": {
+                "answer": "For NVIDIA Corporation (ticker NVDA), interest on notes payable is typically reported in the financial statements, specifically in the notes section of their annual report (10-K). For fiscal year 2017, which ended on January 29, 2017, the specific interest expense related to notes payable would",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.21739130434782608,
+                        "recall": 0.5,
+                        "fmeasure": 0.30303030303030304
+                    },
+                    "rouge2": {
+                        "precision": 0.044444444444444446,
+                        "recall": 0.10526315789473684,
+                        "fmeasure": 0.0625
+                    },
+                    "rougeL": {
+                        "precision": 0.17391304347826086,
+                        "recall": 0.4,
+                        "fmeasure": 0.24242424242424243
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 231,
+                    "completion_tokens": 60,
+                    "total_tokens": 291
+                }
+            },
+            "question": "When is the interest on the notes payable for the company in fiscal year 2017?",
+            "ground_truth_answer": "Interest on the notes is payable on March 16 and September 16 of each year, beginning on March 16, 2017."
+        },
+        {
+            "rag": {
+                "answer": "I couldn't find any relevant information to answer your question.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "reranked_rag": {
+                "answer": "[No documents found to rerank]",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "ensemble_rerank_rag": {
+                "answer": "Could not retrieve any documents.",
+                "retrieval": {},
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {},
+                "contexts": []
+            },
+            "unfiltered": {
+                "answer": "The company's corporate headquarters is located in Seattle, Washington, as of December 31, 2016.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.6666666666666666,
+                        "recall": 1.0,
+                        "fmeasure": 0.8
+                    },
+                    "rouge2": {
+                        "precision": 0.6428571428571429,
+                        "recall": 1.0,
+                        "fmeasure": 0.782608695652174
+                    },
+                    "rougeL": {
+                        "precision": 0.6666666666666666,
+                        "recall": 1.0,
+                        "fmeasure": 0.8
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 33542,
+                    "completion_tokens": 21,
+                    "total_tokens": 33563
+                }
+            },
+            "web_search": {
+                "answer": "As of December 31, 2016, Amazon.com's corporate headquarters was located at 410 Terry Avenue North, Seattle, Washington 98109-5210. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1018724/000101872417000011/amzn-20161231x10k.htm?utm_source=openai))",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.15789473684210525,
+                        "recall": 0.6,
+                        "fmeasure": 0.25
+                    },
+                    "rouge2": {
+                        "precision": 0.08108108108108109,
+                        "recall": 0.3333333333333333,
+                        "fmeasure": 0.13043478260869568
+                    },
+                    "rougeL": {
+                        "precision": 0.15789473684210525,
+                        "recall": 0.6,
+                        "fmeasure": 0.25
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 211,
+                    "completion_tokens": 76,
+                    "total_tokens": 287
+                }
+            },
+            "baseline": {
+                "answer": "As of December 31, 2016, Amazon.com, Inc. (ticker AMZN) was headquartered in Seattle, Washington. The company has maintained its headquarters in Seattle for many years, known for its significant presence in the technology and e-commerce sectors.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.15789473684210525,
+                        "recall": 0.6,
+                        "fmeasure": 0.25
+                    },
+                    "rouge2": {
+                        "precision": 0.08108108108108109,
+                        "recall": 0.3333333333333333,
+                        "fmeasure": 0.13043478260869568
+                    },
+                    "rougeL": {
+                        "precision": 0.13157894736842105,
+                        "recall": 0.5,
+                        "fmeasure": 0.20833333333333334
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 230,
+                    "completion_tokens": 52,
+                    "total_tokens": 282
+                }
+            },
+            "question": "Where is the company's corporate headquarters located as of December 31, 2016?",
+            "ground_truth_answer": "The company's corporate headquarters is located in Seattle, Washington."
+        },
+        {
+            "rag": {
+                "answer": "The provided context does not contain information regarding the amount of Notes issued by NVIDIA (ticker NVDA) in fiscal year 2017. Therefore, I cannot provide an answer to that question.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.13333333333333333,
+                        "recall": 0.23529411764705882,
+                        "fmeasure": 0.1702127659574468
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.1,
+                        "recall": 0.17647058823529413,
+                        "fmeasure": 0.12765957446808512
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 1706,
+                    "completion_tokens": 38,
+                    "total_tokens": 1744
+                }
+            },
+            "reranked_rag": {
+                "answer": "In fiscal year 2017, NVIDIA issued $1.00 billion of the 2.20% Notes Due 2021 and $1.00 billion of the 3.20% Notes Due 2026, totaling $2.00 billion in Notes. The net proceeds from these Notes",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.4358974358974359,
+                        "recall": 1.0,
+                        "fmeasure": 0.6071428571428571
+                    },
+                    "rouge2": {
+                        "precision": 0.3684210526315789,
+                        "recall": 0.875,
+                        "fmeasure": 0.5185185185185185
+                    },
+                    "rougeL": {
+                        "precision": 0.4358974358974359,
+                        "recall": 1.0,
+                        "fmeasure": 0.6071428571428571
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 1715,
+                    "completion_tokens": 60,
+                    "total_tokens": 1775
+                }
+            },
+            "ensemble_rerank_rag": {
+                "answer": "In fiscal year 2017, the company issued $1.00 billion of the 2.20% Notes Due 2021 and $1.00 billion of the 3.20% Notes Due 2026, totaling $2.00 billion in Notes.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.5,
+                        "recall": 1.0,
+                        "fmeasure": 0.6666666666666666
+                    },
+                    "rouge2": {
+                        "precision": 0.42424242424242425,
+                        "recall": 0.875,
+                        "fmeasure": 0.5714285714285714
+                    },
+                    "rougeL": {
+                        "precision": 0.5,
+                        "recall": 1.0,
+                        "fmeasure": 0.6666666666666666
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 4004,
+                    "completion_tokens": 59,
+                    "total_tokens": 4063
+                },
+                "contexts": [
+                    "Note 11 - Debt Long-Term Debt 2.20% Notes Due 2021 and 3.20% Notes Due 2026 In fiscal year 2017, we issued $1.00 billion of the 2.20% Notes Due 2021, and $1.00 billion of the 3.20% Notes Due 2026, or collectively, the Notes. Interest on the Notes is payable on March 16 and September 16 of each year, beginning on March 16, 2017. Upon 30 days' notice to holders of the Notes, we may redeem the Notes for cash prior to maturity, at redemption NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) prices that include accrued and unpaid interest, if any, and a make-whole premium. However, no make-whole premium will be paid for redemptions of the Notes Due 2021 on or after August 16, 2021, or for redemptions of the Notes Due 2026 on or after June 16, 2026. The net proceeds from the Notes were $1.98 billion, after deducting debt discount and issuance costs. The Notes are our unsecured senior obligations and rank equally in right of payment with all existing and future unsecured and unsubordinated indebtedness. The Notes are structurally subordinated to the liabilities of our subsidiaries and are effectively subordinated to any secured indebtedness to the extent of the value of the assets securing such indebtedness. All existing and future liabilities of our subsidiaries will be effectively senior to the Notes. The carrying value of the Notes and the associated interest rates were as follows: Convertible Debt 1.00% Convertible Senior Notes Due 2018 In fiscal year 2014, we issued $1.50 billion of Convertible Notes. During fiscal year 2019, we paid cash to settle an aggregate of $16 million in principal amount of the Convertible Notes and issued 714 thousand shares of our common stock for the excess conversion value. The related loss on early conversions was not significant. As of January 27, 2019, there were no Convertible Notes outstanding. Note Hedges Concurrently with the issuance of the Convertible Notes, we entered into the Note Hedges. Through January 27, 2019, we had received 57 million shares of our common stock from the exercise of a portion of the Note Hedges related to the settlement of $1.50 billion in principal amount of the Convertible Notes. As of January 27, 2019, there were no Note Hedges outstanding. Revolving Credit Facility We have a Credit Agreement under which we may borrow up to $575 million for general corporate purposes and can obtain revolving loan commitments up to $425 million. As of January 27, 2019, we had not borrowed any amounts under this agreement. Commercial Paper We have a $575 million commercial paper program to support general corporate purposes. As of January 27, 2019, we had not issued any commercial paper. Note 12 - Commitments and Contingencies Inventory Purchase Obligations As of January 27, 2019, we had outstanding inventory purchase obligations totaling $912 million. Capital Purchase Obligations As of January 27, 2019, we had outstanding capital purchase obligations totaling $258 million. NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) Lease Obligations Our headquarters complex is located in Santa Clara, California and includes ten buildings that are leased properties.",
+                    "This amount excludes the value of remaining performance obligations for contracts with an original expected length of one year or less. NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) Note 11 - Derivative Financial Instruments We enter into foreign currency forward contracts to mitigate the impact of foreign currency exchange rate movements on our operating expenses. These contracts are designated as cash flow hedges for hedge accounting treatment. Gains or losses on the contracts are recorded in accumulated other comprehensive income or loss and reclassified to operating expense when the related operating expenses are recognized in earnings or ineffectiveness should occur. The fair value of the contracts was not significant as of January 26, 2020 and January 27, 2019. We enter into foreign currency forward contracts to mitigate the impact of foreign currency movements on monetary assets and liabilities that are denominated in currencies other than U.S. dollar. These forward contracts were not designated for hedge accounting treatment. Therefore, the change in fair value of these contracts is recorded in other income or expense and offsets the change in fair value of the hedged foreign currency denominated monetary assets and liabilities, which is also recorded in other income or expense. The table below presents the notional value of our foreign currency forward contracts outstanding as of January 26, 2020 and January 27, 2019: As of January 26, 2020, all designated foreign currency forward contracts mature within eighteen months. The expected realized gains and losses deferred into accumulated other comprehensive income (loss) related to foreign currency forward contracts within the next twelve months was not significant. During fiscal years 2020 and 2019, the impact of derivative financial instruments designated for hedge accounting treatment on other comprehensive income or loss was not significant and all such instruments were determined to be highly effective. Therefore, there were no gains or losses associated with ineffectiveness. Note 12 - Debt Long-Term Debt 2.20% Notes Due 2021 and 3.20% Notes Due 2026 In fiscal year 2017, we issued $1.00 billion of the 2.20% Notes Due 2021, and $1.00 billion of the 3.20% Notes Due 2026, or collectively, the Notes. Interest on the Notes is payable on March 16 and September 16 of each year. Upon 30 days' notice to holders of the Notes, we may redeem the Notes for cash prior to maturity, at redemption prices that include accrued and unpaid interest, if any, and a make-whole premium. However, no make-whole premium will be paid for redemptions of the Notes Due 2021 on or after August 16, 2021, or for redemptions of the Notes Due 2026 on or after June 16, 2026. The net proceeds from the Notes were $1.98 billion, after deducting debt discount and issuance costs. The Notes are our unsecured senior obligations and rank equally in right of payment with all existing and future unsecured and unsubordinated indebtedness. The Notes are structurally subordinated to the liabilities of our subsidiaries and are effectively subordinated to any secured indebtedness to the extent of the value of the assets securing such indebtedness. All existing and future liabilities of our subsidiaries will be effectively senior to the Notes.",
+                    "(3) The aggregate intrinsic value in the table above represents the total pre-tax intrinsic value for in-the-money options at January 29, 2017, based on the $111.77 closing price of our common stock on January 27, 2017. As of January 29, 2017 and January 31, 2016, there were 22 million and 14 million shares, respectively, of common stock reserved for future issuance under our equity incentive plans. The total intrinsic value of options exercised was $246 million, $75 million, and $62 million for fiscal years 2017, 2016, and 2015, respectively. Upon exercise of an option, we issue new shares of stock. The total fair value of options vested was $8 million, $17 million, and $33 million for fiscal years 2017, 2016, and 2015, respectively. NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) Note 3 - Net Income Per Share The following is a reconciliation of the numerators and denominators of the basic and diluted net income per share computations for the periods presented: (1) Calculated as net income divided by basic weighted average shares. (2) Calculated as net income divided by diluted weighted average shares. The 1.00% Convertible Senior Notes, or the Convertible Notes, are included in the calculation of diluted net income per share. The Convertible Notes have a dilutive impact on net income per share if our average stock price for the reporting period exceeds the adjusted conversion price of $20.0662 per share. The warrants associated with our Convertible Notes, or the Warrants, outstanding are also included in the calculation of diluted net income per share. The Warrants have a dilutive impact on net income per share if our average stock price for the quarter exceeds the adjusted strike price of $27.0122 per share. For fiscal year 2017, our average stock price was $59.30, which exceeded both the adjusted conversion price and the adjusted strike price, causing the Convertible Notes and the Warrants to have a dilutive impact. The denominator for diluted net income per share does not include any effect from the convertible note hedge transactions, or the Note Hedges, that we entered into concurrently with the issuance of the Convertible Notes, as its effect would be anti-dilutive. In the event of conversion of the Convertible Notes, the shares delivered to us under the Note Hedges will offset the dilutive effect of the shares that we would issue under the Convertible Notes. On December 12, 2016, we entered into an agreement with a counterparty bank to terminate 63 million of the 75 million Warrants outstanding. In consideration for the termination of these Warrants, we delivered a total of 48 million shares of common stock to the counterparty bank, the amount of which was determined each day based on the daily volume-weighted average price of the common stock during an observation period beginning December 13, 2016 and ending January 31, 2017. As of January 29, 2017, 44 million of the 48 million shares of our common stock had been issued related to the terminated Warrants. The remaining 4 million shares were issued in the beginning of fiscal year 2018. Please refer to Note 11 of these Notes to the Consolidated Financial Statements for additional discussion regarding the Convertible Notes, Note Hedges, and Warrants.",
+                    "On December 12, 2016, we entered into an agreement with a counterparty bank to terminate 63 million of the 75 million warrants outstanding. In consideration for the termination of these warrants, we delivered a total of 48 million shares of common stock to the counterparty bank, the amount of which was determined each day based on the daily volume-weighted average price of the common stock during an observation period beginning December 13, 2016 and ending January 31, 2017. As of January 29, 2017, 44 million of the 48 million shares of our common stock had been issued related to the terminated Warrants. The remaining 4 million shares were issued in the beginning of fiscal year 2018. Long-Term Debt 2.20% Notes Due 2021 and 3.20% Notes Due 2026 On September 16, 2016, we issued $1.00 billion of the 2.20% Notes Due 2021, and $1.00 billion of the 3.20% Notes Due 2026 (collectively, the Notes). Interest on the Notes is payable on March 16 and September 16 of each year, beginning on March 16, 2017. Upon 30 days' notice to holders of the Notes, we may redeem the Notes for cash prior to maturity, at redemption prices that include accrued and unpaid interest, if any, and a make-whole premium. However, no make-whole premium will be paid for redemptions of the Notes Due 2021 on or after August 16, 2021, or for redemptions of the Notes Due 2026 on or after June 16, 2026. The net proceeds from the Notes were $1.98 billion, after deducting debt discount and issuance costs. The Notes are our unsecured senior obligations and rank equally in right of payment with all of our existing and future unsecured and unsubordinated indebtedness. The Notes are structurally subordinated to the liabilities of our subsidiaries and are effectively subordinated to any secured indebtedness to the extent of the value of the assets securing such indebtedness. All existing and future liabilities of our subsidiaries will be effectively senior to the Notes. The carrying value of our long-term debt and the associated interest rates were as follows: Revolving Credit Facility On October 7, 2016, we entered into a credit agreement, or the Credit Agreement, under which we may borrow, repay and re-borrow amounts from time to time, up to $575 million, for working capital and other general corporate purposes. The commitments under the Credit Agreement are available for a 5-year period ending on October 7, 2021, on which all outstanding obligations would be due and payable. The Credit Agreement also permits us to obtain additional revolving loan commitments up to $425 million, subject to certain conditions. As of January 29, 2017, we had not borrowed any amounts under the Credit Agreement. NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) Note 12 - Commitments and Contingencies Inventory Purchase Obligations As of January 29, 2017, we had outstanding inventory purchase obligations totaling $1.00 billion. Capital Purchase Obligations As of January 29, 2017, we had outstanding capital purchase obligations totaling $38 million. Lease Obligations Our headquarters complex is located in Santa Clara, California and includes eight buildings that are leased properties.",
+                    "As this condition was met, the Convertible Notes first became convertible at the holders' option beginning on the first day of fiscal year 2017 and continued to be convertible at the holders\u2019 option through April 30, 2017. NVIDIA CORPORATION AND SUBSIDIARIES NOTES TO THE CONSOLIDATED FINANCIAL STATEMENTS (Continued) During fiscal year 2017, we paid cash to settle an aggregate of $673 million in principal amount of the Convertible Notes and have $827 million in principal amount outstanding as of January 29, 2017. We issued 23 million shares of our common stock for the excess conversion value, and recognized a loss of $21 million on early conversions, of the Convertible Notes. Based on the closing price of our common stock of $111.77 on the last trading day of fiscal year 2017, the if-converted value of the remaining outstanding Convertible Notes exceeded their principal amount by approximately $3.78 billion. Subsequent to January 29, 2017, we have settled an additional $502 million in principal amount of Convertible Notes and issued 20 million additional shares of our common stock for the excess conversion value. Based on additional conversion requests we have received, we expect to settle an additional $103 million in principal amount of Convertible Notes and issue additional shares of our common stock for the excess conversion value during the remainder of the first quarter of fiscal year 2018 and to settle another additional $55 million in principal amount of Convertible Notes and issue additional shares of our common stock for the excess conversion value during the second quarter of fiscal year 2018. The actual number of shares issuable upon conversion will be determined based upon the terms of the Convertible Notes, and we expect to receive an equal number of shares of our common stock under the terms of the Note Hedges. We separately accounted for the liability and equity components of the Convertible Notes at issuance, since our conversion obligation in excess of the aggregate principal could be fully or partially settled in cash. The liability component was assigned by estimating the fair value of a similar debt without the conversion feature. The difference between the net cash proceeds and the liability component was assigned as the equity component. The initial liability component of the Convertible Notes was valued at $1.35 billion and the initial carrying value of the equity component recorded in additional paid-in-capital was valued at $126 million. This equity component, together with the $23 million purchaser's discount to the par value of the Convertible Notes, represented the initial aggregate unamortized debt discount of $148 million. The debt discount is amortized as interest expense over the contractual term of the Convertible Notes using the effective interest method and an interest rate of 3.15%. As of January 29, 2017, the carrying value of the Convertible Notes was classified as a current liability and the difference between the principal amount and the carrying value of the Convertible Notes was classified as convertible debt conversion obligation in the mezzanine equity section of our Consolidated Balance Sheet. The following table presents the carrying value of the liability of the Convertible Notes: (1) As of January 29, 2017, the remaining period over which the unamortized debt discount will be amortized is 1.8 years."
+                ]
+            },
+            "unfiltered": {
+                "answer": "In fiscal year 2017, NVIDIA issued $1.00 billion of the 2.20% Notes Due 2021 and $1.00 billion of the 3.20% Notes Due 2026, totaling $2.00 billion in Notes.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.5151515151515151,
+                        "recall": 1.0,
+                        "fmeasure": 0.6799999999999999
+                    },
+                    "rouge2": {
+                        "precision": 0.4375,
+                        "recall": 0.875,
+                        "fmeasure": 0.5833333333333334
+                    },
+                    "rougeL": {
+                        "precision": 0.5151515151515151,
+                        "recall": 1.0,
+                        "fmeasure": 0.6799999999999999
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 41120,
+                    "completion_tokens": 54,
+                    "total_tokens": 41174
+                }
+            },
+            "web_search": {
+                "answer": "In fiscal year 2017, NVIDIA issued $1.00 billion of 2.20% Notes Due 2021 and $1.00 billion of 3.20% Notes Due 2026. The net proceeds from these Notes were $1.98 billion, after deducting debt discounts and issuance costs. These funds were intended to prefund the repayment of early conversions of Convertible Notes and for general corporate purposes, such as dividend payments or share repurchases. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581017000027/nvda-2017x10k.htm?utm_source=openai))",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.2,
+                        "recall": 1.0,
+                        "fmeasure": 0.33333333333333337
+                    },
+                    "rouge2": {
+                        "precision": 0.14285714285714285,
+                        "recall": 0.75,
+                        "fmeasure": 0.24
+                    },
+                    "rougeL": {
+                        "precision": 0.17647058823529413,
+                        "recall": 0.8823529411764706,
+                        "fmeasure": 0.29411764705882354
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 209,
+                    "completion_tokens": 138,
+                    "total_tokens": 347
+                }
+            },
+            "baseline": {
+                "answer": "I don't have access to specific figures or documents, including SEC filings for NVIDIA (NVDA) or any other company. However, typically, companies disclose details about debt issuance, including notes, in their annual reports (10-K filings) or quarterly reports (10-Q filings). For precise numbers regarding NVIDIA",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.020833333333333332,
+                        "recall": 0.058823529411764705,
+                        "fmeasure": 0.03076923076923077
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.020833333333333332,
+                        "recall": 0.058823529411764705,
+                        "fmeasure": 0.03076923076923077
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 228,
+                    "completion_tokens": 60,
+                    "total_tokens": 288
+                }
+            },
+            "question": "How much in Notes did the company issue in fiscal year 2017?",
+            "ground_truth_answer": "$1.00 billion of the Notes Due 2021 and $1.00 billion of the Notes Due 2026."
+        },
+        {
+            "rag": {
+                "answer": "I couldn't find any relevant information to answer your question.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "reranked_rag": {
+                "answer": "[No documents found to rerank]",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 0.0,
+                    "adj_recall_at_10": 0.0,
+                    "mrr": 0.0,
+                    "adj_mrr": 0.0,
+                    "ndcg_at_10": 0.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 0,
+                    "completion_tokens": 0,
+                    "total_tokens": 0
+                }
+            },
+            "ensemble_rerank_rag": {
+                "answer": "Could not retrieve any documents.",
+                "retrieval": {},
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {},
+                "contexts": []
+            },
+            "unfiltered": {
+                "answer": "The company has no unresolved staff comments for the fiscal year 2015, as stated in Item 1B of the SEC filing.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 46994,
+                    "completion_tokens": 27,
+                    "total_tokens": 47021
+                }
+            },
+            "web_search": {
+                "answer": "Apple Inc.'s Form 10-K for the fiscal year ended September 26, 2015, indicates that there were no unresolved staff comments from the SEC at that time. ([getfilings.com](https://getfilings.com/sec-filings/151028/APPLE-INC_10-K/?utm_source=openai))",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 207,
+                    "completion_tokens": 68,
+                    "total_tokens": 275
+                }
+            },
+            "baseline": {
+                "answer": "I don't have access to specific unresolved staff comments for Apple Inc. (AAPL) for the fiscal year 2015. Typically, unresolved staff comments would be noted in the company's SEC filings, such as their 10-K or 10-Q reports, but I cannot provide specific details or verify any",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rouge2": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    },
+                    "rougeL": {
+                        "precision": 0.0,
+                        "recall": 0.0,
+                        "fmeasure": 0.0
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 226,
+                    "completion_tokens": 60,
+                    "total_tokens": 286
+                }
+            },
+            "question": "What unresolved staff comments does the company have for the fiscal year?",
+            "ground_truth_answer": "None."
+        },
+        {
+            "rag": {
+                "answer": "The context does not provide specific information regarding the filing date of the 2018 Proxy Statement for Tesla (TSLA). Therefore, I cannot determine when it will be filed with the Securities and Exchange Commission.",
+                "retrieval": {
+                    "recall_at_1": 0.0,
+                    "adj_recall_at_1": 0.0,
+                    "recall_at_3": 0.0,
+                    "adj_recall_at_3": 0.0,
+                    "recall_at_5": 0.0,
+                    "adj_recall_at_5": 0.0,
+                    "recall_at_7": 0.0,
+                    "adj_recall_at_7": 0.0,
+                    "recall_at_10": 1.0,
+                    "adj_recall_at_10": 1.0,
+                    "mrr": 0.1,
+                    "adj_mrr": 0.1,
+                    "ndcg_at_10": 0.2890648263178879
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.29411764705882354,
+                        "recall": 0.5882352941176471,
+                        "fmeasure": 0.3921568627450981
+                    },
+                    "rouge2": {
+                        "precision": 0.18181818181818182,
+                        "recall": 0.375,
+                        "fmeasure": 0.24489795918367344
+                    },
+                    "rougeL": {
+                        "precision": 0.23529411764705882,
+                        "recall": 0.47058823529411764,
+                        "fmeasure": 0.3137254901960785
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 1735,
+                    "completion_tokens": 41,
+                    "total_tokens": 1776
+                }
+            },
+            "reranked_rag": {
+                "answer": "The 2018 Proxy Statement for Tesla (TSLA) will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year 2017, which ended on December 31, 2017. This means the filing is expected to occur by April 30,",
+                "retrieval": {
+                    "recall_at_1": 1.0,
+                    "adj_recall_at_1": 1.0,
+                    "recall_at_3": 1.0,
+                    "adj_recall_at_3": 1.0,
+                    "recall_at_5": 1.0,
+                    "adj_recall_at_5": 1.0,
+                    "recall_at_7": 1.0,
+                    "adj_recall_at_7": 1.0,
+                    "recall_at_10": 1.0,
+                    "adj_recall_at_10": 1.0,
+                    "mrr": 1.0,
+                    "adj_mrr": 1.0,
+                    "ndcg_at_10": 1.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.38636363636363635,
+                        "recall": 1.0,
+                        "fmeasure": 0.5573770491803279
+                    },
+                    "rouge2": {
+                        "precision": 0.32558139534883723,
+                        "recall": 0.875,
+                        "fmeasure": 0.47457627118644063
+                    },
+                    "rougeL": {
+                        "precision": 0.38636363636363635,
+                        "recall": 1.0,
+                        "fmeasure": 0.5573770491803279
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 1289,
+                    "completion_tokens": 60,
+                    "total_tokens": 1349
+                }
+            },
+            "ensemble_rerank_rag": {
+                "answer": "The 2018 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year, which relates to the fiscal year ended December 31, 2017.",
+                "retrieval": {
+                    "recall_at_1": 1.0,
+                    "adj_recall_at_1": 1.0,
+                    "recall_at_3": 1.0,
+                    "adj_recall_at_3": 1.0,
+                    "recall_at_5": 1.0,
+                    "adj_recall_at_5": 1.0,
+                    "recall_at_7": 1.0,
+                    "adj_recall_at_7": 1.0,
+                    "recall_at_10": 1.0,
+                    "adj_recall_at_10": 1.0,
+                    "mrr": 1.0,
+                    "adj_mrr": 1.0,
+                    "ndcg_at_10": 1.0
+                },
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.5151515151515151,
+                        "recall": 1.0,
+                        "fmeasure": 0.6799999999999999
+                    },
+                    "rouge2": {
+                        "precision": 0.46875,
+                        "recall": 0.9375,
+                        "fmeasure": 0.625
+                    },
+                    "rougeL": {
+                        "precision": 0.5151515151515151,
+                        "recall": 1.0,
+                        "fmeasure": 0.6799999999999999
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 899,
+                    "completion_tokens": 52,
+                    "total_tokens": 951
+                },
+                "contexts": [
+                    "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2018 Proxy Statement to be filed with the Securities and Exchange Commission in connection with the solicitation of proxies for our 2018 Annual Meeting of Stockholders and is incorporated herein by reference. The 2018 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this report relates. ITEM 11.",
+                    "Item 11. Executive Compensation The information required by this item is incorporated by reference to our Proxy Statement for the 2018 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2017. Item 12.",
+                    "Item 12. Security Ownership of Certain Beneficial Owners and Management and Related Stockholder Matters The information required by this item is incorporated by reference to our Proxy Statement for the 2018 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2017. Item 13.",
+                    "Item 14. Principal Accounting Fees and Services The information required by this item is incorporated by reference to our Proxy Statement for the 2018 Annual Meeting of Stockholders to be filed with the SEC within 120 days of the fiscal year ended December 31, 2017. PART IV Item 15.",
+                    "ITEM 10. DIRECTORS, EXECUTIVE OFFICERS AND CORPORATE GOVERNANCE The information required by this Item 10 of Form 10-K will be included in our 2017 Proxy Statement to be filed with the SEC in connection with the solicitation of proxies for our 2017 Annual Meeting of Stockholders (2017 Proxy Statement) and is incorporated herein by reference. The 2017 Proxy Statement will be filed with the SEC within 120 days after the end of the fiscal year to which this report relates. ITEM 11."
+                ]
+            },
+            "unfiltered": {
+                "answer": "The 2018 Proxy Statement will be filed with the Securities and Exchange Commission within 120 days after the end of the fiscal year to which this report relates. Since the fiscal year ended on December 31, 2017, the filing is expected to occur by April 30, 2018",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.3617021276595745,
+                        "recall": 1.0,
+                        "fmeasure": 0.53125
+                    },
+                    "rouge2": {
+                        "precision": 0.32608695652173914,
+                        "recall": 0.9375,
+                        "fmeasure": 0.48387096774193544
+                    },
+                    "rougeL": {
+                        "precision": 0.3617021276595745,
+                        "recall": 1.0,
+                        "fmeasure": 0.53125
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 82263,
+                    "completion_tokens": 60,
+                    "total_tokens": 82323
+                }
+            },
+            "web_search": {
+                "answer": "Tesla filed its 2018 Proxy Statement with the SEC on April 17, 2018, ahead of the Annual Meeting held on June 5, 2018. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1318605/000156459018009339/tsla-def14a_20180606.htm?utm_source=openai))\n\n## Stock market information for Tesla Inc (TSLA)\n- Tesla Inc is a equity in the USA market.\n- The price is 322.16 USD currently with a change of 0.34 USD (0.00%) from the previous close.\n- The latest open price was 327.87 USD and the intraday volume is 108688008.\n- The intraday high is 332.06 USD and the intraday low is 317.92 USD.\n- The latest trade time is Saturday, June 21, 00:15:00 UTC.",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.06779661016949153,
+                        "recall": 0.47058823529411764,
+                        "fmeasure": 0.1185185185185185
+                    },
+                    "rouge2": {
+                        "precision": 0.02564102564102564,
+                        "recall": 0.1875,
+                        "fmeasure": 0.04511278195488722
+                    },
+                    "rougeL": {
+                        "precision": 0.05084745762711865,
+                        "recall": 0.35294117647058826,
+                        "fmeasure": 0.08888888888888888
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 214,
+                    "completion_tokens": 195,
+                    "total_tokens": 409
+                }
+            },
+            "baseline": {
+                "answer": "The 2018 Proxy Statement for Tesla, Inc. (ticker: TSLA) would typically be filed with the SEC in advance of the company's annual meeting, which usually occurs in the spring. For fiscal year 2017, the Proxy Statement would likely have been filed in early 2018,",
+                "rouge": {
+                    "rouge1": {
+                        "precision": 0.24444444444444444,
+                        "recall": 0.6470588235294118,
+                        "fmeasure": 0.3548387096774193
+                    },
+                    "rouge2": {
+                        "precision": 0.13636363636363635,
+                        "recall": 0.375,
+                        "fmeasure": 0.19999999999999998
+                    },
+                    "rougeL": {
+                        "precision": 0.24444444444444444,
+                        "recall": 0.6470588235294118,
+                        "fmeasure": 0.3548387096774193
+                    }
+                },
+                "tokens": {
+                    "prompt_tokens": 233,
+                    "completion_tokens": 60,
+                    "total_tokens": 293
+                }
+            },
+            "question": "When will the 2018 Proxy Statement be filed with the Securities and Exchange Commission for the company?",
+            "ground_truth_answer": "The 2018 Proxy Statement will be filed within 120 days after the end of the fiscal year."
+        }
+    ],
+    "per_question_metrics": {
+        "rag": {
+            "rouge1_f": [
+                0.0,
+                0.0,
+                0.1702127659574468,
+                0.0,
+                0.3921568627450981
+            ],
+            "rouge2_f": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.24489795918367344
+            ],
+            "rougeL_f": [
+                0.0,
+                0.0,
+                0.12765957446808512,
+                0.0,
+                0.3137254901960785
+            ],
+            "recall_at_1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adj_recall_at_1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "recall_at_3": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adj_recall_at_3": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "recall_at_5": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adj_recall_at_5": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "recall_at_7": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "adj_recall_at_7": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ],
+            "recall_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mrr": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.1
+            ],
+            "adj_mrr": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.1
+            ],
+            "ndcg_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.2890648263178879
+            ]
+        },
+        "reranked_rag": {
+            "rouge1_f": [
+                0.0,
+                0.0,
+                0.6071428571428571,
+                0.0,
+                0.5573770491803279
+            ],
+            "rouge2_f": [
+                0.0,
+                0.0,
+                0.5185185185185185,
+                0.0,
+                0.47457627118644063
+            ],
+            "rougeL_f": [
+                0.0,
+                0.0,
+                0.6071428571428571,
+                0.0,
+                0.5573770491803279
+            ],
+            "recall_at_1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_1": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "recall_at_3": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_3": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "recall_at_5": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_5": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "recall_at_7": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_7": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "recall_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "mrr": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "adj_mrr": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ndcg_at_10": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        },
+        "ensemble_rerank_rag": {
+            "rouge1_f": [
+                0.0,
+                0.0,
+                0.6666666666666666,
+                0.0,
+                0.6799999999999999
+            ],
+            "rouge2_f": [
+                0.0,
+                0.0,
+                0.5714285714285714,
+                0.0,
+                0.625
+            ],
+            "rougeL_f": [
+                0.0,
+                0.0,
+                0.6666666666666666,
+                0.0,
+                0.6799999999999999
+            ],
+            "recall_at_1": [
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_1": [
+                0.0,
+                1.0
+            ],
+            "recall_at_3": [
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_3": [
+                0.0,
+                1.0
+            ],
+            "recall_at_5": [
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_5": [
+                0.0,
+                1.0
+            ],
+            "recall_at_7": [
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_7": [
+                0.0,
+                1.0
+            ],
+            "recall_at_10": [
+                0.0,
+                1.0
+            ],
+            "adj_recall_at_10": [
+                0.0,
+                1.0
+            ],
+            "mrr": [
+                0.0,
+                1.0
+            ],
+            "adj_mrr": [
+                0.0,
+                1.0
+            ],
+            "ndcg_at_10": [
+                0.0,
+                1.0
+            ]
+        },
+        "unfiltered": {
+            "rouge1_f": [
+                0.8085106382978724,
+                0.8,
+                0.6799999999999999,
+                0.0,
+                0.53125
+            ],
+            "rouge2_f": [
+                0.7555555555555555,
+                0.782608695652174,
+                0.5833333333333334,
+                0.0,
+                0.48387096774193544
+            ],
+            "rougeL_f": [
+                0.8085106382978724,
+                0.8,
+                0.6799999999999999,
+                0.0,
+                0.53125
+            ]
+        },
+        "web_search": {
+            "rouge1_f": [
+                0.37113402061855666,
+                0.25,
+                0.33333333333333337,
+                0.0,
+                0.1185185185185185
+            ],
+            "rouge2_f": [
+                0.21052631578947367,
+                0.13043478260869568,
+                0.24,
+                0.0,
+                0.04511278195488722
+            ],
+            "rougeL_f": [
+                0.309278350515464,
+                0.25,
+                0.29411764705882354,
+                0.0,
+                0.08888888888888888
+            ]
+        },
+        "baseline": {
+            "rouge1_f": [
+                0.30303030303030304,
+                0.25,
+                0.03076923076923077,
+                0.0,
+                0.3548387096774193
+            ],
+            "rouge2_f": [
+                0.0625,
+                0.13043478260869568,
+                0.0,
+                0.0,
+                0.19999999999999998
+            ],
+            "rougeL_f": [
+                0.24242424242424243,
+                0.20833333333333334,
+                0.03076923076923077,
+                0.0,
+                0.3548387096774193
+            ]
+        }
+    }
+}

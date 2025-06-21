@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A RAG-based system for querying SEC 10-K filings"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-package-mode = false
+packages = [{include = "sec_insights", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
@@ -42,4 +42,12 @@ ruff = "^0.4.8"
 
 [tool.ruff]
 line-length = 120
+exclude = ["notebooks/"]
 
+[tool.isort]
+profile = "black"
+skip = ["notebooks"]
+
+[tool.mypy]
+ignore_missing_imports = true
+follow_imports = "skip"

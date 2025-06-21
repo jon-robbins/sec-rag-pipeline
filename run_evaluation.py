@@ -2,27 +2,25 @@
 """
 Runs the comprehensive evaluation of the RAG pipeline using a class-based runner.
 """
-import os
-import sys
-from pathlib import Path
-import argparse
 import json
-from datetime import datetime
 import logging
 import shutil
 from dataclasses import dataclass, field
-from typing import List, Optional
+from datetime import datetime
+from pathlib import Path
+from typing import Any, List, Optional
 
-# Add project root to Python path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from sec_insights.evaluation.evaluator import ComprehensiveEvaluator
+from sec_insights.rag.config import RESULTS_DIR
+from sec_insights.rag.pipeline import RAGPipeline
 
-from rag.pipeline import RAGPipeline
-from evaluation.evaluator import ComprehensiveEvaluator
-from rag.config import RESULTS_DIR
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class EvaluationConfig:
     """Configuration for the evaluation run."""
+
     num_questions: int = 50
     log_level: str = "WARNING"
     methods: Optional[List[str]] = field(default_factory=list)
@@ -37,9 +35,10 @@ class EvaluationConfig:
     use_docker: bool = False
     docker_port: int = 6333
 
+
 class EvaluationRunner:
     """Orchestrates the RAG evaluation process based on a configuration."""
-    
+
     def __init__(self, config: EvaluationConfig):
         self.config = config
         self.pipeline: Optional[RAGPipeline] = None
@@ -50,15 +49,18 @@ class EvaluationRunner:
         """Initializes logging, pipeline, and evaluator."""
         logging.basicConfig(
             level=self.config.log_level.upper(),
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         )
-        
+
         if not self.config.quiet:
             print("Initializing RAG pipeline for evaluation...")
-        
+
         RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-        
+
+        project_root = Path(__file__).parent
+
         pipeline_kwargs = {
+            "root_dir": project_root,
             "target_tokens": self.config.target_tokens,
             "overlap_tokens": self.config.overlap_tokens,
             "hard_ceiling": self.config.hard_ceiling,
@@ -68,19 +70,42 @@ class EvaluationRunner:
         # Filter out None values to use defaults in RAGPipeline
         pipeline_kwargs = {k: v for k, v in pipeline_kwargs.items() if v is not None}
 
-        # Don't initialize a full pipeline if we're just reprocessing
-        if not (self.config.quiet and self.config.reprocess_path):
-             self.pipeline = RAGPipeline(**pipeline_kwargs)
-        
-        self.evaluator = ComprehensiveEvaluator(self.pipeline, quiet=self.config.quiet)
+        self.pipeline = None
+        try:
+            if not self.config.reprocess_path:
+                self.pipeline = RAGPipeline(**pipeline_kwargs)
+        except Exception as e:
+            logger.warning(f"RAGPipeline initialization failed: {e}")
+            if self.config.use_docker:
+                logger.warning("Attempting fallback to in-memory mode.")
+                pipeline_kwargs["use_docker"] = False
+                self.pipeline = RAGPipeline(**pipeline_kwargs)
+            else:
+                raise
+
+        self.evaluator = ComprehensiveEvaluator(
+            root_dir=project_root, pipeline=self.pipeline, quiet=self.config.quiet
+        )
 
     def _reprocess(self) -> dict:
         """Reprocesses results from a file."""
         if not self.config.quiet:
             print(f"🔄 Reprocessing raw results from: {self.config.reprocess_path}")
-        
-        with open(self.config.reprocess_path, 'r') as f:
+
+        # Ensure evaluator is initialized for reprocessing
+        if self.evaluator is None:
+            self.evaluator = ComprehensiveEvaluator(
+                pipeline=None, quiet=self.config.quiet
+            )
+
+        if self.config.reprocess_path is None:
+            raise ValueError("reprocess_path cannot be None for reprocessing.")
+
+        with open(self.config.reprocess_path, "r") as f:
             data = json.load(f)
+
+        if self.evaluator is None:
+            raise RuntimeError("Evaluator not initialized during reprocessing.")
 
         if isinstance(data, dict) and "individual" in data:
             if not self.config.quiet:
@@ -100,76 +125,102 @@ class EvaluationRunner:
     def _run_new_evaluation(self) -> dict:
         """Runs a new, full evaluation."""
         if not self.config.quiet:
-            print(f"🚀 Starting evaluation with {self.config.num_questions} questions...")
-        
+            print(
+                f"🚀 Starting evaluation with {self.config.num_questions} questions..."
+            )
+
+        assert (
+            self.evaluator is not None
+        ), "Evaluator must be initialized before running evaluation"
         results, self.temp_dir_to_delete = self.evaluator.evaluate_all_scenarios(
             num_questions=self.config.num_questions,
             methods=self.config.methods,
             k_values=self.config.k_values,
             resume=self.config.resume,
-            run_id=self.config.run_id
+            run_id=self.config.run_id,
         )
         return results
 
-    def _save_and_cleanup(self, results: dict):
+    def _save_and_cleanup(self, results: dict, reporter: Any):
         """Saves results to files and cleans up temporary directories."""
-        if self.config.quiet:
-            if self.temp_dir_to_delete:
-                shutil.rmtree(self.temp_dir_to_delete)
-            return
+        reporter.print_results(results)
+        reporter.save_results(results)
 
-        self.evaluator.print_results(results)
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        final_results_filename = RESULTS_DIR / f"evaluation_results_{timestamp}.json"
-        final_csv_filename = RESULTS_DIR / f"evaluation_results_{timestamp}.csv"
-        
-        print(f"💾 Saving final aggregated results to {final_results_filename}...")
-        with open(final_results_filename, "w") as f:
-            json.dump(results, f, indent=4)
-        
-        print(f"📊 Exporting results to CSV: {final_csv_filename}...")
-        self.evaluator.export_to_csv(results, final_csv_filename)
-        
         if self.temp_dir_to_delete:
             print(f"🧹 Cleaning up temporary directory: {self.temp_dir_to_delete}")
             shutil.rmtree(self.temp_dir_to_delete)
-            
+
         print("✅ Evaluation complete.")
+
+    def _get_reporter_class(self):
+        """Dynamically import and return the EvaluationReporter class.
+
+        Importing inside a function ensures that any runtime monkey-patching (e.g. in
+        the test-suite) of ``sec_insights.evaluation.reporting.EvaluationReporter``
+        is respected, because we fetch the symbol only when ``run`` is executed –
+        *after* the patch has been applied – instead of relying on the module-level
+        import that happens when this file is first imported.
+        """
+        from importlib import import_module
+
+        reporting_module = import_module("sec_insights.evaluation.reporting")
+        return getattr(reporting_module, "EvaluationReporter")
 
     def run(self):
         """Executes the entire evaluation process."""
         self._setup()
-        
+
+        # Fetch the (potentially patched) reporter class at runtime instead of
+        # relying on the module-level import so that unit tests which monkey-patch
+        # ``sec_insights.evaluation.reporting.EvaluationReporter`` see their patch
+        # take effect. This is crucial for tests like ``test_basic_in_memory_run``
+        # which expect methods on the mocked reporter instance to be invoked.
+        ReporterClass = self._get_reporter_class()
+        reporter = ReporterClass(self.config.run_id, self.config.quiet)
+
         if self.config.reprocess_path:
             results = self._reprocess()
         else:
-            results = self._run_new_evaluation()
-        
+            assert self.evaluator is not None
+            results, self.temp_dir_to_delete = self.evaluator.evaluate_all_scenarios(
+                num_questions=self.config.num_questions,
+                methods=self.config.methods,
+                k_values=self.config.k_values,
+                resume=self.config.resume,
+                run_id=self.config.run_id,
+            )
+
         if self.config.quiet:
-            # In quiet mode, return the DataFrame directly
-            return self.evaluator.results_to_dataframe(results)
-        else:
-            self._save_and_cleanup(results)
-            return None
+            return reporter.results_to_dataframe(results)
+
+        self._save_and_cleanup(results, reporter)
+        return None
+
 
 if __name__ == "__main__":
     # Configuration is now defined directly in the script, removing the need for CLI arguments.
     config = EvaluationConfig(
-        num_questions=300,
+        num_questions=5,
         log_level="WARNING",
-        methods=["rag", "reranked_rag", "ensemble_rerank_rag", "unfiltered", "web_search", "baseline"],
+        methods=[
+            "rag",
+            "reranked_rag",
+            "ensemble_rerank_rag",
+            "unfiltered",
+            "web_search",
+            "baseline",
+        ],
         k_values=[1, 3, 5, 7, 10],
-        target_tokens=150,
-        overlap_tokens=50,
-        hard_ceiling=500,
+        target_tokens=750,
+        overlap_tokens=150,
+        hard_ceiling=1000,
         use_docker=True,
         docker_port=6333,
         resume=True,
         # A unique run_id is generated to support the resume functionality.
-        run_id=f"eval_run_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        run_id=f"eval_run_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
     )
-    
+
     # Initialize and run the evaluation.
     runner = EvaluationRunner(config)
     runner.run()
