@@ -3,11 +3,11 @@
 Implements the advanced RAG scenario based on the FinanceRAG architecture,
 including query expansion and ensemble reranking.
 """
+import logging
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import tiktoken
-from openai import OpenAI
 from sentence_transformers import CrossEncoder
 
 from sec_insights.rag.client_utils import get_openai_client
@@ -15,64 +15,7 @@ from sec_insights.rag.pipeline import RAGPipeline
 
 from .metrics import calculate_retrieval_metrics
 
-# Store models globally to avoid re-initialization on every call
-_rerankers: Dict[str, Any] = {}
-_openai_client = None
-_tokenizer = None
-
-
-def _initialize_tokenizer():
-    """Initializes the tokenizer."""
-    global _tokenizer
-    if _tokenizer is None:
-        _tokenizer = tiktoken.encoding_for_model("gpt-4o-mini")
-
-
-def count_tokens(text: str) -> int:
-    """Counts tokens in a string."""
-    _initialize_tokenizer()
-    if _tokenizer is None:
-        raise RuntimeError("Tokenizer not initialized")
-    return len(_tokenizer.encode(text))
-
-
-def get_context_from_chunks(chunks: List[Dict[str, Any]]) -> str:
-    """Concatenates text from a list of chunks to form a context string."""
-    return "\n".join([chunk.get("payload", {}).get("text", "") for chunk in chunks])
-
-
-def generate_answer(
-    question: str, context: str, client: OpenAI
-) -> Tuple[str, int, int]:
-    """Generates an answer using the provided context and question."""
-    system_prompt = """You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context from a curated set of document chunks.
-
-IMPORTANT GUIDELINES:
-1. Answer based ONLY on the information in the provided context.
-2. Be concise and direct - aim for 2-4 sentences unless more detail is needed.
-3. If the context doesn't contain enough information, say so clearly.
-4. Do not make assumptions or add information not present in the context.
-
-RESPONSE FORMAT:
-- Start directly with the answer.
-- Do not say "Based on the context" or similar phrases."""
-    user_prompt = f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer:"
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=0.0,
-        max_tokens=300,
-    )
-
-    answer = response.choices[0].message.content
-    prompt_tokens = response.usage.prompt_tokens
-    completion_tokens = response.usage.completion_tokens
-
-    return answer, prompt_tokens, completion_tokens
+logger = logging.getLogger(__name__)
 
 
 FINQA_QUERY_EXPANSION_PROMPT = """# Role
@@ -113,52 +56,202 @@ FINQA_QUERY_EXPANSION_PROMPT = """# Role
 """
 
 
-def _initialize_rerankers():
-    """Initializes and caches the reranker models."""
-    global _rerankers
-    if not _rerankers:
-        print("Initializing Ensemble Rerankers (Jina, BGE)...")
-        _rerankers = {
+class FinanceRAGScenario:
+    """
+    Encapsulates the FinanceRAG scenario, including model initialization and execution.
+    """
+
+    def __init__(self):
+        self._initialize_models()
+
+    def _initialize_models(self):
+        """Initializes and caches the reranker models, OpenAI client, and tokenizer."""
+        logger.info("Initializing models for FinanceRAG scenario...")
+        self.rerankers = {
             "jina": CrossEncoder(
                 "jinaai/jina-reranker-v2-base-multilingual", trust_remote_code=True
             ),
             "bge": CrossEncoder("BAAI/bge-reranker-base"),
         }
+        self.openai_client = get_openai_client()
+        self.tokenizer = tiktoken.encoding_for_model("gpt-4o-mini")
+
+    def count_tokens(self, text: str) -> int:
+        """Counts tokens in a string."""
+        return len(self.tokenizer.encode(text))
+
+    def get_context_from_chunks(self, chunks: List[Dict[str, Any]]) -> str:
+        """Concatenates text from a list of chunks to form a context string."""
+        return "\n".join([chunk.get("payload", {}).get("text", "") for chunk in chunks])
+
+    def generate_answer(self, question: str, context: str) -> Tuple[str, int, int]:
+        """Generates an answer using the provided context and question."""
+        system_prompt = """You are a financial analyst assistant. Your job is to answer questions about SEC filings based ONLY on the provided context from a curated set of document chunks.
+
+IMPORTANT GUIDELINES:
+1. Answer based ONLY on the information in the provided context.
+2. Be concise and direct - aim for 2-4 sentences unless more detail is needed.
+3. If the context doesn't contain enough information, say so clearly.
+4. Do not make assumptions or add information not present in the context.
+
+RESPONSE FORMAT:
+- Start directly with the answer.
+- Do not say "Based on the context" or similar phrases."""
+        user_prompt = f"Context:\n{context}\n\nQuestion: {question}\n\nAnswer:"
+
+        response = self.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.0,
+            max_tokens=300,
+        )
+
+        answer = response.choices[0].message.content
+        prompt_tokens = response.usage.prompt_tokens
+        completion_tokens = response.usage.completion_tokens
+
+        return answer, prompt_tokens, completion_tokens
+
+    def _expand_query(self, query: str) -> Tuple[str, int, int]:
+        """Expands the query using an LLM, similar to FinanceRAG.
+
+        Returns:
+            tuple: (expanded_query, prompt_tokens, completion_tokens)
+        """
+        prompt = f"{FINQA_QUERY_EXPANSION_PROMPT}\n{query}"
+
+        response = self.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+        )
+        expanded_keywords = response.choices[0].message.content
+        expanded_query = f"{query}\n\n{expanded_keywords}"
+
+        return (
+            expanded_query,
+            response.usage.prompt_tokens,
+            response.usage.completion_tokens,
+        )
+
+    def run(
+        self,
+        rag_pipeline: RAGPipeline,
+        question: str,
+        ground_truth_chunks: List[str],
+        k_values: List[int],
+        phase_1_k: int = 30,
+        phase_2_k: int = 10,
+        use_rrf: bool = False,
+        rrf_k: int = 60,
+    ) -> Dict[str, Any]:
+        """
+        Runs the ensemble reranking RAG scenario.
+        """
+        # Phase 1: Initial Retrieval
+        phase_1_chunks = rag_pipeline.search(query=question, top_k=phase_1_k)
+
+        if not phase_1_chunks:
+            return {
+                "answer": "Could not retrieve any documents.",
+                "retrieval": {},
+                "tokens": {},
+                "retrieved_chunks": [],
+            }
+
+        # Query Expansion
+        (
+            expanded_query,
+            expansion_prompt_tokens,
+            expansion_completion_tokens,
+        ) = self._expand_query(question)
+
+        # Phase 2: Ensemble Reranking
+        rerank_candidates = [
+            (expanded_query, chunk.get("payload", {}).get("text", ""))
+            for chunk in phase_1_chunks
+        ]
+
+        jina_scores = self.rerankers["jina"].predict(
+            rerank_candidates, convert_to_numpy=True
+        )
+        bge_scores = self.rerankers["bge"].predict(
+            rerank_candidates, convert_to_numpy=True
+        )
+
+        if use_rrf:
+            jina_ranks = np.argsort(-jina_scores)
+            bge_ranks = np.argsort(-bge_scores)
+            rrf_scores = np.zeros(len(phase_1_chunks))
+            for doc_idx in range(len(phase_1_chunks)):
+                jina_rank_pos = np.where(jina_ranks == doc_idx)[0][0]
+                bge_rank_pos = np.where(bge_ranks == doc_idx)[0][0]
+                rrf_scores[doc_idx] = 1.0 / (rrf_k + jina_rank_pos + 1) + 1.0 / (
+                    rrf_k + bge_rank_pos + 1
+                )
+            full_reranked_indices = np.argsort(-rrf_scores)
+        else:
+            jina_scores_norm = (jina_scores - jina_scores.min()) / (
+                jina_scores.max() - jina_scores.min() + 1e-6
+            )
+            bge_scores_norm = (bge_scores - bge_scores.min()) / (
+                bge_scores.max() - bge_scores.min() + 1e-6
+            )
+            fused_scores = (jina_scores_norm + bge_scores_norm) / 2
+            full_reranked_indices = np.argsort(fused_scores)[::-1]
+
+        phase_2_chunks = [phase_1_chunks[i] for i in full_reranked_indices[:phase_2_k]]
+
+        # Generation
+        context = self.get_context_from_chunks(phase_2_chunks)
+        answer, prompt_tokens, completion_tokens = self.generate_answer(
+            question=question, context=context
+        )
+
+        # Calculate Metrics
+        full_reranked_chunk_ids = [
+            phase_1_chunks[i]["id"] for i in full_reranked_indices
+        ]
+        retrieval_metrics = calculate_retrieval_metrics(
+            retrieved_chunk_ids=full_reranked_chunk_ids,
+            ground_truth_chunk_id=ground_truth_chunks[0],
+            k_values=k_values,
+            adjacency_map=rag_pipeline.adjacent_map,
+            adjacency_bonus=0.5,
+        )
+
+        return {
+            "answer": answer,
+            "retrieval": retrieval_metrics,
+            "tokens": {
+                "prompt_tokens": expansion_prompt_tokens + prompt_tokens,
+                "completion_tokens": expansion_completion_tokens + completion_tokens,
+                "total_tokens": (
+                    expansion_prompt_tokens
+                    + expansion_completion_tokens
+                    + prompt_tokens
+                    + completion_tokens
+                ),
+            },
+            "contexts": [
+                chunk.get("payload", {}).get("text", "") for chunk in phase_2_chunks
+            ],
+        }
 
 
-def _initialize_openai_client():
-    """Initializes and caches the OpenAI client."""
-    global _openai_client
-    if _openai_client is None:
-        _openai_client = get_openai_client()
+# Keep a single instance of the scenario class
+_finance_rag_scenario_instance = None
 
 
-def _expand_query(query: str) -> Tuple[str, int, int]:
-    """Expands the query using an LLM, similar to FinanceRAG.
-
-    Returns:
-        tuple: (expanded_query, prompt_tokens, completion_tokens)
-    """
-    _initialize_openai_client()
-    if _openai_client is None:
-        raise RuntimeError("OpenAI client not initialized")
-
-    prompt = f"{FINQA_QUERY_EXPANSION_PROMPT}\n{query}"
-
-    response = _openai_client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.0,
-    )
-    expanded_keywords = response.choices[0].message.content
-    expanded_query = f"{query}\n\n{expanded_keywords}"
-
-    # Return the expanded query AND token usage
-    return (
-        expanded_query,
-        response.usage.prompt_tokens,
-        response.usage.completion_tokens,
-    )
+def get_finance_rag_scenario() -> FinanceRAGScenario:
+    """Returns a singleton instance of the FinanceRAGScenario."""
+    global _finance_rag_scenario_instance
+    if _finance_rag_scenario_instance is None:
+        _finance_rag_scenario_instance = FinanceRAGScenario()
+    return _finance_rag_scenario_instance
 
 
 def ensemble_rerank_rag(
@@ -166,91 +259,22 @@ def ensemble_rerank_rag(
     question: str,
     ground_truth_chunks: List[str],
     k_values: List[int],
-    top_k_initial: int = 20,
-    top_k_final: int = 5,
+    phase_1_k: int = 30,
+    phase_2_k: int = 10,
+    use_rrf: bool = False,
+    rrf_k: int = 60,
 ) -> Dict[str, Any]:
     """
-    Runs an evaluation scenario using an ensemble of rerankers.
-
-    1.  Initial retrieval from the pipeline's vector store.
-    2.  Query expansion using an LLM.
-    3.  Reranking of initial results with multiple cross-encoders.
-    4.  Fusion of reranker scores.
-    5.  Generation of an answer from the final top-k chunks.
-    6.  Calculation of retrieval and generation metrics.
+    Function to run the ensemble rerank RAG scenario.
     """
-    _initialize_rerankers()
-    _initialize_openai_client()
-
-    # 1. Initial Retrieval
-    retrieved_chunks = rag_pipeline.search(query=question, top_k=top_k_initial)
-
-    if not retrieved_chunks:
-        return {
-            "answer": "Could not retrieve any documents.",
-            "retrieval": {},
-            "tokens": {},
-            "retrieved_chunks": [],
-        }
-
-    # 2. Query Expansion - ENABLED FinanceRAG methodology
-    # Use LLM to expand the query with relevant financial keywords
-    expanded_query, expansion_prompt_tokens, expansion_completion_tokens = (
-        _expand_query(question)
-    )
-
-    # 3. Ensemble Reranking
-    rerank_candidates = [
-        (expanded_query, chunk.get("payload", {}).get("text", ""))
-        for chunk in retrieved_chunks
-    ]
-
-    # Get scores from each reranker
-    jina_scores = _rerankers["jina"].predict(rerank_candidates, convert_to_numpy=True)
-    bge_scores = _rerankers["bge"].predict(rerank_candidates, convert_to_numpy=True)
-
-    # 4. Score Fusion (simple averaging)
-    jina_scores_norm = (jina_scores - jina_scores.min()) / (
-        jina_scores.max() - jina_scores.min() + 1e-6
-    )
-    bge_scores_norm = (bge_scores - bge_scores.min()) / (
-        bge_scores.max() - bge_scores.min() + 1e-6
-    )
-    fused_scores = (jina_scores_norm + bge_scores_norm) / 2
-
-    # Sort chunks by the new fused score
-    reranked_indices = np.argsort(fused_scores)[::-1]
-    final_chunks = [retrieved_chunks[i] for i in reranked_indices[:top_k_final]]
-
-    # 5. Generation
-    context = get_context_from_chunks(final_chunks)
-    answer, prompt_tokens, completion_tokens = generate_answer(
-        question=question, context=context, client=_openai_client
-    )
-
-    # 6. Calculate Metrics
-    # Calculate metrics on the reranked chunks to properly measure reranking performance
-    reranked_chunk_ids = [retrieved_chunks[i]["id"] for i in reranked_indices]
-    retrieval_metrics = calculate_retrieval_metrics(
-        retrieved_chunk_ids=reranked_chunk_ids,
-        ground_truth_chunk_id=ground_truth_chunks[0],
+    scenario = get_finance_rag_scenario()
+    return scenario.run(
+        rag_pipeline=rag_pipeline,
+        question=question,
+        ground_truth_chunks=ground_truth_chunks,
         k_values=k_values,
-        adjacency_map=rag_pipeline.adjacent_map,
-        adjacency_bonus=0.5,
+        phase_1_k=phase_1_k,
+        phase_2_k=phase_2_k,
+        use_rrf=use_rrf,
+        rrf_k=rrf_k,
     )
-
-    return {
-        "answer": answer,
-        "retrieval": retrieval_metrics,
-        "tokens": {
-            "prompt_tokens": expansion_prompt_tokens + prompt_tokens,
-            "completion_tokens": expansion_completion_tokens + completion_tokens,
-            "total_tokens": expansion_prompt_tokens
-            + expansion_completion_tokens
-            + prompt_tokens
-            + completion_tokens,
-        },
-        "contexts": [
-            chunk.get("payload", {}).get("text", "") for chunk in final_chunks
-        ],
-    }

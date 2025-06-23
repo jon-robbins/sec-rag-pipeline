@@ -3,6 +3,7 @@ Handles aggregation and reporting of evaluation results.
 """
 
 import json
+import logging
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -11,7 +12,9 @@ from typing import Any, DefaultDict, Dict, List
 import numpy as np
 import pandas as pd
 
-from ..rag.config import RESULTS_DIR
+from ..rag.config import PRICING_PER_CALL, PRICING_PER_TOKEN, RESULTS_DIR
+
+logger = logging.getLogger(__name__)
 
 
 class EvaluationReporter:
@@ -19,9 +22,8 @@ class EvaluationReporter:
     Aggregates, prints, and saves evaluation results.
     """
 
-    def __init__(self, run_id: str, quiet: bool = False):
+    def __init__(self, run_id: str):
         self.run_id = run_id
-        self.quiet = quiet
         self.results_dir = RESULTS_DIR
 
     def aggregate_results(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -38,6 +40,9 @@ class EvaluationReporter:
                 if scenario in [
                     "question",
                     "ground_truth_answer",
+                    "ground_truth_chunk_id",
+                    "ticker",
+                    "year",
                     "section",
                     "chunk_text",
                 ]:
@@ -52,6 +57,9 @@ class EvaluationReporter:
                             aggregated[scenario][f"{rouge_type}_f"].append(scores["f"])
                         else:
                             aggregated[scenario][f"{rouge_type}_f"].append(scores)
+                if "bleu" in metrics:
+                    for bleu_type, score in metrics["bleu"].items():
+                        aggregated[scenario][bleu_type].append(score)
                 if "retrieval" in metrics and metrics["retrieval"]:
                     for metric, value in metrics["retrieval"].items():
                         aggregated[scenario][metric].append(value)
@@ -63,14 +71,20 @@ class EvaluationReporter:
         final_summary = {}
         for scenario, metrics in aggregated.items():
             rouge_metrics = {m: np.mean(v) for m, v in metrics.items() if "_f" in m}
+            bleu_metrics = {
+                m: np.mean(v) for m, v in metrics.items() if m.startswith("bleu")
+            }
             retrieval_metrics = {
-                m: np.mean(v) for m, v in metrics.items() if m not in rouge_metrics
+                m: np.mean(v)
+                for m, v in metrics.items()
+                if m not in rouge_metrics and m not in bleu_metrics
             }
             scenario_tokens: Dict[str, Any] = scenario_token_metrics.get(scenario, {})
             token_summary = {t: np.mean(v) for t, v in scenario_tokens.items()}
 
             final_summary[scenario] = {
                 "rouge": rouge_metrics,
+                "bleu": bleu_metrics,
                 "retrieval": retrieval_metrics,
                 "tokens": token_summary,
                 "total_cost": self._calculate_cost(
@@ -86,53 +100,52 @@ class EvaluationReporter:
 
     def print_results(self, results: Dict[str, Any]):
         """Prints a summary of the evaluation results to the console."""
-        if self.quiet:
-            return
-
         summary = results.get("summary", {})
-        print("\n" + "=" * 80)
-        print("📊 Evaluation Summary")
-        print("=" * 80)
+        logging.info("\n" + "=" * 80)
+        logging.info("Evaluation Summary")
+        logging.info("=" * 80)
 
         for scenario, metrics in summary.items():
-            print(f"\n--- Scenario: {scenario.upper()} ---")
+            logging.info("\n--- Scenario: %s ---", scenario.upper())
 
             if "retrieval" in metrics and metrics["retrieval"]:
-                print("  Retrieval Metrics:")
+                logging.info("  Retrieval Metrics:")
                 for key, val in metrics["retrieval"].items():
-                    print(f"    - {key}: {val:.4f}")
+                    logging.info("    - %s: %.4f", key, val)
 
             if "rouge" in metrics and metrics["rouge"]:
-                print("  Generation Metrics (ROUGE-F):")
+                logging.info("  Generation Metrics (ROUGE-F):")
                 for key, val in metrics["rouge"].items():
-                    print(f"    - {key}: {val:.4f}")
+                    logging.info("    - %s: %.4f", key, val)
+
+            if "bleu" in metrics and metrics["bleu"]:
+                logging.info("  Generation Metrics (BLEU):")
+                for key, val in metrics["bleu"].items():
+                    logging.info("    - %s: %.4f", key, val)
 
             if "tokens" in metrics and metrics["tokens"]:
-                print("  Token Usage (avg per question):")
+                logging.info("  Token Usage (avg per question):")
                 for key, val in metrics["tokens"].items():
-                    print(f"    - {key}: {val:.2f}")
+                    logging.info("    - %s: %.2f", key, val)
 
             if "total_cost" in metrics:
-                print(f"  Estimated Cost: ${metrics['total_cost']:.4f}")
+                logging.info("  Estimated Cost: $%.4f", metrics["total_cost"])
 
-        print("\n" + "=" * 80)
+        logging.info("\n" + "=" * 80)
 
     def save_results(self, results: Dict[str, Any]):
         """Saves the aggregated results to JSON and CSV."""
-        if self.quiet:
-            return
-
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         final_results_filename = (
             self.results_dir / f"evaluation_results_{timestamp}.json"
         )
         final_csv_filename = self.results_dir / f"evaluation_results_{timestamp}.csv"
 
-        print(f"💾 Saving final aggregated results to {final_results_filename}...")
+        logging.info("Saving final aggregated results to %s...", final_results_filename)
         with open(final_results_filename, "w") as f:
             json.dump(results, f, indent=4)
 
-        print(f"📊 Exporting results to CSV: {final_csv_filename}...")
+        logging.info("Exporting results to CSV: %s...", final_csv_filename)
         self.export_to_csv(results, final_csv_filename)
 
     def export_to_csv(self, results: Dict[str, Any], filename: Path):
@@ -143,6 +156,9 @@ class EvaluationReporter:
                 if method in [
                     "question",
                     "ground_truth_answer",
+                    "ground_truth_chunk_id",
+                    "ticker",
+                    "year",
                     "section",
                     "chunk_text",
                 ]:
@@ -151,11 +167,18 @@ class EvaluationReporter:
                     "method": method,
                     "question": res["question"],
                     "ground_truth_answer": res["ground_truth_answer"],
+                    "ground_truth_chunk_id": res.get("ground_truth_chunk_id"),
+                    "ticker": res.get("ticker"),
+                    "year": res.get("year"),
+                    "section": res.get("section"),
+                    "generated_answer": metrics.get("answer"),
                 }
                 row.update(metrics.get("retrieval", {}))
                 for rouge_type, scores in metrics.get("rouge", {}).items():
                     if isinstance(scores, dict) and "fmeasure" in scores:
                         row[f"{rouge_type}_f"] = scores["fmeasure"]
+                for bleu_type, score in metrics.get("bleu", {}).items():
+                    row[bleu_type] = score
                 flat_results.append(row)
 
         df = pd.DataFrame(flat_results)
@@ -171,6 +194,7 @@ class EvaluationReporter:
         for scenario, metrics in summary.items():
             record = {"scenario": scenario}
             record.update(metrics.get("rouge", {}))
+            record.update(metrics.get("bleu", {}))
             record.update(metrics.get("retrieval", {}))
             tokens = metrics.get("tokens", {})
             record["avg_prompt_tokens"] = tokens.get("prompt_tokens")
@@ -192,6 +216,9 @@ class EvaluationReporter:
                 if scenario in [
                     "question",
                     "ground_truth_answer",
+                    "ground_truth_chunk_id",
+                    "ticker",
+                    "year",
                     "section",
                     "chunk_text",
                 ]:
@@ -202,6 +229,9 @@ class EvaluationReporter:
                             per_question_metrics[scenario][f"{rouge_type}_f"].append(
                                 scores["fmeasure"]
                             )
+                if "bleu" in metrics and metrics["bleu"]:
+                    for bleu_type, score in metrics["bleu"].items():
+                        per_question_metrics[scenario][bleu_type].append(score)
                 if "retrieval" in metrics and metrics["retrieval"]:
                     for metric, value in metrics["retrieval"].items():
                         per_question_metrics[scenario][metric].append(value)
@@ -214,10 +244,10 @@ class EvaluationReporter:
         self, token_metrics: Dict[str, List[int]], scenario: str, num_questions: int
     ) -> float:
         total_cost = 0.0
-        gpt4_mini_input_price = 0.15 / 1_000_000
-        gpt4_mini_output_price = 0.60 / 1_000_000
-        embedding_price = 0.02 / 1_000_000
-        web_search_price = 27.5 / 1_000
+        gpt4_mini_input_price = PRICING_PER_TOKEN["gpt-4o-mini"]["input"]
+        gpt4_mini_output_price = PRICING_PER_TOKEN["gpt-4o-mini"]["output"]
+        embedding_price = PRICING_PER_TOKEN["text-embedding-3-small"]["input"]
+        web_search_price = PRICING_PER_CALL["gpt-4o-mini-search-preview"]
 
         if "prompt_tokens" in token_metrics and token_metrics["prompt_tokens"]:
             total_prompt_tokens: int = int(np.sum(token_metrics["prompt_tokens"]))

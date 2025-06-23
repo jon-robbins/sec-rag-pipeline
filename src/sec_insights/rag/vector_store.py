@@ -58,20 +58,22 @@ class VectorStore:
         """Set up the Qdrant client based on configuration."""
         if use_docker:
             try:
+                # Add timeout settings for Docker
+                kwargs.setdefault("timeout", 300)
                 client = QdrantClient(**kwargs)
                 client.get_collections()
-                logger.info("✅ Docker Qdrant connection successful.")
+                logger.info("Docker Qdrant connection successful.")
                 return client
             except Exception as e:
-                logger.warning(f"⚠️ Docker Qdrant connection failed: {e}")
+                logger.warning("Docker Qdrant connection failed: %s", e)
                 if self.config.auto_fallback_to_memory:
-                    logger.warning("🔄 Automatically falling back to in-memory Qdrant.")
+                    logger.warning("Automatically falling back to in-memory Qdrant.")
                     self.config.use_docker = False
                     return QdrantClient(":memory:")
                 else:
                     raise
 
-        logger.info("🧠 Using in-memory Qdrant")
+        logger.info("Using in-memory Qdrant")
         return QdrantClient(":memory:")
 
     def search(
@@ -134,7 +136,7 @@ class VectorStore:
         Returns
         -------
         List[Dict[str, Any]]
-            A list of retrieved documents.
+            A list of retrieved documents, including metadata and text.
         """
         query_filter = self._build_filter(ticker, fiscal_year, sections)
         points, _ = self.client.scroll(
@@ -144,9 +146,7 @@ class VectorStore:
             with_payload=True,
             with_vectors=False,
         )
-        return [
-            {**point.payload, "text": point.payload.get("text", "")} for point in points
-        ]
+        return [point.model_dump()["payload"] for point in points]
 
     def _build_filter(
         self,
@@ -185,6 +185,36 @@ class VectorStore:
         if len(chunks) != len(embeddings):
             raise ValueError("The number of chunks and embeddings must be the same.")
 
+        # Use smaller batches for Docker to prevent timeouts
+        batch_size = (
+            self.config.docker_batch_size
+            if self.config.use_docker
+            else self.config.memory_batch_size
+        )
+        total_chunks = len(chunks)
+
+        if total_chunks > batch_size:
+            logger.info(
+                "Processing %d chunks in batches of %d", total_chunks, batch_size
+            )
+            for i in range(0, total_chunks, batch_size):
+                end_idx = min(i + batch_size, total_chunks)
+                batch_chunks = chunks[i:end_idx]
+                batch_embeddings = embeddings[i:end_idx]
+                logger.info(
+                    "Upserting batch %d/%d (%d chunks)",
+                    i // batch_size + 1,
+                    (total_chunks + batch_size - 1) // batch_size,
+                    end_idx - i,
+                )
+                self._upsert_batch(batch_chunks, batch_embeddings)
+        else:
+            self._upsert_batch(chunks, embeddings)
+
+    def _upsert_batch(
+        self, chunks: List[Dict[str, Any]], embeddings: List[List[float]]
+    ) -> None:
+        """Upserts a single batch of chunks."""
         ids = [chunk["id"] for chunk in chunks]
         payloads = [{**chunk["metadata"], "text": chunk["text"]} for chunk in chunks]
 
@@ -195,10 +225,10 @@ class VectorStore:
                 wait=True,
             )
         except Exception as e:
-            logger.warning(f"⚠️ Upsert failed: {e}")
+            logger.warning("Upsert failed: %s", e)
             if self.config.use_docker and self.config.auto_fallback_to_memory:
                 logger.warning(
-                    "🔄 Automatically falling back to in-memory Qdrant for upsert."
+                    "Automatically falling back to in-memory Qdrant for upsert."
                 )
                 self.config.use_docker = False
                 self.client = QdrantClient(":memory:")

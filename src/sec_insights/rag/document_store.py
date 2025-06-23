@@ -5,6 +5,7 @@ A store for accessing the raw SEC filing documents and providing on-the-fly text
 from __future__ import annotations
 
 import html
+import logging
 import re
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -12,6 +13,8 @@ from typing import Dict, List, Optional
 import duckdb
 import pandas as pd
 import tiktoken
+
+logger = logging.getLogger(__name__)
 
 # Text processing functions (moved from chunkers.py for logical grouping)
 _BULLETS = re.compile(r"^[\s»\-–•\*]+\s*", re.MULTILINE)
@@ -87,12 +90,14 @@ class DocumentStore:
         and ticker IN ('{ticker_list_str}')
         and cast(RIGHT(docID, 4) AS INTEGER) between 2012 and 2020
         """
-        print("📁 DocumentStore: Loading and processing raw sentence data...")
+        logger.info("DocumentStore: Loading and processing raw sentence data...")
         self.df = duckdb.query(query).to_df()
-        print(f"✅ Loaded {len(self.df)} sentences for {len(self.tickers)} tickers.")
+        logger.info(
+            "Loaded %d sentences for %d tickers.", len(self.df), len(self.tickers)
+        )
 
         # Preprocess sentences and calculate token counts before sorting
-        print("⚙️  Preprocessing sentences and counting tokens...")
+        logger.info("Preprocessing sentences and counting tokens...")
         self.df["sentence"] = self.df["sentence"].apply(_preprocess_text)
         self.df["sentence_token_count"] = self.df["sentence"].apply(_count_tokens)
 
@@ -110,11 +115,11 @@ class DocumentStore:
             by=["docID", "section_num", "section_letter"]
         ).drop(columns=["section_num", "section_letter"])
 
-        print("Pre-calculating full texts for each document...")
+        logger.info("Pre-calculating full texts for each document...")
         self._full_texts = (
             self.df.groupby("docID")["sentence"].apply(" ".join).to_dict()
         )
-        print("✅ Pre-calculation of full texts complete.")
+        logger.info("Pre-calculation of full texts complete.")
 
     def get_all_sentences(self) -> pd.DataFrame:
         """Retrieves all filtered sentences as a DataFrame.
@@ -129,7 +134,7 @@ class DocumentStore:
         """
         self._load_data_if_needed()
         if self.df is None:
-            return pd.DataFrame()  # Should not happen if _load_data_if_needed works
+            return pd.DataFrame()
         return self.df
 
     def get_sentences_by_filter(

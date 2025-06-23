@@ -4,12 +4,13 @@ Runs the comprehensive evaluation of the RAG pipeline using a class-based runner
 """
 import json
 import logging
+import os
 import shutil
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 from typing import Any, List, Optional
 
+import sec_insights.evaluation.reporting as evaluation_reporting
 from sec_insights.evaluation.evaluator import ComprehensiveEvaluator
 from sec_insights.rag.config import RESULTS_DIR
 from sec_insights.rag.pipeline import RAGPipeline
@@ -19,13 +20,24 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class EvaluationConfig:
-    """Configuration for the evaluation run."""
+    """Configuration for the evaluation run.
+
+    Phase parameters (phase_1_k, phase_2_k) only apply to reranked systems:
+    - reranked_rag: Uses BGE reranker
+    - ensemble_rerank_rag: Uses query expansion + dual rerankers (BGE + Jina)
+
+    These parameters standardize the evaluation to ensure fair comparison between
+    reranked systems by using the same retrieval scope and generation context size.
+    """
 
     num_questions: int = 50
     log_level: str = "WARNING"
     methods: Optional[List[str]] = field(default_factory=list)
     k_values: Optional[List[int]] = field(default_factory=list)
-    quiet: bool = False
+    # Standardized phase parameters for reranked systems only
+    phase_1_k: int = 30
+    phase_2_k: int = 10
+    use_rrf: bool = False
     reprocess_path: Optional[str] = None
     resume: bool = True
     run_id: Optional[str] = None
@@ -34,6 +46,19 @@ class EvaluationConfig:
     hard_ceiling: Optional[int] = None
     use_docker: bool = False
     docker_port: int = 6333
+
+    def get_rag_params(self) -> dict:
+        """Get standardized parameters for reranked RAG methods.
+
+        Returns:
+            dict: Dictionary containing phase_1_k, phase_2_k, and use_rrf parameters
+                 for consistent evaluation of reranked systems.
+        """
+        return {
+            "phase_1_k": self.phase_1_k,
+            "phase_2_k": self.phase_2_k,
+            "use_rrf": self.use_rrf,
+        }
 
 
 class EvaluationRunner:
@@ -52,8 +77,7 @@ class EvaluationRunner:
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         )
 
-        if not self.config.quiet:
-            print("Initializing RAG pipeline for evaluation...")
+        logging.info("Initializing RAG pipeline for evaluation...")
 
         RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -84,18 +108,18 @@ class EvaluationRunner:
                 raise
 
         self.evaluator = ComprehensiveEvaluator(
-            root_dir=project_root, pipeline=self.pipeline, quiet=self.config.quiet
+            root_dir=project_root, pipeline=self.pipeline
         )
 
     def _reprocess(self) -> dict:
         """Reprocesses results from a file."""
-        if not self.config.quiet:
-            print(f"🔄 Reprocessing raw results from: {self.config.reprocess_path}")
+        logging.info("Reprocessing raw results from: %s", self.config.reprocess_path)
 
         # Ensure evaluator is initialized for reprocessing
         if self.evaluator is None:
+            project_root = Path(__file__).parent
             self.evaluator = ComprehensiveEvaluator(
-                pipeline=None, quiet=self.config.quiet
+                root_dir=project_root, pipeline=None
             )
 
         if self.config.reprocess_path is None:
@@ -108,26 +132,22 @@ class EvaluationRunner:
             raise RuntimeError("Evaluator not initialized during reprocessing.")
 
         if isinstance(data, dict) and "individual" in data:
-            if not self.config.quiet:
-                print("✅ Aggregating from 'individual' results in the file.")
-            return self.evaluator._aggregate_results(data["individual"])
+            logging.info("Aggregating from 'individual' results in the file.")
+            return self.evaluator.aggregate_results(data["individual"])
         elif isinstance(data, list):
-            if not self.config.quiet:
-                print("✅ Aggregating from raw individual results list.")
-            return self.evaluator._aggregate_results(data)
+            logging.info("Aggregating from raw individual results list.")
+            return self.evaluator.aggregate_results(data)
         elif isinstance(data, dict) and "completed_results" in data:
-            if not self.config.quiet:
-                print("✅ Aggregating from checkpoint file.")
-            return self.evaluator._aggregate_results(data["completed_results"])
+            logging.info("Aggregating from checkpoint file.")
+            return self.evaluator.aggregate_results(data["completed_results"])
         else:
             raise ValueError(f"Unexpected data format in {self.config.reprocess_path}")
 
     def _run_new_evaluation(self) -> dict:
         """Runs a new, full evaluation."""
-        if not self.config.quiet:
-            print(
-                f"🚀 Starting evaluation with {self.config.num_questions} questions..."
-            )
+        logging.info(
+            "Starting evaluation with %d questions...", self.config.num_questions
+        )
 
         assert (
             self.evaluator is not None
@@ -136,6 +156,9 @@ class EvaluationRunner:
             num_questions=self.config.num_questions,
             methods=self.config.methods,
             k_values=self.config.k_values,
+            phase_1_k=self.config.phase_1_k,
+            phase_2_k=self.config.phase_2_k,
+            use_rrf=self.config.use_rrf,
             resume=self.config.resume,
             run_id=self.config.run_id,
         )
@@ -147,36 +170,17 @@ class EvaluationRunner:
         reporter.save_results(results)
 
         if self.temp_dir_to_delete:
-            print(f"🧹 Cleaning up temporary directory: {self.temp_dir_to_delete}")
+            if not self.temp_dir_to_delete.exists():
+                self.temp_dir_to_delete.mkdir(parents=True, exist_ok=True)
+            logging.info("Cleaning up temporary directory: %s", self.temp_dir_to_delete)
             shutil.rmtree(self.temp_dir_to_delete)
 
-        print("✅ Evaluation complete.")
-
-    def _get_reporter_class(self):
-        """Dynamically import and return the EvaluationReporter class.
-
-        Importing inside a function ensures that any runtime monkey-patching (e.g. in
-        the test-suite) of ``sec_insights.evaluation.reporting.EvaluationReporter``
-        is respected, because we fetch the symbol only when ``run`` is executed –
-        *after* the patch has been applied – instead of relying on the module-level
-        import that happens when this file is first imported.
-        """
-        from importlib import import_module
-
-        reporting_module = import_module("sec_insights.evaluation.reporting")
-        return getattr(reporting_module, "EvaluationReporter")
+        logging.info("Evaluation complete.")
 
     def run(self):
         """Executes the entire evaluation process."""
         self._setup()
-
-        # Fetch the (potentially patched) reporter class at runtime instead of
-        # relying on the module-level import so that unit tests which monkey-patch
-        # ``sec_insights.evaluation.reporting.EvaluationReporter`` see their patch
-        # take effect. This is crucial for tests like ``test_basic_in_memory_run``
-        # which expect methods on the mocked reporter instance to be invoked.
-        ReporterClass = self._get_reporter_class()
-        reporter = ReporterClass(self.config.run_id, self.config.quiet)
+        reporter = evaluation_reporting.EvaluationReporter(self.config.run_id)
 
         if self.config.reprocess_path:
             results = self._reprocess()
@@ -186,11 +190,15 @@ class EvaluationRunner:
                 num_questions=self.config.num_questions,
                 methods=self.config.methods,
                 k_values=self.config.k_values,
+                phase_1_k=self.config.phase_1_k,
+                phase_2_k=self.config.phase_2_k,
+                use_rrf=self.config.use_rrf,
                 resume=self.config.resume,
                 run_id=self.config.run_id,
             )
 
-        if self.config.quiet:
+        # Return dataframe in CI environment for testing purposes
+        if os.getenv("CI"):
             return reporter.results_to_dataframe(results)
 
         self._save_and_cleanup(results, reporter)
@@ -198,29 +206,28 @@ class EvaluationRunner:
 
 
 if __name__ == "__main__":
-    # Configuration is now defined directly in the script, removing the need for CLI arguments.
+    # Configuration for rerankers-only evaluation with RRF implementation
+    from datetime import datetime
+
     config = EvaluationConfig(
-        num_questions=5,
+        num_questions=300,
         log_level="WARNING",
         methods=[
-            "rag",
             "reranked_rag",
             "ensemble_rerank_rag",
-            "unfiltered",
-            "web_search",
-            "baseline",
         ],
         k_values=[1, 3, 5, 7, 10],
-        target_tokens=750,
-        overlap_tokens=150,
-        hard_ceiling=1000,
+        target_tokens=150,
+        overlap_tokens=50,
+        hard_ceiling=500,
+        phase_1_k=30,
+        phase_2_k=10,
+        use_rrf=False,
         use_docker=True,
         docker_port=6333,
         resume=True,
-        # A unique run_id is generated to support the resume functionality.
-        run_id=f"eval_run_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+        run_id=f"rerankers_only_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
     )
-
     # Initialize and run the evaluation.
     runner = EvaluationRunner(config)
     runner.run()

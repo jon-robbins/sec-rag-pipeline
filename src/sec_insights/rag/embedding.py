@@ -6,7 +6,6 @@ import logging
 from typing import List
 
 import numpy as np
-import tiktoken
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 from .client_utils import get_openai_client
@@ -22,7 +21,6 @@ class EmbeddingManager:
         """Initializes the EmbeddingManager."""
         self.client = get_openai_client()
         self.model = EMBEDDING_MODEL_NAME
-        self._encoder = tiktoken.encoding_for_model(self.model)
 
     def _normalize_embeddings(self, embeddings: List[List[float]]) -> List[List[float]]:
         """Normalize the embeddings to unit length."""

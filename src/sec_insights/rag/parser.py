@@ -3,12 +3,15 @@ Query parsing utilities for the SEC Vector Store.
 """
 
 import json
+import logging
 from typing import Any, Callable, Dict, Tuple
 
 import backoff
 from openai import OpenAIError
 
 from .client_utils import get_openai_client
+
+logger = logging.getLogger(__name__)
 
 
 # Decorator for retrying OpenAI API calls with exponential backoff
@@ -43,15 +46,8 @@ class QueryParser:
         Returns:
             Dictionary with parsed parameters: ticker, fiscal_year, sections
         """
-        response = self._make_parsing_request(query)
-        try:
-            content = response.choices[0].message.content
-            result = json.loads(content)
-            print(f"Parsed query: {result}")
-            return result
-        except Exception as e:
-            print(f"Failed to parse response: {e}")
-            return {}
+        result, _ = self.parse_query_with_response(query)
+        return result
 
     def parse_query_with_response(self, query: str) -> Tuple[Dict[str, Any], Any]:
         """
@@ -67,10 +63,10 @@ class QueryParser:
         try:
             content = response.choices[0].message.content
             result = json.loads(content)
-            print(f"Parsed query: {result}")
+            logger.info("Parsed query: %s", result)
             return result, response
         except Exception as e:
-            print(f"Failed to parse response: {e}")
+            logger.error("Failed to parse response: %s", e)
             return {}, response
 
     def _make_parsing_request(self, query: str) -> Any:
@@ -150,7 +146,7 @@ If the input doesn't match any known format, output an empty JSON object `{}`.
                 max_tokens=100,
             )
         except Exception as e:
-            print(f"GPT-4o-mini failed: {e}, falling back to GPT-3.5-turbo")
+            logger.error("GPT-4o-mini failed: %s, falling back to GPT-3.5-turbo", e)
 
             # Fallback to GPT-3.5-turbo
             return retry_openai_call(

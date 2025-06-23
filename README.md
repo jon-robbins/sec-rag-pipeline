@@ -1,5 +1,19 @@
+# Executive Summary
+
+* **Goal** Create a RAG-based QA engine so staff can query massive documents (e.g., 40 k-token SEC 10-Ks) and get sourced answers in seconds.
+* **Result** Our prototype beats closed-book GPT-4o on accuracy and slashes token spend:
+
+  * Full-context GPT-4o ≈ $75 K /mo
+  * Web-search GPT-4o ≈ $166 K /mo
+  * **RAG pipeline ≈ \$3 K /mo → 97 % cheaper**
+* **Tech stack** 150-token chunks → vector search → reranker → GPT-4o answer; evaluated on 300 Q-A pairs with ROUGE-L, BLEU, Recall\@k.
+* **Key metric** Cost-per-accurate-answer; RAG wins by 25× vs. full-context.
+* **Next moves** Expand corpus, add hierarchical retriever for higher recall, containerise for prod latency, and build a human-labelled QA test set.
+
+**Bottom line:** RAG delivers regulator-grade answers at enterprise scale while keeping LLM costs and compliance risk low.
 
 # Problem Definition
+
 A common need in most industries is to have an LLM that can answer questions about private or internal documents. Many of these can be long, unstructured, semantically dense, or have diverse vocabulary difficult to sort through manually. Without fine-tuned LLM, or a Retrieval-Augmented Generation (RAG) pipeline, users have limited options:
 
 - They can upload the relevant document to an LLM, but this can be inaccurate, costly, and potentially create compliance issues
@@ -13,6 +27,77 @@ A common solution to these problems is for companies to create a RAG pipeline th
 - **Expertise**: Building and maintaining the system requires specialized skills/resources. It can be outsourced but creating an accurate model often requires specific domain knowledge that a consultant may not have.
 
 **Problem statement**: How can we create a QA engine on specialized texts, while optimizing for cost and relevance of answers retrieved?
+
+# Opportunity sizing
+SEC filings are long, filled with boilerplate language, and often difficult to parse through even as an experienced analyst. Let's assume that I have the following question:
+
+> "What were some of the risks outlined in Tesla's 2024 SEC filing?"
+
+16 tokens.
+
+For the sake of simplicity, let's assume the answer can be obtained with the following source:
+- [TSLA 2024 10-K SEC filing](https://www.sec.gov/Archives/edgar/data/1318605/000162828025003063/tsla-20241231.htm#ie9fbbc0a99a6483f9fc1594c1ef72807_157), 83,000 tokens
+
+
+To implement an architecture that could answer these questions, we have the following options.
+
+- LLM with no context: Just ask the question directly and rely on training data to give us the answer.
+- LLM with unfiltered context: Manually upload full context to LLM, have the LLM parse it for us and return the answer
+- LLM with web search: Ask the question directly, and don't provide context.
+- RAG: Embed chunks of the query and entire corpus of texts, match subset $N$ of the top $k$ chunks by their embedding similiarity, send those to the LLM along with the query.
+
+There are lots of LLM's we could use, but let's assume that we're using GPT 4o mini at commercial API usage rates.
+
+Using our document baseline, and assuming that each method can accurately answer the question, here are the daily cost extrapolations for a platform with the following levels of activity:
+
+- We have a platform with 1000 concurrent users at any given moment
+- These users use the platform for 10 hours per day
+- Each user asks 1 question every 3 minutes, each similar to the above question (16 tokens).
+
+That's 6,000,000 queries per month
+
+| Scenario                                  | Cost per Query (USD)\* | Cost per 1 k Queries (USD) | Cost per 30-Day Month (USD)\*\* |
+| ----------------------------------------- | --------------------- | -------------------------- | ------------------------------- |
+| GPT-4o, **unfiltered 83 k-token context** | **\$0.01257**         | **\$12.57**                | **\$ 75 434.40**                |
+| GPT-4o **+ web-search call**              | **\$0.02762**         | **\$27.62**                | **\$ 165 734.40**               |
+| GPT-4o **no context / no search**         | **\$0.00012**         | **\$0.12**                 | **\$ 734.40**                   |
+| **RAG pipeline** (2,516-token prompt)     | **\$0.00050**         | **\$0.50**                 | **\$ 2 984.40**                 |
+
+A RAG is **97% cheaper** than an unfiltered call, and pennies compared to using GPT's web-search feature. And unlike the LLM-only options, we can optimize it to make it cheaper, more flexible, and more accurate.
+
+| Scenario                           | High Accuracy | Cost Efficient | Low Latency | Scalable | Curated Sources |
+|------------------------------------|----------------|----------------|-------------|----------|---------------------|
+| GPT-4o with unfiltered context     | ✅             | ❌             | ❌          | ❌       | ✅                  |
+| GPT-4o with web search             | ✅             | ✅             | ✅          | ✅       | ❌                  |
+| GPT-4o without context             | ❌             | ✅             | ✅          | ✅       | ❌                  |
+| RAG with semantic search (GPT-4o)  | ✅             | ✅             | ✅          | ✅       | ✅                  |
+
+# Evaluation Criteria
+
+We'll implement all scenarios above, and evaluate them on the following criteria:
+
+- *How well does our engine answer questions about [SEC 10K filings](https://huggingface.co/datasets/virattt/financial-qa-10K)?*
+
+We will use GPT 4 to generate 300 questions about the text, and ground the correct answer to a single chunk. We'll then evaluate each system on their ability
+to locate the chunk, and use the key language from the chunk.
+
+## Evaluation metrics
+
+### Technical metrics
+
+All models will be evaluated on ROUGE-L and BLEU. These are powerful complementary metrics, as ROUGE-L captures the presence of longer sequences of tokens that shows that an answer captures a topic end-to-end, while BLEU focuses on the precision of shorter n-grams, penalizing hallucination. Both capture n-gram overlap that matters for financial texts.
+
+For RAG engines, we'll evaluate on Recall@k and nDCG@10.
+
+Recall@k measures how many of our top k chunks returned have high relevance to the query. This helps us identify the point of diminishing returns so we can reduce the number of chunks we send to the LLM, and therefore save money without impacting accuracy.
+
+Normalized Discounted Cumulative Grade at Rank 10, or nDCG@10, measures the ranking of the top 10 vectors returned. If the top 10 vectors returned are all relevant, and all sorted in descending order, then the score is 1.0. The higher the score, the fewer vectors we need to send to the LLM, the more savings opportunities.
+
+### Business metric
+
+Our primary business metric will be **cost per accurate answer**, CPAA.
+![CPAA](./images/cpaa.png)
+This helps balance our model accuracy with cost.
 
 # Dataset Sourcing
 
@@ -52,31 +137,47 @@ See the RAG with reranker(s) flow below:
 
 For details of EDA and implementation, see the following notebooks:
 
-[EDA](./notebooks/EDA.ipynb)
-[Implementation details](./notebooks/implementation.ipynb)
-[Results analysis](./notebooks/evaluation.ipynb)
+- [EDA](./notebooks/EDA.ipynb)
+- [Implementation details](./notebooks/implementation.ipynb)
+- [Results analysis](./notebooks/evaluation.ipynb)
 
-# Evaluation
-For evaluation of results, I'll use an ensemble of metrics:
+# Next iterations
 
-## Primary metric: Cost per accurate answer
+## Accuracy improvements
+A recent paper by [Huang et al, 2025](https://arxiv.org/pdf/2503.10150) introduced a new methodology for graph based hierarchical knowledge modeling for retrieval pipelines that could be useful for our system. It could help us increase recall and decrease context sent to LLM's, therefore limiting costs.
 
-![CPAA](./images/cpaa.png)
+The reranking ensemble we've used is also a relatively vanilla setup. There are higher parameter models that we could use to increase our ranking efficacy.
 
----
+## New features
 
-## Secondary metrics
+Ideally we utilize multiple sources of text. Ideally we could ask the question
 
-- **ROUGE-L** (Longest Common Subsequence)
-  Best for factual QA; rewards both accuracy and completeness.
+> "What were the reported earnings in META's 2019 10K filing, and how did the media respond after earnings calls? How did the stock change in the upcoming 24 hours?"
 
-- **Recall@k** ($k \in \{1,3,5,7,10\}$) (only for RAG)
-  Measures the value of returning *k* vectors to the LLM, balancing accuracy and cost.
+This would require integrating multiple API's and having a different evaluation process. The costs would be higher as well, but the possibility of having a potentially infinite number of data sources curated and catalogued, and ready for our users to query is an exciting prospect.
 
-- **NDCG@10** (only for RAG)
-  Normalized Discounted Cumulative Gain at rank 10.
-  Captures not just if the correct answer is returned, but also how highly it’s ranked.
+OpenAI's web-search API, while performing abysmally in this iteration, could be a premium feature that we could develop and iterate upon, as long as we can control the model's variability.
 
----
+# Current limitations
 
-## Recommendations
+If our goal is to implement a RAG pipeline for SEC 10-K filings, we have developed a thorough proof of concept, but we're nowhere near ready for production.
+
+## Limited evaluation data
+
+Due to computational restrictions (not testing on the cloud), we've only evaluated our pipeline on a very narrow set of documents. Specifically, tech companies between the years of 2012-2020. We can't guarantee that the same methodology we're using for our PoC will transfer to other domains. In other words, if we ask it questions about oil companies, or feed it documents from the European Commission instead of the US FEC, we can't guarantee the same results. Furthermore, the data we used for our proof of concept is already clean, and we'll need to spend time and resources creating an appropriate pipeline that will structure the data in a stable and efficient way.
+
+## Limited validation sets
+
+The way we judge the accuracy of the model currently is based off LLM QA generation with limited human oversight. The questions we've currently evaluated our model on might not be the same types of questions that our users would actually ask on a daily basis. In order to ensure that we're evaluating the quality of our model, we need to get buy-in from business stakeholders to help either create a labeled QA set, or at least review an LLM-generated one. This will give us more confidence in our metrics.
+
+## Latency issues
+
+Our current implementation is theoretical and academic; we still have a lot of infrastructure work to do before we can put it into production. This includes:
+- Containerizing the model for a cloud environment (ideally a VM with persistent storage)
+- Latency testing to ensure that the multiple API/transformer/embedding model calls aren't going to have a negative impact on the user experience
+- We're currently heavily dependent on OpenAI. There are likely other models more suited for our use case that we haven't explored, including hosting our own fine-tuned models for only the cost of GPU compute time.
+- Load testing to ensure that the system will work at scale
+
+## Limited amount of data sets
+
+Currently we're only getting the public datasets of the SEC 10-K filings. This might not be enough features to satisfy our users or business stakeholders

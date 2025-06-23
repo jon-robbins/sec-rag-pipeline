@@ -52,35 +52,10 @@ class AnswerGenerator:
         Returns:
             Dictionary containing the answer and metadata
         """
-        if not chunks:
-            return {
-                "answer": "I couldn't find any relevant information to answer your question.",
-                "sources": [],
-                "chunks_used": 0,
-                "confidence": "low",
-            }
-
-        # Prepare context from chunks
-        context = self._prepare_context(chunks, max_chunks, max_context_length)
-
-        # Generate the answer
-        try:
-            response = self._make_generation_request(question, context["text"])
-            answer = response.choices[0].message.content.strip()
-
-            return {
-                "answer": answer,
-                "sources": context["sources"],
-                "chunks_used": context["chunks_used"],
-                "confidence": self._assess_confidence(chunks, context["chunks_used"]),
-            }
-        except Exception as e:
-            return {
-                "answer": f"I encountered an error while generating the answer: {str(e)}",
-                "sources": [],
-                "chunks_used": 0,
-                "confidence": "error",
-            }
+        result, _ = self.generate_answer_with_response(
+            question, chunks, max_chunks, max_context_length
+        )
+        return result
 
     def generate_answer_with_response(
         self,

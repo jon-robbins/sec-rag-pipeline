@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .chunkers import SmartChunker
-
-# from .config import RAW_DATA_PATH
 from .document_store import DocumentStore
 from .embedding import EmbeddingManager
 from .generation import AnswerGenerator
@@ -78,63 +76,66 @@ class RAGPipeline:
         self.overlap_tokens = overlap_tokens
         self.hard_ceiling = hard_ceiling
 
-        # --- Caching Logic ---
-        cache_dir_name = (
-            f"target_{target_tokens}_overlap_{overlap_tokens}_ceiling_{hard_ceiling}"
-        )
+        # Load or generate chunks with embeddings
+        self.chunks = self._load_or_generate_chunks()
+
+        # Initialize the vector store and upsert chunks
+        self._init_vector_store(use_docker, docker_port)
+
+        # Build adjacency map for evaluation
+        self.adjacent_map = self._build_adjacent_map()
+        logger.info("RAG Pipeline Initialized Successfully!")
+
+    def _load_or_generate_chunks(self) -> List[Any]:
+        """Loads chunks from cache if available, otherwise generates and caches them."""
+        cache_dir_name = f"target_{self.target_tokens}_overlap_{self.overlap_tokens}_ceiling_{self.hard_ceiling}"
         embedding_cache_dir = self.root_dir / "data" / "cache" / "embeddings"
         embedding_cache_dir.mkdir(parents=True, exist_ok=True)
         chunk_cache_file = embedding_cache_dir / f"{cache_dir_name}.pkl"
 
         if chunk_cache_file.exists():
             logger.info(
-                f"✅ Loading cached chunks and embeddings from {chunk_cache_file}"
+                "Loading cached chunks and embeddings from %s", chunk_cache_file
             )
             with open(chunk_cache_file, "rb") as f:
-                self.chunks = pickle.load(f)
-        else:
-            logger.info(
-                f"💾 Cached chunks not found at {chunk_cache_file}. Generating fresh..."
-            )
+                return pickle.load(f)
 
-            logger.info("🔄 Generating chunks from sorted sentences...")
-            df_sentences = (
-                self.document_store.get_all_sentences()
-            )  # This will trigger data loading
+        logger.info(
+            "Cached chunks not found at %s. Generating fresh...", chunk_cache_file
+        )
+        logger.info("Generating chunks from sorted sentences...")
+        df_sentences = self.document_store.get_all_sentences()
 
-            # Add 'item' column for compatibility with chunker
-            df_sentences["item"] = df_sentences["section"]
+        df_sentences["item"] = df_sentences["section"]
 
-            chunker = SmartChunker(
-                target_tokens=target_tokens,
-                hard_ceiling=hard_ceiling,
-                overlap_tokens=overlap_tokens,
-            )
-            chunk_objects = chunker.run(df_sentences)
+        chunker = SmartChunker(
+            target_tokens=self.target_tokens,
+            hard_ceiling=self.hard_ceiling,
+            overlap_tokens=self.overlap_tokens,
+        )
+        chunk_objects = chunker.run(df_sentences)
 
-            logger.info("🔄 Generating embeddings for chunks...")
-            embedding_manager = EmbeddingManager()
-            texts = [chunk.text for chunk in chunk_objects]
-            embeddings = embedding_manager.embed_texts_in_batches(texts)
-            logger.info(f"✅ Generated {len(embeddings)} embeddings")
+        logger.info("Generating embeddings for chunks...")
+        embedding_manager = EmbeddingManager()
+        texts = [chunk.text for chunk in chunk_objects]
+        embeddings = embedding_manager.embed_texts_in_batches(texts)
+        logger.info("Generated %d embeddings", len(embeddings))
 
-            if len(chunk_objects) != len(embeddings):
-                raise ValueError("Mismatch between number of chunks and embeddings")
+        if len(chunk_objects) != len(embeddings):
+            raise ValueError("Mismatch between number of chunks and embeddings")
 
-            for i, chunk in enumerate(chunk_objects):
-                chunk.embedding = embeddings[i]
+        for i, chunk in enumerate(chunk_objects):
+            chunk.embedding = embeddings[i]
 
-            self.chunks = chunk_objects
+        logger.info("Saving %d chunks with embeddings to cache...", len(chunk_objects))
+        with open(chunk_cache_file, "wb") as f:
+            pickle.dump(chunk_objects, f)
 
-            logger.info(
-                f"💾 Saving {len(self.chunks)} chunks with embeddings to cache..."
-            )
-            with open(chunk_cache_file, "wb") as f:
-                pickle.dump(self.chunks, f)
+        return chunk_objects
 
-        # --- Vector Store Upsert ---
-        logger.info("🧠 Initializing vector store...")
-
+    def _init_vector_store(self, use_docker: bool, docker_port: int):
+        """Initializes the vector store and upserts chunks if needed."""
+        logger.info("Initializing vector store...")
         if use_docker:
             self.vector_store = VectorStore(
                 use_docker=use_docker,
@@ -159,12 +160,7 @@ class RAGPipeline:
             logger.info("Vector store is out of sync. Loading data...")
             self.vector_store.upsert_chunks(chunk_dicts, embeddings_list)
         else:
-            logger.info("✅ Vector store is already up to date.")
-
-        logger.info("✅ RAG Pipeline Initialized Successfully!")
-
-        # --- Build adjacency map for evaluation ---
-        self.adjacent_map = self._build_adjacent_map()
+            logger.info("Vector store is already up to date.")
 
     def _build_adjacent_map(self):
         """Create a mapping from chunk_id to its immediate neighbours (prev, next)."""
@@ -324,7 +320,7 @@ class RAGPipeline:
             A list of chunk objects, without embeddings.
         """
         logger.info(
-            f"🔄 Generating chunks for tickers {tickers} and years {fiscal_years}..."
+            "Generating chunks for tickers %s and years %s...", tickers, fiscal_years
         )
 
         # 1. Get filtered sentences from the document store
@@ -352,7 +348,7 @@ class RAGPipeline:
 
         # 4. Run chunking
         chunk_objects = chunker.run(df_sentences)
-        logger.info(f"✅ Generated {len(chunk_objects)} chunks.")
+        logger.info("Generated %d chunks.", len(chunk_objects))
 
         return chunk_objects
 
@@ -369,11 +365,11 @@ class RAGPipeline:
         Returns:
             The list of chunk objects, updated with their embeddings.
         """
-        logger.info(f"🔄 Generating embeddings for {len(chunks_to_embed)} chunks...")
+        logger.info("Generating embeddings for %d chunks...", len(chunks_to_embed))
         embedding_manager = EmbeddingManager()
         texts = [chunk.text for chunk in chunks_to_embed]
         embeddings = embedding_manager.embed_texts_in_batches(texts)
-        logger.info(f"✅ Generated {len(embeddings)} embeddings")
+        logger.info("Generated %d embeddings", len(embeddings))
 
         if len(chunks_to_embed) != len(embeddings):
             raise ValueError("Mismatch between number of chunks and embeddings")

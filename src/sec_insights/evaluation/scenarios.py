@@ -223,50 +223,65 @@ def run_reranked_rag_scenario(
     pipeline: RAGPipeline,
     qa_item: Dict[str, Any],
     reranker: BGEReranker,
-    initial_k: int = 50,
-    final_k: int = 10,
+    phase_1_k: int = 30,  # Phase 1: Initial retrieval (only for reranked systems)
+    phase_2_k: int = 10,  # Phase 2: Final selection for generation (only for reranked systems)
 ) -> Tuple[str, List[str], Dict[str, int]]:
-    """Scenario 4: RAG pipeline with BGE reranker."""
+    """Scenario 4: RAG pipeline with BGE reranker.
+
+    This scenario uses a two-phase approach:
+    - Phase 1: Retrieve phase_1_k documents via vector search
+    - Phase 2: Rerank and select top phase_2_k for generation
+
+    For fair evaluation, NDCG@10 is calculated on the full phase_1_k reranked list.
+    Note: Phase parameters only apply to reranked systems.
+    """
     question = qa_item["question"]
     ticker = qa_item["ticker"]
     year = qa_item["year"]
 
     formatted_question = format_question_with_context(question, ticker, year)
 
-    # 1. Over-retrieve documents
-    initial_chunks = pipeline.search(query=formatted_question, top_k=initial_k)
-    if not initial_chunks:
+    # Phase 1: Over-retrieve documents
+    phase_1_chunks = pipeline.search(query=formatted_question, top_k=phase_1_k)
+    if not phase_1_chunks:
         return (
             "[No documents found to rerank]",
             [],
             {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
         )
 
-    # 2. Rerank the passages
-    passages = [chunk.get("payload", {}).get("text", "") for chunk in initial_chunks]
-    reranked_results = reranker.rerank(formatted_question, passages, top_k=final_k)
+    # Phase 2: Rerank and select final chunks
+    passages = [chunk.get("payload", {}).get("text", "") for chunk in phase_1_chunks]
 
-    # 3. Get the reranked chunks in the new order
-    reranked_chunks = [initial_chunks[i] for i, score in reranked_results]
+    # Get full reranked order for evaluation (all phase_1_k documents)
+    all_reranked_results = reranker.rerank(
+        formatted_question, passages, top_k=phase_1_k
+    )
 
-    # 4. Generate answer using reranked chunks with token tracking
+    # Select top phase_2_k for generation
+    phase_2_chunks = [
+        phase_1_chunks[i] for i, score in all_reranked_results[:phase_2_k]
+    ]
+
+    # Generate answer using phase_2_k chunks with token tracking
     result, response = pipeline.answer_generator.generate_answer_with_response(
-        question=formatted_question, chunks=reranked_chunks
+        question=formatted_question, chunks=phase_2_chunks
     )
     answer = result.get("answer", "")
 
-    # 5. Extract chunk IDs for metrics
-    reranked_ids = []
-    for chunk in reranked_chunks:
+    # Extract chunk IDs for metrics - FULL RERANKED LIST for fair evaluation
+    all_reranked_ids = []
+    for i, score in all_reranked_results:
+        chunk = phase_1_chunks[i]
         chunk_id = (
             chunk.get("id")
             or chunk.get("chunk_id")
             or chunk.get("payload", {}).get("id")
         )
         if chunk_id:
-            reranked_ids.append(chunk_id)
+            all_reranked_ids.append(chunk_id)
 
-    # 6. Get token usage
+    # Get token usage
     token_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
     if response and hasattr(response, "usage"):
         usage = response.usage
@@ -276,4 +291,4 @@ def run_reranked_rag_scenario(
             "total_tokens": usage.total_tokens,
         }
 
-    return answer, reranked_ids, token_usage
+    return answer, all_reranked_ids, token_usage

@@ -1,14 +1,7 @@
-# isort: skip_file
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-from sec_insights.evaluation.bootstrap_analysis import BootstrapAnalyzer
-
-sys.path.append(str(Path(__file__).parent.parent))  # noqa: E402
-
 import warnings
+from pathlib import Path
 from textwrap import fill
 from typing import List, Optional, Tuple
 
@@ -20,6 +13,8 @@ import seaborn as sns
 import tiktoken
 from sklearn.metrics.pairwise import cosine_similarity
 
+from sec_insights.evaluation.bootstrap_analysis import BootstrapAnalyzer
+
 
 def plot_filing_coverage(df):
     """
@@ -28,8 +23,7 @@ def plot_filing_coverage(df):
     Args:
         df (pd.DataFrame): DataFrame containing 'ticker' and 'fiscal_year' columns
     """
-
-    # Create a binary indicator for each (ticker, year)
+    # Create a pivot table to get a binary indicator for each (ticker, year)
     pivot = (
         df[["ticker", "fiscal_year"]]
         .drop_duplicates()
@@ -37,7 +31,7 @@ def plot_filing_coverage(df):
         .pivot(index="ticker", columns="fiscal_year", values="has_filing")
         .fillna(0)
         .astype(int)
-        .sort_index(axis=1)  # sort years left to right
+        .sort_index(axis=1)
     )
 
     plt.figure(figsize=(12, 6))
@@ -672,15 +666,3 @@ def plot_section_token_distribution_from_df(df_sections: pd.DataFrame):
         labels={"token_count": "Token Count"},
     )
     fig.show()
-
-
-def plot_word_clouds_for_sections(df: pd.DataFrame, sections: list):
-    """
-    Generates and displays word clouds for specified sections from the dataframe.
-
-    Args:
-        df (pd.DataFrame): The dataframe containing the text data.
-        sections (list): A list of section identifiers to generate word clouds for.
-    """
-    # Import moved to the top of the file
-    pass

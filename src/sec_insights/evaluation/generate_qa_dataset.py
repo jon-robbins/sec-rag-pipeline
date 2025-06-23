@@ -26,7 +26,6 @@ from typing import Any, Dict, List
 
 import numpy as np
 import tiktoken
-from rag.config import QA_DATASET_PATH
 
 # Add parent directory to path for imports
 
@@ -142,7 +141,7 @@ class BalancedChunkSampler:
 
 def generate_qa_pairs(
     chunks: List,
-    output_path: Path = QA_DATASET_PATH,
+    output_path: Path,
     append: bool = False,
     debug_mode: bool = False,
 ):
@@ -292,7 +291,11 @@ def main():
     balanced_chunks = sampler.stratified_sample(grouped_chunks)
 
     # Generate QA pairs
-    qa_output_path = QA_DATASET_PATH
+    output_dir = Path.cwd() / "data" / "processed"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = time.strftime("%Y%m%d_%H%M%S")
+    qa_output_path = output_dir / f"qa_dataset_generated_{timestamp}.jsonl"
+
     print(f"\n🚀 Generating QA pairs from {len(balanced_chunks)} balanced chunks...")
     generate_qa_pairs(balanced_chunks, qa_output_path)
     print(f"\n✅ All done! QA dataset saved to: {qa_output_path}")

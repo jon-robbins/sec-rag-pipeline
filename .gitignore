@@ -321,3 +321,21 @@ data/sql/sec_filings.duckdb
 embeddings/chunks_embeddings.pkl
 *.pkl
 FinanceRAG/
+
+# Evaluation results and checkpoints
+data/results/evaluation_results_*.json
+data/results/evaluation_results_*.csv
+data/results/checkpoint_*.json
+data/results/checkpoints/
+data/results/evaluation_results/
+data/results/final/
+
+# Demo and utility files
+demo_usage.py
+evaluation_results_utils.py
+fix_token_data.py
+README_evaluation_utils.md
+log.txt
+eval-log.txt
+notebooks/eval_utils.py
+notebooks/results_aggregator.py

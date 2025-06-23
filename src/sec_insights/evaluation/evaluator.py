@@ -4,6 +4,7 @@ Defines the ComprehensiveEvaluator for running and evaluating RAG scenarios.
 """
 
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -16,7 +17,11 @@ from ..rag.document_store import DocumentStore
 from ..rag.pipeline import RAGPipeline
 from ..rag.reranker import BGEReranker
 from .dataset import QADatasetManager
-from .metrics import calculate_retrieval_metrics, calculate_rouge_scores
+from .metrics import (
+    calculate_bleu_score,
+    calculate_retrieval_metrics,
+    calculate_rouge_scores,
+)
 from .reporting import EvaluationReporter
 from .scenarios import (
     format_question_with_context,
@@ -28,19 +33,21 @@ from .scenarios import (
 )
 from .scenarios_financerag import ensemble_rerank_rag
 
+logger = logging.getLogger(__name__)
+
 
 class ComprehensiveEvaluator:
     """
     Orchestrates the comprehensive evaluation of different RAG scenarios.
     """
 
-    def __init__(
-        self, root_dir: Path, pipeline: Optional[RAGPipeline], quiet: bool = False
-    ):
+    def __init__(self, root_dir: Path, pipeline: Optional[RAGPipeline]):
         self.pipeline = pipeline
-        self.quiet = quiet
         self.openai_client = get_openai_client()
+        self._initialize_components(root_dir, pipeline)
 
+    def _initialize_components(self, root_dir: Path, pipeline: Optional[RAGPipeline]):
+        """Initialize required components for the evaluator."""
         # The evaluator needs its own DocumentStore for the 'unfiltered' scenario
         raw_data_path = root_dir / "data" / "raw" / "df_filings_full.parquet"
         doc_store_tickers = (
@@ -52,23 +59,48 @@ class ComprehensiveEvaluator:
             raw_data_path=raw_data_path, tickers_of_interest=doc_store_tickers
         )
 
-        if not quiet:
-            print("Initializing BGE Reranker...")
+        logging.info("Initializing BGE Reranker...")
         self.reranker = BGEReranker()
 
-        qa_dataset_path = root_dir / "data" / "processed" / "qa_dataset.jsonl"
-        self.qa_manager = QADatasetManager(qa_dataset_path, quiet)
+        # Create config-specific QA dataset path using pipeline chunking configuration
+        if pipeline:
+            chunking_config = {
+                "target_tokens": pipeline.target_tokens,
+                "overlap_tokens": pipeline.overlap_tokens,
+                "hard_ceiling": pipeline.hard_ceiling,
+            }
+        else:
+            # Default configuration if no pipeline provided
+            chunking_config = {
+                "target_tokens": 750,
+                "overlap_tokens": 150,
+                "hard_ceiling": 1000,
+            }
+        self.qa_manager = QADatasetManager(root_dir, chunking_config)
 
     def evaluate_all_scenarios(
         self,
         num_questions: int = 50,
         methods: Optional[List[str]] = None,
         k_values: Optional[List[int]] = None,
+        phase_1_k: int = 30,
+        phase_2_k: int = 10,
+        use_rrf: bool = False,
         resume: bool = True,
         run_id: Optional[str] = None,
     ) -> Tuple[Dict[str, Any], Path]:
         """
         Runs the full evaluation across all scenarios.
+
+        Args:
+            num_questions: Number of questions to evaluate
+            methods: List of evaluation methods to run
+            k_values: List of k values for retrieval metrics
+            phase_1_k: Initial retrieval count (only for reranked systems)
+            phase_2_k: Final selection count for generation (only for reranked systems)
+            use_rrf: Whether to use Reciprocal Rank Fusion for ensemble reranking
+            resume: Whether to resume from checkpoint
+            run_id: Unique identifier for this evaluation run
         """
         methods = methods or [
             "rag",
@@ -81,10 +113,9 @@ class ComprehensiveEvaluator:
         k_values = k_values or [1, 3, 5, 7, 10]
         run_id = run_id or time.strftime("%Y%m%d_%H%M%S")
 
-        reporter = EvaluationReporter(run_id, self.quiet)
+        reporter = EvaluationReporter(run_id)
 
-        if not self.quiet:
-            print("Pre-loading all necessary data for evaluation...")
+        logging.info("Pre-loading all necessary data for evaluation...")
         self.doc_store.get_all_sentences()
 
         all_chunks = []
@@ -104,18 +135,15 @@ class ComprehensiveEvaluator:
             ):
                 all_results = checkpoint["completed_results"]
                 start_index = checkpoint["current_index"]
-                if not self.quiet:
-                    print(
-                        f"🔄 Resuming from question {start_index + 1}/{len(qa_dataset)}"
-                    )
+                logging.info(
+                    "Resuming from question %d/%d", start_index + 1, len(qa_dataset)
+                )
             elif checkpoint:
-                if not self.quiet:
-                    print("⚠️ Checkpoint incompatible. Starting fresh.")
+                logging.warning("Checkpoint incompatible. Starting fresh.")
 
         progress_bar = tqdm(
             qa_dataset[start_index:],
-            desc="🔬 Evaluating scenarios",
-            disable=self.quiet,
+            desc="Evaluating scenarios",
             initial=start_index,
             total=len(qa_dataset),
         )
@@ -123,10 +151,14 @@ class ComprehensiveEvaluator:
         try:
             for i, qa_item in enumerate(progress_bar, start=start_index):
                 single_result = self.evaluate_single_question(
-                    qa_item, methods, k_values
+                    qa_item, methods, k_values, phase_1_k, phase_2_k, use_rrf
                 )
                 single_result["question"] = qa_item["question"]
                 single_result["ground_truth_answer"] = qa_item["answer"]
+                single_result["ground_truth_chunk_id"] = qa_item["chunk_id"]
+                single_result["ticker"] = qa_item.get("ticker")
+                single_result["year"] = qa_item.get("year")
+                single_result["section"] = qa_item.get("section")
                 all_results.append(single_result)
 
                 if (i + 1) % 10 == 0:
@@ -137,8 +169,7 @@ class ComprehensiveEvaluator:
 
             self._cleanup_checkpoint(run_id)
         except (KeyboardInterrupt, Exception) as e:
-            if not self.quiet:
-                print(f"\n⚠️ Process interrupted: {e}. Progress saved.")
+            logging.error("Process interrupted: %s. Progress saved.", e)
             self._save_checkpoint(
                 all_results, qa_dataset, len(all_results), methods, k_values, run_id
             )
@@ -148,12 +179,28 @@ class ComprehensiveEvaluator:
         temp_results_dir.mkdir(parents=True, exist_ok=True)
 
         aggregated_results = reporter.aggregate_results(all_results)
+
+        # Add chunking configuration metadata to results
+        if self.pipeline:
+            aggregated_results["chunking_config"] = {
+                "target_tokens": self.pipeline.target_tokens,
+                "overlap_tokens": self.pipeline.overlap_tokens,
+                "hard_ceiling": self.pipeline.hard_ceiling,
+            }
+            aggregated_results["qa_dataset_path"] = str(self.qa_manager.qa_dataset_path)
+
         reporter.save_results(aggregated_results)
 
         return aggregated_results, temp_results_dir
 
     def evaluate_single_question(
-        self, qa_item: Dict[str, Any], methods: List[str], k_values: List[int]
+        self,
+        qa_item: Dict[str, Any],
+        methods: List[str],
+        k_values: List[int],
+        phase_1_k: int = 30,
+        phase_2_k: int = 10,
+        use_rrf: bool = False,
     ) -> Dict[str, Any]:
         results = {}
         ground_truth_answer = qa_item["answer"]
@@ -178,12 +225,17 @@ class ComprehensiveEvaluator:
                     adjacency_bonus=0.5,
                 ),
                 "rouge": calculate_rouge_scores(rag_answer, ground_truth_answer),
+                "bleu": calculate_bleu_score(rag_answer, ground_truth_answer),
                 "tokens": rag_tokens,
             }
 
         if "reranked_rag" in methods:
             reranked_answer, reranked_ids, reranked_tokens = run_reranked_rag_scenario(
-                self.pipeline, qa_item, self.reranker
+                self.pipeline,
+                qa_item,
+                self.reranker,
+                phase_1_k=phase_1_k,  # Use configurable Phase 1: Initial retrieval
+                phase_2_k=phase_2_k,  # Use configurable Phase 2: Final selection for generation
             )
             results["reranked_rag"] = {
                 "answer": reranked_answer,
@@ -195,6 +247,7 @@ class ComprehensiveEvaluator:
                     adjacency_bonus=0.5,
                 ),
                 "rouge": calculate_rouge_scores(reranked_answer, ground_truth_answer),
+                "bleu": calculate_bleu_score(reranked_answer, ground_truth_answer),
                 "tokens": reranked_tokens,
             }
 
@@ -203,12 +256,21 @@ class ComprehensiveEvaluator:
                 qa_item["question"], qa_item["ticker"], qa_item["year"]
             )
             scenario_output = ensemble_rerank_rag(
-                self.pipeline, augmented_question, [ground_truth_chunk_id], k_values
+                self.pipeline,
+                augmented_question,
+                [ground_truth_chunk_id],
+                k_values,
+                phase_1_k=phase_1_k,  # Use configurable Phase 1: Initial retrieval
+                phase_2_k=phase_2_k,  # Use configurable Phase 2: Final selection for generation
+                use_rrf=use_rrf,  # Use configurable RRF for ensemble reranking
             )
             results["ensemble_rerank_rag"] = {
                 "answer": scenario_output["answer"],
                 "retrieval": scenario_output["retrieval"],
                 "rouge": calculate_rouge_scores(
+                    scenario_output["answer"], ground_truth_answer
+                ),
+                "bleu": calculate_bleu_score(
                     scenario_output["answer"], ground_truth_answer
                 ),
                 "tokens": scenario_output.get("tokens", {}),
@@ -222,6 +284,7 @@ class ComprehensiveEvaluator:
             results["unfiltered"] = {
                 "answer": unfiltered_answer,
                 "rouge": calculate_rouge_scores(unfiltered_answer, ground_truth_answer),
+                "bleu": calculate_bleu_score(unfiltered_answer, ground_truth_answer),
                 "tokens": unfiltered_tokens,
             }
 
@@ -232,6 +295,7 @@ class ComprehensiveEvaluator:
             results["web_search"] = {
                 "answer": web_search_answer,
                 "rouge": calculate_rouge_scores(web_search_answer, ground_truth_answer),
+                "bleu": calculate_bleu_score(web_search_answer, ground_truth_answer),
                 "tokens": web_search_tokens,
             }
 
@@ -242,6 +306,7 @@ class ComprehensiveEvaluator:
             results["baseline"] = {
                 "answer": baseline_answer,
                 "rouge": calculate_rouge_scores(baseline_answer, ground_truth_answer),
+                "bleu": calculate_bleu_score(baseline_answer, ground_truth_answer),
                 "tokens": baseline_tokens,
             }
 
@@ -273,8 +338,7 @@ class ComprehensiveEvaluator:
     def _load_checkpoint(self, run_id: str) -> Optional[Dict[str, Any]]:
         checkpoint_path = self._get_checkpoint_path(run_id)
         if checkpoint_path.exists():
-            if not self.quiet:
-                print(f"✅ Found checkpoint: {checkpoint_path}")
+            logging.info("Found checkpoint: %s", checkpoint_path)
             with open(checkpoint_path, "r") as f:
                 return json.load(f)
         return None
@@ -283,5 +347,4 @@ class ComprehensiveEvaluator:
         checkpoint_path = self._get_checkpoint_path(run_id)
         if checkpoint_path.exists():
             checkpoint_path.unlink()
-            if not self.quiet:
-                print(f"🗑️ Checkpoint cleaned up: {checkpoint_path}")
+            logging.info("Checkpoint cleaned up: %s", checkpoint_path)

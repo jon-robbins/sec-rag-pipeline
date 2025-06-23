@@ -1,9 +1,11 @@
 """
 Evaluation metrics for the RAG pipeline.
 
-Includes ROUGE for answer quality and retrieval metrics like Recall@K and MRR.
+Includes ROUGE and BLEU for answer quality and retrieval metrics like Recall@K and MRR.
 """
 
+import math
+from collections import Counter
 from typing import Dict, List, Optional
 
 import numpy as np
@@ -137,4 +139,103 @@ def calculate_rouge_scores(
             "recall": value.recall,
         }
         for key, value in scores.items()
+    }
+
+
+def calculate_bleu_score(
+    generated_answer: str, ground_truth_answer: str, max_n: int = 4
+) -> Dict[str, float]:
+    """
+    Calculate BLEU score for text generation evaluation.
+
+    BLEU (Bilingual Evaluation Understudy) measures n-gram overlap between
+    generated text and reference text, with brevity penalty for short outputs.
+
+    Args:
+        generated_answer: The generated answer text.
+        ground_truth_answer: The reference/ground truth answer text.
+        max_n: Maximum n-gram length to consider (default: 4).
+
+    Returns:
+        Dictionary containing BLEU scores and components:
+        - bleu: Overall BLEU score
+        - bleu_1, bleu_2, bleu_3, bleu_4: Individual n-gram precisions
+        - brevity_penalty: Brevity penalty factor
+    """
+    if not generated_answer.strip() or not ground_truth_answer.strip():
+        return {
+            "bleu": 0.0,
+            "bleu_1": 0.0,
+            "bleu_2": 0.0,
+            "bleu_3": 0.0,
+            "bleu_4": 0.0,
+            "brevity_penalty": 0.0,
+        }
+
+    # Tokenize (simple whitespace tokenization)
+    candidate_tokens = generated_answer.lower().split()
+    reference_tokens = ground_truth_answer.lower().split()
+
+    candidate_length = len(candidate_tokens)
+    reference_length = len(reference_tokens)
+
+    # Calculate brevity penalty
+    if candidate_length == 0:
+        brevity_penalty = 0.0
+    elif candidate_length >= reference_length:
+        brevity_penalty = 1.0
+    else:
+        brevity_penalty = math.exp(1 - reference_length / candidate_length)
+
+    # Calculate n-gram precisions
+    precisions = []
+    bleu_scores = {}
+
+    for n in range(1, min(max_n + 1, candidate_length + 1)):
+        # Get n-grams
+        candidate_ngrams: Counter[tuple] = Counter()
+        reference_ngrams: Counter[tuple] = Counter()
+
+        # Extract candidate n-grams
+        for i in range(len(candidate_tokens) - n + 1):
+            ngram = tuple(candidate_tokens[i : i + n])
+            candidate_ngrams[ngram] += 1
+
+        # Extract reference n-grams
+        for i in range(len(reference_tokens) - n + 1):
+            ngram = tuple(reference_tokens[i : i + n])
+            reference_ngrams[ngram] += 1
+
+        # Calculate clipped precision
+        clipped_matches = 0
+        total_candidate_ngrams = sum(candidate_ngrams.values())
+
+        for ngram, count in candidate_ngrams.items():
+            clipped_matches += min(count, reference_ngrams.get(ngram, 0))
+
+        precision = (
+            clipped_matches / total_candidate_ngrams
+            if total_candidate_ngrams > 0
+            else 0.0
+        )
+        precisions.append(precision)
+        bleu_scores[f"bleu_{n}"] = precision
+
+    # Fill remaining BLEU scores with 0.0 if we have fewer n-grams than max_n
+    for n in range(len(precisions) + 1, max_n + 1):
+        bleu_scores[f"bleu_{n}"] = 0.0
+
+    # Calculate overall BLEU score (geometric mean of precisions with brevity penalty)
+    if all(p > 0 for p in precisions) and len(precisions) > 0:
+        geometric_mean = math.exp(
+            sum(math.log(p) for p in precisions) / len(precisions)
+        )
+        bleu_score = brevity_penalty * geometric_mean
+    else:
+        bleu_score = 0.0
+
+    return {
+        "bleu": bleu_score,
+        **bleu_scores,
+        "brevity_penalty": brevity_penalty,
     }

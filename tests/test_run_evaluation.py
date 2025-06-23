@@ -2,6 +2,7 @@
 Integration tests for the run_evaluation.py script.
 """
 
+import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -77,17 +78,26 @@ def test_basic_in_memory_run(mock_dependencies, tmp_path):
     """
     Tests a basic evaluation run with use_docker=False.
     """
-    # Point RESULTS_DIR to a temporary directory for this test
-    with patch("sec_insights.evaluation.reporting.RESULTS_DIR", tmp_path):
+    with patch("sec_insights.evaluation.reporting.RESULTS_DIR", tmp_path), patch.dict(
+        os.environ, {"CI": "true"}
+    ):
+        # Make sure the mock returns a real path
+        mock_evaluator_instance = mock_dependencies[
+            "ComprehensiveEvaluator"
+        ].return_value
+        mock_evaluator_instance.evaluate_all_scenarios.return_value = (
+            {"summary": {}, "individual": []},
+            tmp_path / "dummy_run",
+        )
+
         config = EvaluationConfig(
             num_questions=1,
             use_docker=False,
-            quiet=True,  # Run in quiet mode to avoid printing to console during tests
-            resume=False,  # Start a fresh run
+            resume=False,
         )
 
         runner = EvaluationRunner(config)
-        runner.run()
+        result_df = runner.run()
 
         # Assert that the core components were initialized
         mock_dependencies["RAGPipeline"].assert_called_once()
@@ -99,7 +109,10 @@ def test_basic_in_memory_run(mock_dependencies, tmp_path):
 
         # Assert that the reporter was used
         reporter_instance = mock_dependencies["EvaluationReporter"].return_value
-        reporter_instance.results_to_dataframe.assert_called_once()
+        reporter_instance.results_to_dataframe.assert_called_once_with(
+            evaluator_instance.evaluate_all_scenarios.return_value[0]
+        )
+        assert result_df is not None
 
 
 def test_docker_fallback_run(mock_dependencies, tmp_path):
@@ -114,10 +127,18 @@ def test_docker_fallback_run(mock_dependencies, tmp_path):
             mock_pipeline_instance,  # Success on the second call
         ]
 
+        # Make sure the mock returns a real path
+        mock_evaluator_instance = mock_dependencies[
+            "ComprehensiveEvaluator"
+        ].return_value
+        mock_evaluator_instance.evaluate_all_scenarios.return_value = (
+            {"summary": {}, "individual": []},
+            tmp_path / "dummy_run",
+        )
+
         config = EvaluationConfig(
             num_questions=1,
             use_docker=True,  # Attempt to use Docker
-            quiet=True,
             resume=False,
         )
 
@@ -139,10 +160,13 @@ def test_qa_generation_is_triggered(mock_dependencies, tmp_path):
     with patch("sec_insights.evaluation.reporting.RESULTS_DIR", tmp_path):
         # The evaluator will call the QA manager, so we check the mock on that class
         evaluator_instance = mock_dependencies["ComprehensiveEvaluator"].return_value
+        evaluator_instance.evaluate_all_scenarios.return_value = (
+            {"summary": {}, "individual": []},
+            tmp_path / "dummy_run",
+        )
 
         config = EvaluationConfig(
             num_questions=10,  # Request more questions than available
-            quiet=True,
             resume=False,
         )
 

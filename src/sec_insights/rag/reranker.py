@@ -18,13 +18,20 @@ class BGEReranker:
             if torch.cuda.is_available()
             else "mps" if torch.backends.mps.is_available() else "cpu"
         )
-        print(f"BGEReranker using device: {self.device}")
+        logger.info("BGEReranker using device: %s", self.device)
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForSequenceClassification.from_pretrained(model_name).to(
-            self.device
-        )
-        self.model.eval()
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                model_name
+            ).to(self.device)
+            self.model.eval()
+        except OSError:
+            logger.error(
+                "Could not load the reranker model. "
+                "Ensure you have a network connection and the model name is correct."
+            )
+            raise
 
     def rerank(
         self, query: str, passages: List[str], top_k: int = 10

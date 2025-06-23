@@ -8,6 +8,7 @@ comparison of their performance.
 """
 
 import json
+import logging
 import warnings
 from collections import defaultdict
 from pathlib import Path
@@ -16,10 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from .reporting import EvaluationReporter
-
-# Suppress pandas SettingWithCopyWarning
-pd.options.mode.chained_assignment = None
+logger = logging.getLogger(__name__)
 
 
 class BootstrapAnalyzer:
@@ -44,56 +42,42 @@ class BootstrapAnalyzer:
         self.random_seed = random_seed
         self.results = None
         self.per_question_df = None
-        self.reporter = EvaluationReporter(run_id="bootstrap_analysis", quiet=True)
-        self.df_individual = self._load_results()
-
+        self.df_individual = None
         np.random.seed(random_seed)
 
         # Load results immediately
         self.load_results()
 
-    def _load_results(self) -> Optional[pd.DataFrame]:
-        """Loads individual results from a JSON file into a DataFrame."""
-        try:
-            with open(self.results_path, "r") as f:
-                data = json.load(f)
-
-            if "individual" not in data:
-                print(f"❌ Error: 'individual' key not found in {self.results_path}")
-                return None
-
-            df = pd.DataFrame(data["individual"])
-            # Unpack nested metric dictionaries
-            for metric_type in ["retrieval", "rouge"]:
-                for key in df.iloc[0].get(metric_type, {}).keys():
-                    df[f"{metric_type}_{key}"] = df[metric_type].apply(
-                        lambda x: x.get(key) if isinstance(x, dict) else None
-                    )
-            return df
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"❌ Error loading results file: {e}")
-            return None
-
-    def load_results(self) -> Dict[str, Any]:
+    def load_results(self) -> Optional[Dict[str, Any]]:
         """
         Load evaluation results from JSON file.
 
         Returns:
-            Dictionary containing evaluation results
+            Dictionary containing evaluation results, or None on failure.
         """
         if not self.results_path.exists():
-            raise FileNotFoundError(f"Results file not found: {self.results_path}")
+            logger.error("Results file not found: %s", self.results_path)
+            return None
 
-        with open(self.results_path, "r") as f:
-            self.results = json.load(f)
+        try:
+            with open(self.results_path, "r") as f:
+                self.results = json.load(f)
+        except json.JSONDecodeError:
+            logger.error("Failed to decode JSON from %s", self.results_path)
+            return None
 
-        if self.results is None:
-            raise ValueError("Failed to load results from file")
+        if self.results and "per_question_metrics" not in self.results:
+            logger.warning(
+                "Results file does not contain 'per_question_metrics'. "
+                "Some analysis methods may not be available."
+            )
 
-        if "per_question_metrics" not in self.results:
-            raise ValueError(
-                "Results file does not contain per-question metrics. "
-                "Please run evaluation with updated evaluator to generate per-question data."
+        if self.results and "individual" in self.results:
+            self.df_individual = pd.DataFrame(self.results["individual"])
+        else:
+            logger.warning(
+                "Results file does not contain 'individual' results. "
+                "Some analysis methods may not be available."
             )
 
         return self.results
@@ -463,32 +447,35 @@ class BootstrapAnalyzer:
             "observed_difference": observed_diff,
             "p_value": p_value,
             "confidence_interval": self.get_confidence_interval(bootstrap_diffs_np),
-            "is_significant": p_value
-            < 0.05,  # Fixed: use hardcoded alpha since self.alpha doesn't exist
+            "is_significant": p_value < 0.05,
         }
 
     def run_full_analysis(self):
         """Runs the full analysis pipeline and prints a report."""
         if self.df_individual is None:
-            print("❌ Cannot run analysis, no data loaded.")
+            logging.warning("Cannot run analysis, no data loaded.")
             return
 
         metric_columns = self._get_metric_columns()
         scenarios = self.df_individual["method"].unique()
 
-        print("--- Bootstrap Confidence Intervals ---")
+        logging.info("--- Bootstrap Confidence Intervals ---")
         for metric in metric_columns:
-            print(f"\nMetric: {metric}")
+            logging.info("\nMetric: %s", metric)
             metric_results = self.run_bootstrap_for_metric(metric)
             if metric_results:
                 for scenario, ci in metric_results.items():
-                    print(
-                        f"  - {scenario}: {ci['mean']:.4f} (95% CI: {ci['lower']:.4f} - {ci['upper']:.4f})"
+                    logging.info(
+                        "  - %s: %.4f (95%% CI: %.4f - %.4f)",
+                        scenario,
+                        ci["mean"],
+                        ci["lower"],
+                        ci["upper"],
                     )
 
-        print("\n--- Pairwise Scenario Comparisons (p-values) ---")
+        logging.info("\n--- Pairwise Scenario Comparisons (p-values) ---")
         for metric in metric_columns:
-            print(f"\nMetric: {metric}")
+            logging.info("\nMetric: %s", metric)
             for i in range(len(scenarios)):
                 for j in range(i + 1, len(scenarios)):
                     comparison = self.compare_scenarios(
@@ -500,8 +487,12 @@ class BootstrapAnalyzer:
                             if comparison["is_significant"]
                             else "not significant"
                         )
-                        print(
-                            f"  - {scenarios[i]} vs {scenarios[j]}: p-value={comparison['p_value']:.4f} ({significance})"
+                        logging.info(
+                            "  - %s vs %s: p-value=%.4f (%s)",
+                            scenarios[i],
+                            scenarios[j],
+                            comparison["p_value"],
+                            significance,
                         )
 
     def plot_bootstrap_distributions(
@@ -511,7 +502,7 @@ class BootstrapAnalyzer:
         Plots the bootstrap distributions of the mean for a given metric.
         """
         if self.df_individual is None:
-            print("❌ No data to plot.")
+            logging.warning("No data to plot.")
             return
 
         import matplotlib.pyplot as plt
