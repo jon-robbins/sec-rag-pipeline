@@ -12,6 +12,73 @@
 
 **Bottom line:** RAG delivers regulator-grade answers at enterprise scale while keeping LLM costs and compliance risk low.
 
+# Quick Start
+
+## Running an Evaluation
+
+To quickly evaluate the RAG pipeline performance, follow these steps:
+
+### Prerequisites
+```bash
+# Install dependencies
+poetry install
+
+# Set up environment variables
+export OPENAI_API_KEY="your-openai-api-key"
+export HUGGINGFACE_TOKEN="your-hf-token"  # Optional, for downloading datasets
+```
+
+### Basic Evaluation
+```bash
+# Run evaluation with default settings (uses cached data if available)
+python run_evaluation.py
+
+# Run with specific configuration
+python run_evaluation.py --config-name "rag_reranker" --max-questions 50
+```
+
+### Custom Evaluation
+```bash
+# Generate a new QA dataset first
+python -m src.sec_insights.evaluation.generate_qa_dataset \
+    --dataset-size 100 \
+    --output-path data/qa_custom.json
+
+# Run evaluation on custom dataset
+python run_evaluation.py \
+    --qa-dataset-path data/qa_custom.json \
+    --config-name "rag_ensemble" \
+    --max-questions 100
+```
+
+### Available Configurations
+- `vanilla_rag`: Basic RAG with vector search
+- `rag_reranker`: RAG with single reranker
+- `rag_ensemble`: RAG with dual rerankers and query expansion
+- `full_context`: GPT-4o with full document context (expensive)
+- `web_search`: GPT-4o with web search capability
+
+### Results
+Results are saved to `data/results/` with timestamps. Key metrics include:
+- **ROUGE-L**: Measures answer quality vs ground truth
+- **BLEU**: Measures precision of generated text
+- **Recall@k**: Measures retrieval effectiveness (RAG only)
+- **Cost per accurate answer**: Primary business metric
+
+### Example Output
+```
+Evaluation Results Summary:
+========================
+Method: rag_reranker
+ROUGE-L: 0.742
+BLEU: 0.681
+Recall@5: 0.856
+Cost per query: $0.0008
+Total cost: $24.50
+```
+
+For detailed analysis, see the generated notebooks in `notebooks/evaluation.ipynb`.
+
 # Problem Definition
 
 A common need in most industries is to have an LLM that can answer questions about private or internal documents. Many of these can be long, unstructured, semantically dense, or have diverse vocabulary difficult to sort through manually. Without fine-tuned LLM, or a Retrieval-Augmented Generation (RAG) pipeline, users have limited options:
