@@ -77,7 +77,7 @@ Cost per query: $0.0008
 Total cost: $24.50
 ```
 
-For detailed analysis, see the generated notebooks in `notebooks/evaluation.ipynb`.
+For detailed analysis, see the generated notebooks in `notebooks/implementation.ipynb`.
 
 # Problem Definition
 
