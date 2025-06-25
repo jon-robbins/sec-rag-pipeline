@@ -1,0 +1,2 @@
+method,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens
+baseline,218.0,60.0,278.0

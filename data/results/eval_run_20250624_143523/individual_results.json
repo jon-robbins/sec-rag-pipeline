@@ -1,0 +1,46 @@
+[
+    {
+        "question_id": "AAPL_2017_15_0",
+        "question": "What financial statement schedules were included in Apple Inc.'s 2017 Form 10-K?",
+        "baseline": {
+            "answer": "Apple Inc.'s 2017 Form 10-K would typically include several financial statement schedules as part of its filing. Common schedules include the consolidated balance sheets, consolidated statements of operations, consolidated statements of comprehensive income, consolidated statements of cash flows, and consolidated statements of shareholders' equity. Additionally, it",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 232,
+                "completion_tokens": 60,
+                "total_tokens": 292
+            }
+        },
+        "web_search": {
+            "answer": "Apple Inc.'s 2017 Form 10-K did not include any financial statement schedules. The company stated that all required information was either not applicable, not present in amounts sufficient to require submission, or included in the consolidated financial statements and accompanying notes. ([sec.gov](https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/a10-k20179302017.htm?utm_source=openai))",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 213,
+                "completion_tokens": 91,
+                "total_tokens": 304
+            }
+        }
+    },
+    {
+        "question_id": "AAPL_2017_15_0",
+        "question": "Who signed the Apple Inc. 2017 Form 10-K on behalf of the company?",
+        "baseline": {
+            "answer": "The Apple Inc. 2017 Form 10-K was typically signed by key executives, including the CEO and CFO. For that fiscal year, Tim Cook was the CEO, and Luca Maestri was the CFO. However, I cannot verify the exact signatories without access to the specific document.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 232,
+                "completion_tokens": 60,
+                "total_tokens": 292
+            }
+        },
+        "web_search": {
+            "answer": "Apple Inc.'s 2017 Form 10-K was signed on behalf of the company by:\n\n- **Timothy D. Cook**, Chief Executive Officer and Director (Principal Executive Officer)\n- **Luca Maestri**, Senior Vice President, Chief Financial Officer (Principal Financial Officer)\n- **Chris Kondo**, Senior Director of Corporate Accounting (Principal Accounting Officer)\n- **James A. Bell**, Director\n- **Al Gore**, Director\n- **Robert A. Iger**, Director\n- **Andrea Jung**, Director\n- **Arthur D. Levinson**, Director\n- **Ronald D. Sugar**, Director\n- **Susan L. Wagner**, Director\n\nThis information is detailed in the \"Signatures\" section of the 2017 Form 10-K. ([getfilings.com](https://getfilings.com/sec-filings/171103/APPLE-INC_10-K/?utm_source=openai))",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 213,
+                "completion_tokens": 189,
+                "total_tokens": 402
+            }
+        }
+    }
+]

@@ -1,0 +1,68 @@
+[
+    {
+        "question_id": "AAPL_2021_1A_0",
+        "question": "What are Apple's main revenue sources?",
+        "baseline": {
+            "answer": "Apple's main revenue sources for fiscal year 2021 primarily included sales from its iPhone products, which typically account for a significant portion of total revenue. Other key revenue streams included services (such as the App Store, Apple Music, and iCloud), Mac computers, iPads, and wearables",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        },
+        "web_search": {
+            "answer": "In fiscal year 2021, Apple Inc.'s main revenue sources were:\n\n- **iPhone**: $191.973 billion, accounting for 52.5% of total revenue.\n- **Services**: $68.425 billion, representing 18.7% of total revenue.\n- **Wearables, Home, and Accessories**: $38.367 billion, making up 10.5% of total revenue.\n- **Mac**: $35.190 billion, contributing 9.6% of total revenue.\n- **iPad**: $31.862 billion, comprising 8.7% of total revenue.\n\nThese figures are based on Apple's 2021 Form 10-K filing. ([sec.gov](https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/aapl-20210925.htm?utm_source=openai))",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 201,
+                "completion_tokens": 185,
+                "total_tokens": 386
+            }
+        }
+    },
+    {
+        "question_id": "TSLA_2022_1A_1",
+        "question": "What are Tesla's major risks?",
+        "baseline": {
+            "answer": "Tesla's major risks for fiscal year 2022 included supply chain disruptions, particularly related to semiconductor shortages, which affected production capabilities. Additionally, regulatory risks related to environmental standards and safety regulations posed challenges. Competition in the electric vehicle market was also a significant concern, as more automakers entered the space,",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        },
+        "web_search": {
+            "answer": "In its 2022 SEC filings, Tesla identified several major risks:\n\n- **Manufacturing Challenges**: Tesla acknowledged difficulties in scaling up production to meet anticipated demand, particularly for the Model 3, and the need to develop efficient, automated, low-cost manufacturing capabilities. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Supply Chain Dependencies**: The company highlighted reliance on suppliers for critical components, which could lead to delivery failures or component shortages affecting production. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Product Performance and Safety**: Tesla faced scrutiny over its Autopilot and Full Self-Driving (FSD) features, with investigations into safety concerns and potential defects. ([en.wikipedia.org](https://en.wikipedia.org/wiki/Criticism_of_Tesla%2C_Inc.?utm_source=openai))\n\n- **Legal and Regulatory Risks**: The company was involved in various lawsuits and regulatory investigations, including those related to Autopilot incidents and labor practices, which could impact its operations and reputation. ([en.wikipedia.org](https://en.wikipedia.org/wiki/List_of_lawsuits_involving_Tesla%2C_Inc.?utm_source=openai))\n\n- **Financial Risks**: Tesla's rapid expansion and ambitious plans required substantial capital, leading to significant debt obligations and exposure to interest rate fluctuations. ([redway-tech.com](https://www.redway-tech.com/what-are-teslas-biggest-risks/?utm_source=openai))\n\nThese risks underscore the challenges Tesla faced in 2022 as it navigated growth and innovation in the competitive electric vehicle market.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 201,
+                "completion_tokens": 377,
+                "total_tokens": 578
+            }
+        }
+    },
+    {
+        "question_id": "NVDA_2023_1A_2",
+        "question": "How does NVIDIA generate revenue?",
+        "baseline": {
+            "answer": "NVIDIA primarily generates revenue through the sale of graphics processing units (GPUs) for gaming, data centers, and professional visualization. The company also earns revenue from its automotive segment, which includes AI and machine learning applications, as well as from software and services related to its hardware products. Additionally, NVIDIA",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 219,
+                "completion_tokens": 60,
+                "total_tokens": 279
+            }
+        },
+        "web_search": {
+            "answer": "In fiscal year 2023, NVIDIA's revenue was primarily generated from two main segments:\n\n- **Data Center**: This segment led with $15.01 billion in revenue, accounting for approximately 55.6% of the total revenue. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23cfocommentary.htm?utm_source=openai))\n\n- **Gaming**: This segment contributed $9.07 billion, representing about 33.6% of the total revenue. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23cfocommentary.htm?utm_source=openai))\n\nOther segments included Professional Visualization with $1.54 billion (5.7%), Automotive with $903 million (3.4%), and OEM and Other with $455 million (1.7%). ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23cfocommentary.htm?utm_source=openai))\n\nThese figures highlight NVIDIA's strong presence in both data center solutions and gaming hardware.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 200,
+                "completion_tokens": 254,
+                "total_tokens": 454
+            }
+        }
+    }
+]

@@ -1,0 +1,41 @@
+[
+    {
+        "question_id": "AAPL_2021_1A_0",
+        "question": "Test question?",
+        "baseline": {
+            "answer": "I can provide general information about Apple Inc. (AAPL) and its typical SEC filing practices, but I cannot access specific details or figures from fiscal year 2021. Generally, companies like Apple file Form 10-K annually, which includes comprehensive financial statements, management discussion, and risk factors.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 216,
+                "completion_tokens": 60,
+                "total_tokens": 276
+            }
+        }
+    },
+    {
+        "question_id": "test_chunk_2",
+        "question": "Test question 2?",
+        "baseline": {
+            "answer": "I'm unable to provide specific details about Tesla's fiscal year 2022 performance or any particular test question related to it, as I don't have access to current documents or specific filings. However, I can tell you that Tesla typically files its annual report (Form 10-K) with the SEC, which",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 218,
+                "completion_tokens": 60,
+                "total_tokens": 278
+            }
+        }
+    },
+    {
+        "question_id": "test_chunk_3",
+        "question": "Test question 3?",
+        "baseline": {
+            "answer": "I'm unable to provide specific details about NVIDIA's fiscal year 2023 performance or any particular test question related to it, as my training data does not include real-time or specific financial figures. However, I can tell you that NVIDIA typically files various reports with the SEC, including 10-Ks and",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 218,
+                "completion_tokens": 60,
+                "total_tokens": 278
+            }
+        }
+    }
+]

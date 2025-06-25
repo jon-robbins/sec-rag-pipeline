@@ -1,0 +1,28 @@
+[
+    {
+        "question_id": "AAPL_2021_1A_0",
+        "question": "What are Apple's main revenue sources?",
+        "baseline": {
+            "answer": "Apple's main revenue sources for fiscal year 2021 primarily included sales from its iPhone products, which typically account for a significant portion of total revenue. Other key revenue streams included services (such as the App Store, Apple Music, and iCloud), Mac computers, iPads, and wearables",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        }
+    },
+    {
+        "question_id": "TSLA_2022_1A_1",
+        "question": "What are Tesla's major risks?",
+        "baseline": {
+            "answer": "Tesla's major risks for fiscal year 2022 included supply chain disruptions, particularly related to semiconductor shortages, which affected production capabilities. Additionally, regulatory risks related to environmental standards and safety regulations posed challenges. Competition in the electric vehicle market was also a significant concern, as more automakers entered the space,",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        }
+    }
+]

@@ -1,0 +1,15 @@
+[
+    {
+        "question_id": "AAPL_2017_15_0",
+        "question": "What financial statement schedules were included in Apple Inc.'s 2017 Form 10-K?",
+        "unfiltered_text": {
+            "answer": "All financial statement schedules have been omitted from Apple Inc.'s 2017 Form 10-K, as the required information is either not applicable, not present in amounts sufficient to require submission of the schedule, or is included in the consolidated financial statements and notes thereto.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 46540,
+                "completion_tokens": 53,
+                "total_tokens": 46593
+            }
+        }
+    }
+]

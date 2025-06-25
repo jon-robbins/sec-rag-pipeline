@@ -1,0 +1,17 @@
+{
+    "baseline": {
+        "mean_prompt_tokens": 219.66666666666666,
+        "mean_completion_tokens": 60.0,
+        "mean_total_tokens": 279.6666666666667
+    },
+    "web_search": {
+        "mean_prompt_tokens": 200.66666666666666,
+        "mean_completion_tokens": 291.3333333333333,
+        "mean_total_tokens": 492.0
+    },
+    "unfiltered_text": {
+        "mean_prompt_tokens": 0.0,
+        "mean_completion_tokens": 0.0,
+        "mean_total_tokens": 0.0
+    }
+}

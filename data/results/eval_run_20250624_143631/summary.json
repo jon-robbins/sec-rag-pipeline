@@ -1,0 +1,7 @@
+{
+    "unfiltered_text": {
+        "mean_prompt_tokens": 46540.0,
+        "mean_completion_tokens": 53.0,
+        "mean_total_tokens": 46593.0
+    }
+}

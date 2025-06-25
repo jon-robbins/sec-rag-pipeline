@@ -1,0 +1,7 @@
+{
+    "baseline": {
+        "mean_prompt_tokens": 220.0,
+        "mean_completion_tokens": 60.0,
+        "mean_total_tokens": 280.0
+    }
+}

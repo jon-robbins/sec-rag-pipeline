@@ -1,0 +1,41 @@
+[
+    {
+        "question_id": "MIXED_2024_1A_0",
+        "question": "Mixed format question 1?",
+        "baseline": {
+            "answer": "I'm unable to provide specific information about the ticker MIXED or its fiscal year 2024 filings, as my training data does not include real-time or current SEC filings. Generally, companies file various forms with the SEC, such as 10-Ks for annual reports and 10-Qs for quarterly",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 219,
+                "completion_tokens": 60,
+                "total_tokens": 279
+            }
+        }
+    },
+    {
+        "question_id": "mixed_2",
+        "question": "Mixed format question 2?",
+        "baseline": {
+            "answer": "I'm unable to provide specific information about the ticker MIXED2 or any details regarding fiscal year 2024, as my training data does not include real-time or specific company filings. Generally, mixed format questions in SEC filings may refer to a combination of different reporting formats or financial metrics. For precise details",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        }
+    },
+    {
+        "question_id": "mixed_3",
+        "question": "Mixed format question 3?",
+        "baseline": {
+            "answer": "I'm unable to provide specific information about the ticker MIXED3 or its fiscal year 2024 filings, as my training data does not include real-time or specific company details. Generally, companies file various forms with the SEC, such as 10-Ks for annual reports and 10-Qs for",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        }
+    }
+]

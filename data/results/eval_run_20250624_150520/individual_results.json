@@ -1,0 +1,15 @@
+[
+    {
+        "question_id": "AAPL_2021_1A_0",
+        "question": "What is the revenue?",
+        "baseline": {
+            "answer": "I can't provide the specific revenue figure for Apple Inc. (AAPL) for fiscal year 2021, as I don't have access to real-time data or specific financial statements. However, I can tell you that Apple typically reports its annual revenue in its Form 10-K filings with the SEC,",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 218,
+                "completion_tokens": 60,
+                "total_tokens": 278
+            }
+        }
+    }
+]

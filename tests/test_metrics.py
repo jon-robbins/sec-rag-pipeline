@@ -4,7 +4,7 @@ Tests for evaluation metrics.
 
 import pytest
 
-from sec_insights.evaluation.metrics import (
+from src.metrics.metrics import (
     calculate_bleu_score,
     calculate_ndcg,
     calculate_retrieval_metrics,

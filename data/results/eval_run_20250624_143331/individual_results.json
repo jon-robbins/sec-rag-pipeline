@@ -1,0 +1,28 @@
+[
+    {
+        "question_id": "AAPL_2017_15_0",
+        "question": "What financial statement schedules were included in Apple Inc.'s 2017 Form 10-K?",
+        "baseline": {
+            "answer": "Apple Inc.'s 2017 Form 10-K would typically include several financial statement schedules as part of its filing. Common schedules include the consolidated balance sheets, consolidated statements of operations, consolidated statements of comprehensive income, consolidated statements of cash flows, and consolidated statements of stockholders' equity. Additionally,",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 232,
+                "completion_tokens": 60,
+                "total_tokens": 292
+            }
+        }
+    },
+    {
+        "question_id": "AAPL_2017_15_0",
+        "question": "Who signed the Apple Inc. 2017 Form 10-K on behalf of the company?",
+        "baseline": {
+            "answer": "The Apple Inc. 2017 Form 10-K was typically signed by key executives, including the CEO and CFO. For that fiscal year, Tim Cook was the CEO, and Luca Maestri was the CFO. However, I cannot verify the exact signatories without access to the specific document.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 232,
+                "completion_tokens": 60,
+                "total_tokens": 292
+            }
+        }
+    }
+]

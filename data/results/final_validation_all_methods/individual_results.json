@@ -1,0 +1,95 @@
+[
+    {
+        "question_id": "AAPL_2021_1A_0",
+        "question": "What are Apple's main revenue sources?",
+        "baseline": {
+            "answer": "Apple's main revenue sources for fiscal year 2021 primarily included sales from its iPhone products, which typically account for a significant portion of total revenue. Other key revenue streams included services (such as the App Store, Apple Music, and iCloud), Mac computers, iPads, and wearables",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        },
+        "web_search": {
+            "answer": "In fiscal year 2021, Apple Inc.'s main revenue sources were:\n\n- **iPhone**: $191.973 billion, accounting for 52.5% of total revenue.\n- **Services**: $68.425 billion, representing 18.7% of total revenue.\n- **Wearables, Home, and Accessories**: $38.367 billion, making up 10.5% of total revenue.\n- **Mac**: $35.190 billion, contributing 9.6% of total revenue.\n- **iPad**: $31.862 billion, comprising 8.7% of total revenue.\n\nThese figures are based on Apple's 2021 Form 10-K filing. ([sec.gov](https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/aapl-20210925.htm?utm_source=openai))",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 201,
+                "completion_tokens": 185,
+                "total_tokens": 386
+            }
+        },
+        "unfiltered_text": {
+            "answer": "[No SEC filing data available for AAPL 2021]",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        }
+    },
+    {
+        "question_id": "TSLA_2022_1A_1",
+        "question": "What are Tesla's major risks?",
+        "baseline": {
+            "answer": "Tesla's major risks for fiscal year 2022 included supply chain disruptions, particularly related to semiconductor shortages, which affected production capabilities. Additionally, regulatory risks related to environmental standards and safety regulations posed challenges. Competition in the electric vehicle market was also a significant concern, as more automakers entered the space,",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 220,
+                "completion_tokens": 60,
+                "total_tokens": 280
+            }
+        },
+        "web_search": {
+            "answer": "In its fiscal year 2022 10-K filing, Tesla identified several major risks:\n\n- **Manufacturing Challenges**: Tesla acknowledged the need to develop efficient, automated, low-cost manufacturing capabilities to meet anticipated high-volume production targets for the Model 3. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Supply Chain Dependencies**: The company highlighted its reliance on suppliers for key components, noting that the absence of long-term agreements could expose Tesla to delivery failures or component shortages. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Product Performance**: Tesla recognized that if its vehicles or other products containing vehicle powertrains or battery packs failed to perform as expected, it could harm the company's ability to develop, market, and sell electric vehicles. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Consumer Adoption**: The company emphasized that its future growth is dependent upon consumers' willingness to adopt electric vehicles, especially in the mass-market demographic targeted with the Model 3. ([businessinsider.com](https://www.businessinsider.com/tesla-risk-terrifying-and-unprecendented-2016-5?utm_source=openai))\n\n- **Legal and Regulatory Risks**: Tesla faced investigations into its Autopilot and Full Self-Driving (FSD) features, with the National Highway Traffic Safety Administration (NHTSA) opening multiple investigations into Autopilot-related incidents. ([seo.goover.ai](https://seo.goover.ai/report/202406/go-public-report-en-a7fc5cfd-aa15-4f90-96ef-800a4701b174-0-0.html?utm_source=openai))\n\n- **Labor Relations**: The company encountered labor disputes, including a California judge ruling that Tesla violated labor laws by interfering with employee attempts to unionize. ([en.wikipedia.org](https://en.wikipedia.org/wiki/Tesla_Fremont_Factory?utm_source=openai))\n\nThese risks underscore the challenges Tesla faces in scaling production, managing supply chains, ensuring product reliability, fostering consumer adoption, navigating legal scrutiny, and maintaining positive labor relations.",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 201,
+                "completion_tokens": 506,
+                "total_tokens": 707
+            }
+        },
+        "unfiltered_text": {
+            "answer": "[No SEC filing data available for TSLA 2022]",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        }
+    },
+    {
+        "question_id": "NVDA_2023_1A_2",
+        "question": "How does NVIDIA generate revenue?",
+        "baseline": {
+            "answer": "NVIDIA generates revenue primarily through the sale of graphics processing units (GPUs) for gaming, data centers, and professional visualization. The company also earns revenue from its automotive segment, which includes AI and machine learning applications, as well as from software and services related to its hardware products. Additionally, NVIDIA",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 219,
+                "completion_tokens": 60,
+                "total_tokens": 279
+            }
+        },
+        "web_search": {
+            "answer": "In fiscal year 2023, NVIDIA's revenue was primarily generated through the following segments:\n\n- **Data Center**: $15.01 billion, accounting for 55.63% of total revenue.\n- **Gaming**: $9.07 billion, representing 33.61% of total revenue.\n- **Professional Visualization**: $1.54 billion, making up 5.72% of total revenue.\n- **Automotive**: $903 million, contributing 3.35% of total revenue.\n- **OEM and Other**: $455 million, comprising 1.69% of total revenue.\n\nThese figures are based on NVIDIA's fiscal year 2023 financial results. ([sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581023000014/q4fy23cfocommentary.htm?utm_source=openai))",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 200,
+                "completion_tokens": 183,
+                "total_tokens": 383
+            }
+        },
+        "unfiltered_text": {
+            "answer": "[No SEC filing data available for NVDA 2023]",
+            "retrieval_metrics": {},
+            "token_usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+        }
+    }
+]

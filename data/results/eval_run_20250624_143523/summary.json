@@ -1,0 +1,12 @@
+{
+    "baseline": {
+        "mean_prompt_tokens": 232.0,
+        "mean_completion_tokens": 60.0,
+        "mean_total_tokens": 292.0
+    },
+    "web_search": {
+        "mean_prompt_tokens": 213.0,
+        "mean_completion_tokens": 140.0,
+        "mean_total_tokens": 353.0
+    }
+}

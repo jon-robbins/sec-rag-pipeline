@@ -1,0 +1,4 @@
+method,mean_prompt_tokens,mean_completion_tokens,mean_total_tokens
+baseline,219.66666666666666,60.0,279.6666666666667
+web_search,200.66666666666666,291.3333333333333,492.0
+unfiltered_text,0.0,0.0,0.0

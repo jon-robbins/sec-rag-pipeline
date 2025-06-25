@@ -339,3 +339,4 @@ log.txt
 eval-log.txt
 notebooks/eval_utils.py
 notebooks/results_aggregator.py
+data/implementation_example_files/chunks_with_embeddings.json

@@ -1,0 +1,7 @@
+{
+    "web_search": {
+        "mean_prompt_tokens": 199.0,
+        "mean_completion_tokens": 119.0,
+        "mean_total_tokens": 318.0
+    }
+}

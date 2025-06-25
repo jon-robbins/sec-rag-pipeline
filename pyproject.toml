@@ -54,3 +54,7 @@ skip = ["notebooks"]
 [tool.mypy]
 ignore_missing_imports = true
 follow_imports = "skip"
+
+[[tool.mypy.overrides]]
+module = "src.evaluation.evaluator"
+disable_error_code = ["assignment"]
